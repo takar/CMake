@@ -827,6 +827,38 @@ static const struct CompileLanguageNode : public cmGeneratorExpressionNode
           "components of the file(GENERATE) command.");
       return std::string();
       }
+
+    std::vector<std::string> enabledLanguages;
+    cmGlobalGenerator* gg
+        = context->Makefile->GetLocalGenerator()->GetGlobalGenerator();
+    gg->GetEnabledLanguages(enabledLanguages);
+    if (!parameters.empty() &&
+          std::find(enabledLanguages.begin(), enabledLanguages.end(),
+                  parameters.front()) == enabledLanguages.end())
+      {
+      reportError(context, content->GetOriginalExpression(),
+          "$<COMPILE_LANGUAGE:...> Unknown language.");
+      return std::string();
+      }
+
+    if (gg->GetName().find("Visual Studio") != std::string::npos)
+      {
+      reportError(context, content->GetOriginalExpression(),
+          "$<COMPILE_LANGUAGE:...> may not be used with Visual Studio "
+          "generators.");
+      return std::string();
+      }
+    else
+      {
+      if(gg->GetName().find("Makefiles") == std::string::npos &&
+              gg->GetName().find("Ninja") == std::string::npos &&
+              gg->GetName().find("Xcode") == std::string::npos)
+        {
+        reportError(context, content->GetOriginalExpression(),
+            "$<COMPILE_LANGUAGE:...> not supported for this generator.");
+        return std::string();
+        }
+      }
     if (parameters.empty())
       {
       return context->Language;

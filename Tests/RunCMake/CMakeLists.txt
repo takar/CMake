@@ -192,6 +192,9 @@ add_RunCMake_test(ExternalProject)
 set(build-property-paths_INCLUDE_DIRECTORIES_ARGS -DTEST_PROP=INCLUDE_DIRECTORIES)
 add_RunCMake_test(build-property-paths_INCLUDE_DIRECTORIES TEST_DIR build-property-paths)
 
+set(build-property-paths_SOURCES_ARGS -DTEST_PROP=SOURCES)
+add_RunCMake_test(build-property-paths_SOURCES TEST_DIR build-property-paths)
+
 if(RPMBUILD)
   add_RunCMake_test(CPackRPM)
 endif()

@@ -1,17 +1,29 @@
 # See adjacent README.rst for documentation of this test infrastructure.
 
 macro(add_RunCMake_test test)
+  set(TEST_ARGS ${ARGN})
+  if ("${ARGV1}" STREQUAL "TEST_DIR")
+    message("HERE ${ARGV1}")
+    if ("${ARGV2}" STREQUAL "")
+      message(FATAL_ERROR "Invalid args")
+    endif()
+    set(Test_Dir ${ARGV2})
+    list(REMOVE_AT TEST_ARGS 0)
+    list(REMOVE_AT TEST_ARGS 0)
+  else()
+    set(Test_Dir ${test})
+  endif()
   add_test(NAME RunCMake.${test} COMMAND ${CMAKE_CMAKE_COMMAND}
     -DCMAKE_MODULE_PATH=${CMAKE_CURRENT_SOURCE_DIR}
     -DRunCMake_GENERATOR=${CMAKE_GENERATOR}
     -DRunCMake_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}
     -DRunCMake_GENERATOR_TOOLSET=${CMAKE_GENERATOR_TOOLSET}
     -DRunCMake_MAKE_PROGRAM=${CMake_TEST_EXPLICIT_MAKE_PROGRAM}
-    -DRunCMake_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/${test}
+    -DRunCMake_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/${Test_Dir}
     -DRunCMake_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/${test}
     ${${test}_ARGS}
-    ${ARGN}
-    -P "${CMAKE_CURRENT_SOURCE_DIR}/${test}/RunCMakeTest.cmake"
+    ${TEST_ARGS}
+    -P "${CMAKE_CURRENT_SOURCE_DIR}/${Test_Dir}/RunCMakeTest.cmake"
     )
 endmacro()
 
@@ -177,7 +189,9 @@ add_RunCMake_test(CommandLine)
 add_RunCMake_test(install)
 add_RunCMake_test(CPackInstallProperties)
 add_RunCMake_test(ExternalProject)
-add_RunCMake_test(build-property-paths)
+
+set(build-property-paths_INCLUDE_DIRECTORIES_ARGS -DTEST_PROP=INCLUDE_DIRECTORIES)
+add_RunCMake_test(build-property-paths_INCLUDE_DIRECTORIES TEST_DIR build-property-paths)
 
 if(RPMBUILD)
   add_RunCMake_test(CPackRPM)

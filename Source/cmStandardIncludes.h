@@ -72,10 +72,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined( _MSC_VER )
-typedef unsigned short mode_t;
-#endif
-
 // use this class to shrink the size of symbols in .o files
 // std::string is really basic_string<....lots of stuff....>
 // when combined with a map or set, the symbols can be > 2000 chars!

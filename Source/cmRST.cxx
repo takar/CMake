@@ -497,6 +497,7 @@ void cmRST::UnindentLines(std::vector<std::string>& lines)
     {
     ++trailingEmpty;
     }
-  lines.erase(lines.begin(), lines.begin()+leadingEmpty);
-  lines.erase(lines.end()-trailingEmpty, lines.end());
+  lines.erase(cmRotate(lines.begin(),
+              lines.begin() + leadingEmpty,
+              lines.end() - trailingEmpty), lines.end());
 }

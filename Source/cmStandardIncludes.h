@@ -22,7 +22,6 @@
 #ifdef _MSC_VER
 #pragma warning ( disable : 4786 )
 #pragma warning ( disable : 4503 )
-#pragma warning ( disable : 4512 ) /* operator=() could not be generated */
 #endif
 
 
@@ -42,11 +41,6 @@
 # include <cmsys/IOStream.hxx>
 #endif
 
-// Avoid warnings in system headers.
-#if defined(_MSC_VER)
-# pragma warning (push,1)
-#endif
-
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -57,24 +51,13 @@
 #include <string>
 #include <iterator>
 #include <algorithm>
-#include <functional>
 #include <map>
-#include <list>
 #include <set>
-#include <deque>
-
-#if defined(_MSC_VER)
-# pragma warning(pop)
-#endif
 
 // include the "c" string header
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#if defined( _MSC_VER )
-typedef unsigned short mode_t;
-#endif
 
 // use this class to shrink the size of symbols in .o files
 // std::string is really basic_string<....lots of stuff....>

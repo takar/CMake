@@ -287,18 +287,14 @@ bool cmListCommand::HandleFindCommand(std::vector<std::string> const& args)
     return true;
     }
 
-  std::vector<std::string>::iterator it;
-  unsigned int index = 0;
-  for ( it = varArgsExpanded.begin(); it != varArgsExpanded.end(); ++ it )
+  std::vector<std::string>::iterator it =
+      std::find(varArgsExpanded.begin(), varArgsExpanded.end(), args[2]);
+  if (it != varArgsExpanded.end())
     {
-    if ( *it == args[2] )
-      {
-      char indexString[32];
-      sprintf(indexString, "%d", index);
-      this->Makefile->AddDefinition(variableName, indexString);
-      return true;
-      }
-    index++;
+    char indexString[32];
+    sprintf(indexString, "%zu", std::distance(varArgsExpanded.begin(), it));
+    this->Makefile->AddDefinition(variableName, indexString);
+    return true;
     }
 
   this->Makefile->AddDefinition(variableName, "-1");
@@ -376,18 +372,10 @@ bool cmListCommand
   size_t cc;
   for ( cc = 2; cc < args.size(); ++ cc )
     {
-    size_t kk = 0;
-    while ( kk < varArgsExpanded.size() )
-      {
-      if ( varArgsExpanded[kk] == args[cc] )
-        {
-        varArgsExpanded.erase(varArgsExpanded.begin()+kk);
-        }
-      else
-        {
-        kk ++;
-        }
-      }
+    varArgsExpanded.erase(
+        std::remove(varArgsExpanded.begin(), varArgsExpanded.end(),
+                    args[cc]),
+        varArgsExpanded.end());
     }
 
 

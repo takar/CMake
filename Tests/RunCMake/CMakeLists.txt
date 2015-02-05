@@ -3,7 +3,6 @@
 macro(add_RunCMake_test test)
   set(TEST_ARGS ${ARGN})
   if ("${ARGV1}" STREQUAL "TEST_DIR")
-    message("HERE ${ARGV1}")
     if ("${ARGV2}" STREQUAL "")
       message(FATAL_ERROR "Invalid args")
     endif()

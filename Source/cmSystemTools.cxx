@@ -26,6 +26,7 @@
 #include <cmsys/Encoding.hxx>
 #if defined(CMAKE_BUILD_WITH_CMAKE)
 # include "cmArchiveWrite.h"
+# include "cmLocale.h"
 # include <cm_libarchive.h>
 #endif
 #include <cmsys/stl/algorithm>
@@ -1694,6 +1695,8 @@ long copy_data(struct archive *ar, struct archive *aw)
 bool extract_tar(const char* outFileName, bool verbose,
                  bool extract)
 {
+  cmLocaleRAII localeRAII;
+  static_cast<void>(localeRAII);
   struct archive* a = archive_read_new();
   struct archive *ext = archive_write_disk_new();
   archive_read_support_compression_all(a);

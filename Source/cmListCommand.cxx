@@ -372,10 +372,18 @@ bool cmListCommand
   size_t cc;
   for ( cc = 2; cc < args.size(); ++ cc )
     {
-    varArgsExpanded.erase(
-        std::remove(varArgsExpanded.begin(), varArgsExpanded.end(),
-                    args[cc]),
-        varArgsExpanded.end());
+    size_t kk = 0;
+    while ( kk < varArgsExpanded.size() )
+      {
+      if ( varArgsExpanded[kk] == args[cc] )
+        {
+        varArgsExpanded.erase(varArgsExpanded.begin()+kk);
+        }
+      else
+        {
+        kk ++;
+        }
+      }
     }
 
 

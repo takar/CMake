@@ -520,7 +520,7 @@ files.
   ``-t clean`` system.
 ``test``
   Runs tests.  This target is only automatically available if the CMake
-  files provide CTest-based tests.  See also `Running Tests`_.
+  files provide CTest-based tests.
 ``install``
   Installs the software.  This target is only automatically available if
   the software defines install rules with the :command:`install`

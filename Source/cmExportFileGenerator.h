@@ -139,11 +139,6 @@ protected:
                       cmGeneratorExpression::PreprocessContext preprocessRule,
                       ImportPropertyMap &properties,
                       std::vector<std::string> &missingTargets);
-  void PopulateSourcesInterface(
-                      cmTargetExport *target,
-                      cmGeneratorExpression::PreprocessContext preprocessRule,
-                      ImportPropertyMap &properties,
-                      std::vector<std::string> &missingTargets);
 
   void SetImportLinkInterface(const std::string& config,
                     std::string const& suffix,

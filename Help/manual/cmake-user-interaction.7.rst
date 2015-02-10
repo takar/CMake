@@ -25,7 +25,8 @@ to their system.
 
 Generated buildsystems should generally be treated as read-only. The CMake
 files as a primary artifact should completely specify the buildsystem and
-there should be no reason to populate properties in an IDE for example.
+there should be no reason to populate properties manually in an IDE for
+example.
 
 The features and user interfaces described in this manual are available for
 all CMake-based build systems by virtue of providing CMake files.
@@ -84,9 +85,8 @@ simply deleting the build directory.
 
 The CMake tooling may report warnings which are intended for the provider
 of the software, not intended for the consumer of the software.  Such
-warnings usually take the form of :manual:`policy <cmake-policies(7)>`
-warnings.  Users may disable such warnings by passing the ``-Wno-dev`` flag
-to :manual:`cmake(1)`.
+warnings end with "This warning is for project developers".  Users may
+disable such warnings by passing the ``-Wno-dev`` flag to :manual:`cmake(1)`.
 
 Note that spaces in the path to the source directory or build directory can
 cause problems if the provided software is not written to carefully quote
@@ -110,7 +110,7 @@ The output of ``cmake --help`` includes a list of
 :manual:`generators <cmake-generators(7)>` available for the user to
 choose from.
 
-On Unix-like systems (including Apple), the :generator:`Unix Makefiles`
+On Unix-like systems (including Mac OS X), the :generator:`Unix Makefiles`
 generator is used by default.  A variant of that generator can also be used
 on Windows in various environments, such as the :generator:`NMake Makefiles`
 and :generator:`MinGW Makefiles` generator.  These generators generate

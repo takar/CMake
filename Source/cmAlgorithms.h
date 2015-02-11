@@ -122,15 +122,13 @@ struct Range
   const_iterator begin() const { return Begin; }
   const_iterator end() const { return End; }
   bool empty() const { return std::distance(Begin, End) == 0; }
-  template<typename Distance>
-  Range& advance(Distance amount)
+  Range& advance(cmIML_INT_intptr_t amount)
   {
     std::advance(Begin, amount);
     return *this;
   }
 
-  template<typename Distance>
-  Range& retreat(Distance amount)
+  Range& retreat(cmIML_INT_intptr_t amount)
   {
     std::advance(End, -amount);
     return *this;

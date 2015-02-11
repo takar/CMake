@@ -113,13 +113,13 @@ bool cmMacroHelperCommand::InvokeInitialPass
   std::string expandedArgv = cmJoin(expandedArgs, ";");
   std::vector<std::string> variables;
   variables.reserve(this->Args.size() - 1);
-  std::vector<std::string> argVs;
-  argVs.reserve(this->Args.size() - 1);
-  char argvName[60];
   for (unsigned int j = 1; j < this->Args.size(); ++j)
     {
     variables.push_back("${" + this->Args[j] + "}");
     }
+  std::vector<std::string> argVs;
+  argVs.reserve(expandedArgs.size());
+  char argvName[60];
   for (unsigned int j = 0; j < expandedArgs.size(); ++j)
     {
     sprintf(argvName,"${ARGV%i}",j);

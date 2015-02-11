@@ -172,13 +172,10 @@ bool cmMacroHelperCommand::InvokeInitialPass
 
         // if the current argument of the current function has ${ARGV in it
         // then try replacing ARGV values
-        if (tmps.find("${ARGV") != std::string::npos)
+        for (unsigned int t = 0; t < expandedArgs.size(); ++t)
           {
-          for (unsigned int t = 0; t < expandedArgs.size(); ++t)
-            {
-            cmSystemTools::ReplaceString(tmps, argVs[t].c_str(),
-                                         expandedArgs[t].c_str());
-            }
+          cmSystemTools::ReplaceString(tmps, argVs[t].c_str(),
+                                       expandedArgs[t].c_str());
           }
 
         arg.Value = tmps;

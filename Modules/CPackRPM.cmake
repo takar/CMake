@@ -423,10 +423,6 @@
 
 # Author: Eric Noulard with the help of Alexander Neundorf.
 
-# prevent older policies from interfearing with this script
-cmake_policy(PUSH)
-cmake_policy(VERSION ${CMAKE_VERSION})
-
 function(cpack_rpm_prepare_relocation_paths)
   # set appropriate prefix, remove possible trailing slash and convert backslashes to slashes
   if(CPACK_RPM_${CPACK_RPM_PACKAGE_COMPONENT}_PACKAGE_PREFIX)
@@ -459,7 +455,12 @@ function(cpack_rpm_prepare_relocation_paths)
   endforeach()
 
   # warn about all the paths that are not relocatable
-  file(GLOB_RECURSE FILE_PATHS_ "${WDIR}/*")
+  cmake_policy(PUSH)
+    # Tell file(GLOB_RECURSE) not to follow directory symlinks
+    # even if the project does not set this policy to NEW.
+    cmake_policy(SET CMP0009 NEW)
+    file(GLOB_RECURSE FILE_PATHS_ "${WDIR}/*")
+  cmake_policy(POP)
   foreach(TMP_PATH ${FILE_PATHS_})
     string(LENGTH "${WDIR}" WDIR_LEN)
     string(SUBSTRING "${TMP_PATH}" ${WDIR_LEN} -1 TMP_PATH)
@@ -1312,6 +1313,3 @@ if(CPACK_RPM_PACKAGE_DESCRIPTION_)
 else()
   unset(CPACK_RPM_PACKAGE_DESCRIPTION)
 endif()
-
-# restore previous policies
-cmake_policy(POP)

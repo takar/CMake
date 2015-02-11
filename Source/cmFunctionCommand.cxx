@@ -193,7 +193,6 @@ IsFunctionBlocked(const cmListFileFunction& lff, cmMakefile &mf,
     if (!this->Depth)
       {
       std::string name = this->Args[0];
-      std::vector<std::string>::size_type cc;
       name += "( ";
       name += cmJoin(this->Args, " ");
       name += " )";

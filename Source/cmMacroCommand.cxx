@@ -113,9 +113,17 @@ bool cmMacroHelperCommand::InvokeInitialPass
   std::string expandedArgv = cmJoin(expandedArgs, ";");
   std::vector<std::string> variables;
   variables.reserve(this->Args.size() - 1);
+  std::vector<std::string> argVs;
+  argVs.reserve(this->Args.size() - 1);
+  char argvName[60];
   for (unsigned int j = 1; j < this->Args.size(); ++j)
     {
     variables.push_back("${" + this->Args[j] + "}");
+    }
+  for (unsigned int j = 0; j < expandedArgs.size(); ++j)
+    {
+    sprintf(argvName,"${ARGV%i}",j);
+    argVs.push_back(argvName);
     }
   if(!this->Functions.empty())
     {
@@ -166,12 +174,9 @@ bool cmMacroHelperCommand::InvokeInitialPass
         // then try replacing ARGV values
         if (tmps.find("${ARGV") != std::string::npos)
           {
-          char argvName[60];
-          // also replace the ARGV1 ARGV2 ... etc
           for (unsigned int t = 0; t < expandedArgs.size(); ++t)
             {
-            sprintf(argvName,"${ARGV%i}",t);
-            cmSystemTools::ReplaceString(tmps, argvName,
+            cmSystemTools::ReplaceString(tmps, argVs[t].c_str(),
                                          expandedArgs[t].c_str());
             }
           }

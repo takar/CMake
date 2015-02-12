@@ -1329,12 +1329,7 @@ bool cmcmd::RunCommand(const char* comment,
   if(verbose)
     {
     std::cout << comment << ":\n";
-    for(std::vector<std::string>::iterator i = command.begin();
-        i != command.end(); ++i)
-      {
-      std::cout << *i << " ";
-      }
-    std::cout << "\n";
+    std::cout << cmJoin(command, " ") << "\n";
     }
   std::string output;
   int retCode =0;

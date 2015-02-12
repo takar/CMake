@@ -198,3 +198,8 @@ add_RunCMake_test(IfacePaths_SOURCES TEST_DIR IfacePaths)
 if(RPMBUILD)
   add_RunCMake_test(CPackRPM)
 endif()
+
+# Matlab module related tests
+if(CMake_TEST_FindMatlab)
+  add_RunCMake_test(FindMatlab)
+endif()

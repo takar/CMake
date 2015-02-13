@@ -1,3 +1,6 @@
+# This is an undocumented internal helper for the FindMatlab
+# module ``matlab_add_unit_test`` command.
+
 #=============================================================================
 # Copyright 2014-2015 Raffi Enficiaud, Max Planck Society
 #

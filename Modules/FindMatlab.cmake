@@ -967,7 +967,7 @@ if(WIN32)
     endif()
 
     # filtering the results with the registry keys
-    matlab_get_all_valid_matlab_roots_from_registry(${matlab_versions_from_registry} _matlab_possible_roots)
+    matlab_get_all_valid_matlab_roots_from_registry("${matlab_versions_from_registry}" _matlab_possible_roots)
 
 
 
@@ -1057,7 +1057,7 @@ else()
         set(_matlab_full_string "/Applications/MATLAB_${_matlab_current_release}.app")
         if(EXISTS ${_matlab_full_string})
           set(_matlab_current_version)
-          matlab_get_version_from_release_name(${_matlab_current_release} _matlab_current_version)
+          matlab_get_version_from_release_name("${_matlab_current_release}" _matlab_current_version)
           if(MATLAB_FIND_DEBUG)
             message(STATUS "[MATLAB] Found version ${_matlab_current_release} (${_matlab_current_version}) in ${_matlab_full_string}")
           endif()
@@ -1132,7 +1132,7 @@ if(${Matlab_VERSION_STRING} STREQUAL "NOTFOUND")
 
     if(Matlab_MAIN_PROGRAM)
       set(matlab_list_of_all_versions)
-      matlab_get_version_from_matlab_run(${Matlab_MAIN_PROGRAM} matlab_list_of_all_versions)
+      matlab_get_version_from_matlab_run("${Matlab_MAIN_PROGRAM}" matlab_list_of_all_versions)
 
       list(GET matlab_list_of_all_versions 0 MATLAB_VERSION_tmp)
 
@@ -1204,7 +1204,7 @@ unset(_matlab_64Build)
 
 if(NOT DEFINED Matlab_MEX_EXTENSION)
   set(_matlab_mex_extension "")
-  matlab_get_mex_suffix(${Matlab_ROOT_DIR} _matlab_mex_extension)
+  matlab_get_mex_suffix("${Matlab_ROOT_DIR}" _matlab_mex_extension)
 
   # This variable goes to the cache.
   set(Matlab_MEX_EXTENSION ${_matlab_mex_extension} CACHE STRING "Extensions for the mex targets (automatically given by Matlab)")

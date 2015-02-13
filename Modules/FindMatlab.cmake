@@ -309,11 +309,11 @@ endmacro()
 # extracts all the supported versions of Matlab
 # internal use
 macro(matlab_get_supported_versions list_versions)
-  set(${list_releases})
+  set(${list_versions})
   foreach(_var IN LISTS MATLAB_VERSIONS_MAPPING)
     string(REGEX MATCHALL "(.+)=([0-9]+\\.?[0-9]*)" _matched ${_var})
     if(NOT _matched STREQUAL "")
-      list(APPEND ${list_releases} ${CMAKE_MATCH_2})
+      list(APPEND ${list_versions} ${CMAKE_MATCH_2})
     endif()
     unset(_matched)
     unset(CMAKE_MATCH_1)

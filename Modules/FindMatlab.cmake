@@ -370,7 +370,9 @@ function(matlab_extract_all_installed_versions_from_registry win64 matlab_versio
   execute_process(
     COMMAND ${MATLAB_REG_EXE_LOCATION} query HKEY_LOCAL_MACHINE\\SOFTWARE\\Mathworks\\MATLAB /f * /k ${APPEND_REG}
     RESULT_VARIABLE resultMatlab
-    OUTPUT_VARIABLE varMatlab)
+    OUTPUT_VARIABLE varMatlab
+    ERROR_VARIABLE errMatlab
+    )
   #message("Matlabs = ${varMatlab} | ${resultMatlab}")
 
 

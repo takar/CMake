@@ -197,7 +197,7 @@ user because they are paths and options specific to the users system.
 When it is first executed, CMake generates a cache file in the build
 directory containing key-value pairs for such artifacts.  The cache file
 can be viewed or edited by the user by running the :manual:`cmake-gui(1)`
-or :manual:`ccmake(1)` tool.  The tools provide user interface for
+or :manual:`ccmake(1)` tool.  The tools provide an interactive interface for
 re-configuring the provided software and re-generating the buildsystem, as
 is needed after editing cached values.  Each cache entry may have an
 associated short help text which is displayed in the user interface tools.
@@ -209,7 +209,8 @@ type ``BOOL`` can be edited by a checkbox in a user interface, a
 to a ``STRING`` should also provide a way to locate filesystem paths using
 a file dialog.  An entry of type ``STRING`` may provide a restricted list of
 allowed values which are then provided in a drop-down menu in
-the :manual:`cmake-gui(1)` user interface.
+the :manual:`cmake-gui(1)` user interface (see the :prop_cache:`STRINGS`
+cache property).
 
 On the command line, the ``-D`` option to the :manual:`cmake(1)` tool is
 used to specify cache entries, and the ``-U`` option is used to clear

@@ -213,27 +213,14 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
     // Echo string
     else if (args[1] == "echo" )
       {
-      unsigned int cc;
-      const char* space = "";
-      for ( cc = 2; cc < args.size(); cc ++ )
-        {
-        std::cout << space << args[cc];
-        space = " ";
-        }
-      std::cout << std::endl;
+      std::cout << cmJoin(cmRange(args).advance(2), " ") << std::endl;
       return 0;
       }
 
     // Echo string no new line
     else if (args[1] == "echo_append" )
       {
-      unsigned int cc;
-      const char* space = "";
-      for ( cc = 2; cc < args.size(); cc ++ )
-        {
-        std::cout << space << args[cc];
-        space = " ";
-        }
+      std::cout << cmJoin(cmRange(args).advance(2), " ");
       return 0;
       }
 

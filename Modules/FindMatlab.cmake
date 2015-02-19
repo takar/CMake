@@ -219,6 +219,7 @@ if(NOT MATLAB_ADDITIONAL_VERSIONS)
 endif()
 
 set(MATLAB_VERSIONS_MAPPING
+  "R2014a=8.3"
   "R2013b=8.2"
   "R2013a=8.1"
   "R2012b=8.0"
@@ -235,8 +236,8 @@ set(MATLAB_VERSIONS_MAPPING
 # temporary folder for all Matlab runs
 set(_matlab_temporary_folder ${CMAKE_BINARY_DIR}/Matlab)
 
-if(NOT EXISTS ${_matlab_temporary_folder})
-  file(MAKE_DIRECTORY ${_matlab_temporary_folder})
+if(NOT EXISTS "${_matlab_temporary_folder}")
+  file(MAKE_DIRECTORY "${_matlab_temporary_folder}")
 endif()
 
 #.rst:
@@ -341,21 +342,6 @@ function(matlab_extract_all_installed_versions_from_registry win64 matlab_versio
     message(FATAL_ERROR "This macro can only be called by a windows host (call to reg.exe")
   endif()
 
-  # list the keys under HKEY_LOCAL_MACHINE\SOFTWARE\mathworks but the call to
-  # reg does not work from cmake, curiously, as is. The command provides the
-  # desired result under the command line though.
-  # Fix: this is because "/reg:64" should appended to the command, otherwise
-  # it gets on the 32 bits software key (curiously again)
-  find_program(MATLAB_REG_EXE_LOCATION "reg")
-
-  # if reg.exe is not found, then it is impossible to use this method.
-  if(NOT MATLAB_REG_EXE_LOCATION)
-    if(MATLAB_FIND_DEBUG)
-      message(WARNING "[MATLAB] reg.exe not found")
-    endif()
-    set(${matlab_versions} "" PARENT_SCOPE)
-    return()
-  endif()
 
   if(${win64} AND ${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "64")
     set(APPEND_REG "/reg:64")
@@ -366,7 +352,7 @@ function(matlab_extract_all_installed_versions_from_registry win64 matlab_versio
   # /reg:64 should be added on 64 bits capable OSs in order to enable the
   # redirection of 64 bits applications
   execute_process(
-    COMMAND ${MATLAB_REG_EXE_LOCATION} query HKEY_LOCAL_MACHINE\\SOFTWARE\\Mathworks\\MATLAB /f * /k ${APPEND_REG}
+    COMMAND reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\Mathworks\\MATLAB /f * /k ${APPEND_REG}
     RESULT_VARIABLE resultMatlab
     OUTPUT_VARIABLE varMatlab
     ERROR_VARIABLE errMatlab
@@ -523,7 +509,7 @@ function(matlab_get_mex_suffix matlab_root mex_suffix)
   # one empty string element
   find_program(
     MATLAB_MEXEXTENSIONS_PROG
-    "mexext"
+    NAMES mexext
     PATHS ${matlab_root}/bin
     DOC "Matlab MEX extension provider"
     NO_DEFAULT_PATH
@@ -556,7 +542,8 @@ function(matlab_get_mex_suffix matlab_root mex_suffix)
 
   execute_process(
     COMMAND ${MATLAB_MEXEXTENSIONS_PROG}
-    OUTPUT_VARIABLE _matlab_mex_extension)
+    OUTPUT_VARIABLE _matlab_mex_extension
+    ERROR_VARIABLE _matlab_mex_extension_error)
   string(STRIP ${_matlab_mex_extension} _matlab_mex_extension)
 
   set(${mex_suffix} ${_matlab_mex_extension} PARENT_SCOPE)
@@ -590,11 +577,11 @@ function(matlab_get_version_from_matlab_run matlab_binary_program matlab_list_ve
     message(STATUS "[MATLAB] Determining the version of Matlab from ${matlab_binary_program}")
   endif()
 
-  if(EXISTS ${_matlab_temporary_folder}/matlabVersionLog.cmaketmp)
+  if(EXISTS "${_matlab_temporary_folder}/matlabVersionLog.cmaketmp")
     if(MATLAB_FIND_DEBUG)
       message(STATUS "[MATLAB] Removing previous ${_matlab_temporary_folder}/matlabVersionLog.cmaketmp file")
     endif()
-    file(REMOVE ${_matlab_temporary_folder}/matlabVersionLog.cmaketmp)
+    file(REMOVE "${_matlab_temporary_folder}/matlabVersionLog.cmaketmp")
   endif()
 
 
@@ -611,10 +598,12 @@ function(matlab_get_version_from_matlab_run matlab_binary_program matlab_list_ve
   # independent manner however, not setting it would flush the output of Matlab
   # in the current console (unix variant)
   execute_process(
-    COMMAND ${matlab_binary_program} -nosplash -nojvm ${_matlab_additional_commands} -logfile ${_matlab_temporary_folder}/matlabVersionLog.cmaketmp -nodesktop -nodisplay -r "version, exit"
+    COMMAND "${matlab_binary_program}" -nosplash -nojvm ${_matlab_additional_commands} -logfile "matlabVersionLog.cmaketmp" -nodesktop -nodisplay -r "version, exit"
     OUTPUT_VARIABLE _matlab_version_from_cmd_dummy
     RESULT_VARIABLE _matlab_result_version_call
+    ERROR_VARIABLE _matlab_result_version_call_error
     TIMEOUT 30
+    WORKING_DIRECTORY "${_matlab_temporary_folder}"
     )
 
 
@@ -623,7 +612,7 @@ function(matlab_get_version_from_matlab_run matlab_binary_program matlab_list_ve
       message(WARNING "[MATLAB] Unable to determine the version of Matlab. Matlab call returned with error ${_matlab_result_version_call}.")
     endif()
     return()
-  elseif(NOT EXISTS ${_matlab_temporary_folder}/matlabVersionLog.cmaketmp)
+  elseif(NOT EXISTS "${_matlab_temporary_folder}/matlabVersionLog.cmaketmp")
     if(MATLAB_FIND_DEBUG)
       message(WARNING "[MATLAB] Unable to determine the version of Matlab. The log file does not exist.")
     endif()
@@ -631,8 +620,8 @@ function(matlab_get_version_from_matlab_run matlab_binary_program matlab_list_ve
   endif()
 
   # if successful, read back the log
-  file(READ ${_matlab_temporary_folder}/matlabVersionLog.cmaketmp _matlab_version_from_cmd)
-  file(REMOVE ${_matlab_temporary_folder}/matlabVersionLog.cmaketmp)
+  file(READ "${_matlab_temporary_folder}/matlabVersionLog.cmaketmp" _matlab_version_from_cmd)
+  file(REMOVE "${_matlab_temporary_folder}/matlabVersionLog.cmaketmp")
 
   set(index -1)
   string(FIND ${_matlab_version_from_cmd} "ans" index)
@@ -997,27 +986,19 @@ else()
     endif()
 
     if(NOT _matlab_main_tmp)
-      # if we get there a second time and the folder matlab is created here,
-      # and then the find_program does not find it,
-      # the get_filename_component (... PROGRAM) finds this directory instead.
+
       find_program(
         _matlab_main_tmp
-        "matlab")
+        NAMES matlab)
 
       if(NOT _matlab_main_tmp)
-        #execute_process(COMMAND which matlab OUTPUT_VARIABLE _which_matlab
-        # RESULT_VARIABLE _which_matlab_result)
-        get_filename_component(_matlab_main_tmp "matlab" PROGRAM)
-
-        # "bug" of cmake: if we call get_filename_component with PROGRAM, it can
-        # return us a directory
-        if((NOT EXISTS ${_matlab_main_tmp}) OR (IS_DIRECTORY ${_matlab_main_tmp}))
-          execute_process(
-            COMMAND "which matlab"
-            OUTPUT_VARIABLE _matlab_main_tmp)
-         endif()
+        execute_process(
+          COMMAND "which" matlab
+          OUTPUT_VARIABLE _matlab_main_tmp
+          ERROR_VARIABLE _matlab_main_tmp_err)
+        # the output should be cleaned up
+        string(STRIP "${_matlab_main_tmp}" _matlab_main_tmp)
       endif()
-
 
       if(EXISTS ${_matlab_main_tmp})
         if(MATLAB_FIND_DEBUG)
@@ -1032,7 +1013,6 @@ else()
     endif() # if(NOT _matlab_main_tmp)
 
     if(_matlab_main_tmp AND EXISTS ${_matlab_main_tmp})
-
       # resolve symlinks
       get_filename_component(_matlab_current_location "${_matlab_main_tmp}" REALPATH)
       set(_directory_alias DIRECTORY)
@@ -1141,7 +1121,7 @@ if(_matlab_version_should_be_recomputed)
     message(STATUS "[MATLAB] querying for version from Matlab root = ${Matlab_ROOT_DIR}")
   endif()
 
-  if(NOT Matlab_MAIN_PROGRAM)
+  if(Matlab_MAIN_PROGRAM)
     set(_matlab_main_tmp ${Matlab_MAIN_PROGRAM})
   else()
     find_program(
@@ -1155,7 +1135,7 @@ if(_matlab_version_should_be_recomputed)
 
   if(_matlab_main_tmp)
     set(matlab_list_of_all_versions)
-    matlab_get_version_from_matlab_run(${_matlab_main_tmp} matlab_list_of_all_versions)
+    matlab_get_version_from_matlab_run("${_matlab_main_tmp}" matlab_list_of_all_versions)
 
     list(GET matlab_list_of_all_versions 0 MATLAB_VERSION_tmp)
 

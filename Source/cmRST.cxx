@@ -491,7 +491,9 @@ void cmRST::UnindentLines(std::vector<std::string>& lines)
   size_t trailingEmpty = std::distance(rit,
                             cmFindNot(cmReverseRange(lines), std::string()));
 
-  lines.erase(cmRotate(lines.begin(),
-              lines.begin() + leadingEmpty,
-              lines.end() - trailingEmpty), lines.end());
+  std::vector<std::string>::iterator contentEnd
+      = cmRotate(lines.begin(),
+                 lines.begin() + leadingEmpty,
+                 lines.end() - trailingEmpty);
+  lines.erase(contentEnd, lines.end());
 }

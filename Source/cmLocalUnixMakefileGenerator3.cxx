@@ -1325,7 +1325,7 @@ cmLocalUnixMakefileGenerator3
                       this->Makefile->GetSafeDefinition("CMAKE_BUILD_TYPE"));
     fout << "\n"
          << "# Per-language clean rules from dependency scanning.\n"
-         << "foreach(lang" << cmJoin(languages, " ") << ")\n"
+         << "foreach(lang " << cmJoin(languages, " ") << ")\n"
          << "  include(" << this->GetTargetDirectory(target)
          << "/cmake_clean_${lang}.cmake OPTIONAL)\n"
          << "endforeach()\n";

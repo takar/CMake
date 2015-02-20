@@ -295,7 +295,6 @@ std::string cmWrap(char prefix, Range const& r, char suffix, std::string sep)
   return cmWrap(std::string(1, prefix), r, std::string(1, suffix), sep);
 }
 
-
 template<typename Range, typename T>
 typename Range::const_iterator cmFindNot(Range const& r, T const& t)
 {

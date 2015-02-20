@@ -289,6 +289,12 @@ std::string cmWrap(std::string prefix, Range const& r, std::string suffix,
   return prefix + cmJoin(r, (suffix + sep + prefix).c_str()) + suffix;
 }
 
+template<typename Range>
+std::string cmWrap(char prefix, Range const& r, char suffix, std::string sep)
+{
+  return cmWrap(std::string(1, prefix), r, std::string(1, suffix), sep);
+}
+
 
 template<typename Range, typename T>
 typename Range::const_iterator cmFindNot(Range const& r, T const& t)

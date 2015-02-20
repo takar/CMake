@@ -213,7 +213,7 @@ cmMakefile::~cmMakefile()
 void cmMakefile::PrintStringVector(const char* s,
                                    const std::vector<std::string>& v) const
 {
-  std::cout << s << ": ( \n" << cmWrap("\"", v, "\"", " ") << ")\n";
+  std::cout << s << ": ( \n" << cmWrap('"', v, '"', " ") << ")\n";
 }
 
 void cmMakefile

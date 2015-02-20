@@ -835,7 +835,7 @@ cmSystemTools::PrintSingleCommand(std::vector<std::string> const& command)
     return std::string();
     }
 
-  return cmWrap("\"", command, "\"", " ");
+  return cmWrap('"', command, '"', " ");
 }
 
 bool cmSystemTools::DoesFileExistWithExtensions(

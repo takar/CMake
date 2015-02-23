@@ -183,6 +183,7 @@ bool cmCTestCoverageHandler::StartCoverageLogFile(
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE, "Cannot open log file: "
       << covLogFilename << std::endl);
+    this->SetScriptErrorOccurred(true);
     return false;
     }
   std::string local_start_time = this->CTest->CurrentTime();
@@ -348,6 +349,7 @@ int cmCTestCoverageHandler::ProcessHandler()
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Cannot create LastCoverage.log file" << std::endl);
+    this->SetScriptErrorOccurred(true);
     }
 
   ofs << "Performing coverage: " << elapsed_time_start << std::endl;
@@ -456,6 +458,7 @@ int cmCTestCoverageHandler::ProcessHandler()
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Cannot open coverage summary file." << std::endl);
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
 
@@ -523,6 +526,7 @@ int cmCTestCoverageHandler::ProcessHandler()
       {
       cmCTestLog(this->CTest, ERROR_MESSAGE, "Cannot find file: "
         << fullFileName << std::endl);
+      this->SetScriptErrorOccurred(true);
       continue;
       }
 
@@ -684,6 +688,7 @@ int cmCTestCoverageHandler::ProcessHandler()
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "  " << *erIt << std::endl);
       }
+    this->SetScriptErrorOccurred(true);
     }
 
   long total_lines = total_tested + total_untested;
@@ -1005,6 +1010,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Could not find gcov." << std::endl);
+    this->SetScriptErrorOccurred(true);
     return 0;
     }
   std::string gcovExtraFlags
@@ -1112,6 +1118,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "Command produced error: " << errors << std::endl);
       cont->Error ++;
+      this->SetScriptErrorOccurred(true);
       continue;
       }
     if ( retVal != 0 )
@@ -1120,6 +1127,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
         << retVal << " while processing: " << *it << std::endl);
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "Command produced error: " << cont->Error << std::endl);
+      this->SetScriptErrorOccurred(true);
       }
     cmCTestOptionalLog(this->CTest, HANDLER_VERBOSE_OUTPUT,
       "--------------------------------------------------------------"
@@ -1156,6 +1164,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
           cmCTestLog(this->CTest, ERROR_MESSAGE, "Unknown gcov output style e1"
             << std::endl);
           cont->Error ++;
+          this->SetScriptErrorOccurred(true);
           break;
           }
 
@@ -1173,6 +1182,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
           cmCTestLog(this->CTest, ERROR_MESSAGE, "Unknown gcov output style e2"
             << std::endl);
           cont->Error ++;
+          this->SetScriptErrorOccurred(true);
           break;
           }
 
@@ -1189,6 +1199,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
           cmCTestLog(this->CTest, ERROR_MESSAGE, "Unknown gcov output style e3"
             << std::endl);
           cont->Error ++;
+          this->SetScriptErrorOccurred(true);
           break;
           }
 
@@ -1206,6 +1217,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
           cmCTestLog(this->CTest, ERROR_MESSAGE, "Unknown gcov output style e4"
             << std::endl);
           cont->Error ++;
+          this->SetScriptErrorOccurred(true);
           break;
           }
         }
@@ -1220,6 +1232,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
           cmCTestLog(this->CTest, ERROR_MESSAGE, "Unknown gcov output style e5"
             << std::endl);
           cont->Error ++;
+          this->SetScriptErrorOccurred(true);
           break;
           }
 
@@ -1236,6 +1249,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
           cmCTestLog(this->CTest, ERROR_MESSAGE, "Unknown gcov output style e6"
             << std::endl);
           cont->Error ++;
+          this->SetScriptErrorOccurred(true);
           break;
           }
 
@@ -1253,6 +1267,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
           cmCTestLog(this->CTest, ERROR_MESSAGE, "Unknown gcov output style e7"
             << std::endl);
           cont->Error ++;
+          this->SetScriptErrorOccurred(true);
           break;
           }
 
@@ -1270,6 +1285,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
           cmCTestLog(this->CTest, ERROR_MESSAGE, "Unknown gcov output style e8"
             << std::endl);
           cont->Error ++;
+          this->SetScriptErrorOccurred(true);
           break;
           }
 
@@ -1287,6 +1303,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
           cmCTestLog(this->CTest, ERROR_MESSAGE,
             "Unknown gcov output line: [" << *line << "]"
             << std::endl);
+          this->SetScriptErrorOccurred(true);
           cont->Error ++;
           //abort();
           }
@@ -1310,6 +1327,7 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
           {
           cmCTestLog(this->CTest, ERROR_MESSAGE, "Cannot open file: "
             << gcovFile << std::endl);
+          this->SetScriptErrorOccurred(true);
           }
         else
           {
@@ -1526,6 +1544,7 @@ int cmCTestCoverageHandler::HandleLCovCoverage(
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "Command produced error: " << errors << std::endl);
       cont->Error ++;
+      this->SetScriptErrorOccurred(true);
       continue;
       }
     if ( retVal != 0 )
@@ -1534,6 +1553,7 @@ int cmCTestCoverageHandler::HandleLCovCoverage(
         << retVal << " while processing: " << *it << std::endl);
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "Command produced error: " << cont->Error << std::endl);
+      this->SetScriptErrorOccurred(true);
       }
     cmCTestOptionalLog(this->CTest, HANDLER_VERBOSE_OUTPUT,
       "--------------------------------------------------------------"
@@ -1584,6 +1604,7 @@ int cmCTestCoverageHandler::HandleLCovCoverage(
           {
           cmCTestLog(this->CTest, ERROR_MESSAGE, "Cannot open file: "
                      << lcovFile << std::endl);
+          this->SetScriptErrorOccurred(true);
           }
         std::string srcname;
 
@@ -1593,6 +1614,7 @@ int cmCTestCoverageHandler::HandleLCovCoverage(
           cmCTestLog(this->CTest, ERROR_MESSAGE,
                      "Error while parsing lcov file '" << lcovFile << "':"
                      << " No source file name found!" << std::endl);
+          this->SetScriptErrorOccurred(true);
           return 0;
           }
         srcname = srcname.substr(18);
@@ -1626,6 +1648,7 @@ int cmCTestCoverageHandler::HandleLCovCoverage(
             {
             cmCTestLog(this->CTest, ERROR_MESSAGE, "Cannot open file: "
                        << lcovFile << std::endl);
+            this->SetScriptErrorOccurred(true);
             }
           else
             {
@@ -1801,6 +1824,7 @@ int cmCTestCoverageHandler::HandleTracePyCoverage(
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "Cannot find source Python file corresponding to: "
         << *fileIt << std::endl);
+      this->SetScriptErrorOccurred(true);
       continue;
       }
 
@@ -1818,6 +1842,7 @@ int cmCTestCoverageHandler::HandleTracePyCoverage(
       {
       cmCTestLog(this->CTest, ERROR_MESSAGE, "Cannot open file: "
         << *fileIt << std::endl);
+      this->SetScriptErrorOccurred(true);
       }
     else
       {
@@ -1854,6 +1879,7 @@ int cmCTestCoverageHandler::HandleTracePyCoverage(
               cmCTestLog(this->CTest, ERROR_MESSAGE,
                 "Currently the limit is maximum coverage of 999999"
                 << std::endl);
+              this->SetScriptErrorOccurred(true);
               }
             }
           }
@@ -1948,6 +1974,7 @@ int cmCTestCoverageHandler::RunBullseyeCoverageBranch(
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Files and full path files not the same size?:\n");
+    this->SetScriptErrorOccurred(true);
     return 0;
     }
   // create the output stream for the CoverageLog-N.xml file
@@ -1955,6 +1982,7 @@ int cmCTestCoverageHandler::RunBullseyeCoverageBranch(
   int logFileCount = 0;
   if ( !this->StartCoverageLogFile(covLogFile, logFileCount) )
     {
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   // for each file run covbr on that file to get the coverage
@@ -1966,6 +1994,7 @@ int cmCTestCoverageHandler::RunBullseyeCoverageBranch(
   if(!this->RunBullseyeCommand(cont, "covbr", 0, outputFile))
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE, "error running covbr for." << "\n");
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   cmCTestOptionalLog(this->CTest, HANDLER_VERBOSE_OUTPUT,
@@ -1977,6 +2006,7 @@ int cmCTestCoverageHandler::RunBullseyeCoverageBranch(
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Cannot open coverage file: " <<
                outputFile << std::endl);
+    this->SetScriptErrorOccurred(true);
     return 0;
     }
   std::map<std::string, std::string> fileMap;
@@ -2089,6 +2119,7 @@ int cmCTestCoverageHandler::RunBullseyeCommand(
   if(program.empty())
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE, "Cannot find :" << cmd << "\n");
+    this->SetScriptErrorOccurred(true);
     return 0;
     }
   if(arg)
@@ -2120,6 +2151,7 @@ int cmCTestCoverageHandler::RunBullseyeCommand(
                << program << " " << arg << "\n"
                << "kwsys process state : "
                << runCoverageSrc.GetProcessState());
+    this->SetScriptErrorOccurred(true);
     return 0;
     }
   // since we set the output file names wait for it to end
@@ -2137,6 +2169,7 @@ int cmCTestCoverageHandler::RunBullseyeSourceSummary(
   if(!this->RunBullseyeCommand(cont, "covsrc", "-c", outputFile))
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE, "error running covsrc:\n");
+    this->SetScriptErrorOccurred(true);
     return 0;
     }
 
@@ -2147,6 +2180,7 @@ int cmCTestCoverageHandler::RunBullseyeSourceSummary(
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Cannot open coverage summary file." << std::endl);
+    this->SetScriptErrorOccurred(true);
     return 0;
     }
   this->CTest->StartXML(covSumFile, this->AppendXML);
@@ -2187,6 +2221,7 @@ int cmCTestCoverageHandler::RunBullseyeSourceSummary(
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Cannot open coverage summary file: " <<
                outputFile << std::endl);
+    this->SetScriptErrorOccurred(true);
     return 0;
     }
   std::set<std::string> coveredFileNames;
@@ -2351,6 +2386,7 @@ int cmCTestCoverageHandler::HandleBullseyeCoverage(
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Error running bullseye summary.\n");
+    this->SetScriptErrorOccurred(true);
     return 0;
     }
   cmCTestOptionalLog(this->CTest, DEBUG, "HandleBullseyeCoverage return 1 "
@@ -2389,6 +2425,7 @@ bool cmCTestCoverageHandler::ParseBullsEyeCovsrcLine(
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE, "Error parsing string : "
                << inputLine << "\n");
+    this->SetScriptErrorOccurred(true);
     return false;
     }
   // the source file has "" around it so extract out the file name
@@ -2424,6 +2461,7 @@ bool cmCTestCoverageHandler::ParseBullsEyeCovsrcLine(
     cmCTestLog(this->CTest, ERROR_MESSAGE, "Error parsing input : "
                << inputLine << " last pos not npos =  " << pos <<
                "\n");
+    this->SetScriptErrorOccurred(true);
     }
   return true;
 }

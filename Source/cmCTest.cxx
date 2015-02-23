@@ -3122,7 +3122,6 @@ void cmCTest::Log(int logType, const char* file, int line, const char* msg,
       cmCTestLogOutputFileLine(err);
       err << msg;
       err.flush();
-      cmSystemTools::SetErrorOccured();
       break;
     default:
       cmCTestLogOutputFileLine(out);

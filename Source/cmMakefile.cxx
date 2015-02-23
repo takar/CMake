@@ -382,8 +382,21 @@ bool cmMakefile::ExecuteCommand(const cmListFileFunction& lff,
         {
         if(!status.GetNestedError())
           {
-          // The command invocation requested that we report an error.
-          this->IssueMessage(cmake::FATAL_ERROR, pcmd->GetError());
+          if (cmSystemTools::GetFilenameName(
+              this->GetSafeDefinition("CMAKE_CURRENT_LIST_FILE")) ==
+              this->GetSafeDefinition("CTEST_SCRIPT_NAME") &&
+              std::string(pcmd->GetError()).find("unknown error") !=
+              std::string::npos)
+            {
+            // Don't report "unknown error" from a CTest script.
+            // Instead simply note that an error occurred.
+            cmSystemTools::SetFatalErrorOccured();
+            }
+          else
+            {
+            // The command invocation requested that we report an error.
+            this->IssueMessage(cmake::FATAL_ERROR, pcmd->GetError());
+            }
           }
         result = false;
         if ( this->GetCMakeInstance()->GetWorkingMode() != cmake::NORMAL_MODE)

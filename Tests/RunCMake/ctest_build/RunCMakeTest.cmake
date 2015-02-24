@@ -8,4 +8,3 @@ function(run_ctest_build CASE_NAME)
 endfunction()
 
 run_ctest_build(BuildQuiet QUIET)
-run_ctest_build(BuildCompileError TARGET compile_error)

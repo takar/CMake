@@ -51,7 +51,6 @@ static void xmlReportError(int line, const char* msg, void* data)
   cmCTestLog(ctest, ERROR_MESSAGE,
              "Error parsing XML in stream at line "
              << line << ": " << msg << std::endl);
-  ctest->GetHandler("memcheck")->SetScriptErrorOccurred(true);
 }
 
 // parse the xml file containing the results of last BoundsChecker run
@@ -112,7 +111,6 @@ public:
         this->Errors.push_back(cmCTestMemCheckHandler::ABW); // do not know
         cmCTestLog(this->CTest, ERROR_MESSAGE,
                    "No Category found in Bounds checker XML\n" );
-        this->CTest->GetHandler("memcheck")->SetScriptErrorOccurred(true);
         return;
         }
       while(ptr->ErrorCategory && cat)
@@ -130,7 +128,6 @@ public:
         cmCTestLog(this->CTest, ERROR_MESSAGE,
                    "Found unknown Bounds Checker error "
                    << ptr->ErrorCategory << std::endl);
-        this->CTest->GetHandler("memcheck")->SetScriptErrorOccurred(true);
         }
     }
   cmCTest* CTest;
@@ -178,7 +175,6 @@ int cmCTestMemCheckHandler::PreProcessHandler()
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Problem executing pre-memcheck command(s)." << std::endl);
-    this->SetScriptErrorOccurred(true);
     return 0;
     }
   return 1;
@@ -191,7 +187,6 @@ int cmCTestMemCheckHandler::PostProcessHandler()
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Problem executing post-memcheck command(s)." << std::endl);
-    this->SetScriptErrorOccurred(true);
     return 0;
     }
   return 1;
@@ -651,7 +646,6 @@ bool cmCTestMemCheckHandler::InitializeMemoryChecking()
             "Cannot find memory checker suppression file: "
             << this->CTest->GetCTestConfiguration(
               "MemoryCheckSuppressionFile") << std::endl);
-          this->SetScriptErrorOccurred(true);
           return false;
           }
         std::string suppressions = "--suppressions="
@@ -677,7 +671,6 @@ bool cmCTestMemCheckHandler::InitializeMemoryChecking()
                      "Cannot find memory checker suppression file: "
                      << this->CTest->GetCTestConfiguration(
                        "MemoryCheckSuppressionFile").c_str() << std::endl);
-          this->SetScriptErrorOccurred(true);
           return false;
           }
         std::string filterFiles = "/FilterFiles="
@@ -749,7 +742,6 @@ bool cmCTestMemCheckHandler::InitializeMemoryChecking()
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "Do not understand memory checker: " << this->MemoryTester
         << std::endl);
-      this->SetScriptErrorOccurred(true);
       return false;
     }
 
@@ -916,7 +908,6 @@ bool cmCTestMemCheckHandler::ProcessMemCheckPurifyOutput(
           << pfW.match(1) << std::endl);
         ostr << "*** Unknown Purify memory fault: " << pfW.match(1)
           << std::endl;
-        this->SetScriptErrorOccurred(true);
         }
       }
     if ( failure != this->ResultStrings.size() )
@@ -1152,7 +1143,6 @@ bool cmCTestMemCheckHandler::ProcessMemCheckBoundsCheckerOutput(
         cmCTestLog(this->CTest, ERROR_MESSAGE,
                    "Error in ParseChunk: " << theLine
                    << std::endl);
-        this->SetScriptErrorOccurred(true);
         }
       }
     }
@@ -1227,7 +1217,6 @@ cmCTestMemCheckHandler::PostProcessBoundsCheckerTest(cmCTestTestResult& res,
     {
     std::string log = "Cannot read memory tester output file: " + ofile;
     cmCTestLog(this->CTest, ERROR_MESSAGE, log.c_str() << std::endl);
-    this->SetScriptErrorOccurred(true);
     return;
     }
   res.Output += BOUNDS_CHECKER_MARKER;
@@ -1263,7 +1252,6 @@ cmCTestMemCheckHandler::AppendMemTesterOutput(cmCTestTestResult& res,
     {
     std::string log = "Cannot read memory tester output file: " + ofile;
     cmCTestLog(this->CTest, ERROR_MESSAGE, log.c_str() << std::endl);
-    this->SetScriptErrorOccurred(true);
     return;
     }
   std::string line;
@@ -1302,7 +1290,6 @@ void cmCTestMemCheckHandler::TestOutputFileNames(int test,
       std::string log = "Cannot find memory tester output file: "
         + ofile;
       cmCTestLog(this->CTest, ERROR_MESSAGE, log.c_str() << std::endl);
-      this->SetScriptErrorOccurred(true);
       ofile = "";
       }
     else
@@ -1316,7 +1303,6 @@ void cmCTestMemCheckHandler::TestOutputFileNames(int test,
     std::string log = "Cannot find memory tester output file: "
       + ofile;
     cmCTestLog(this->CTest, ERROR_MESSAGE, log.c_str() << std::endl);
-    this->SetScriptErrorOccurred(true);
     ofile = "";
     }
   files.push_back(ofile);

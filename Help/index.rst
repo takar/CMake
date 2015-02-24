@@ -38,7 +38,6 @@ Reference Manuals
    /manual/cmake-properties.7
    /manual/cmake-qt.7
    /manual/cmake-toolchains.7
-   /manual/cmake-user-interaction.7
    /manual/cmake-variables.7
 
 .. only:: html or text

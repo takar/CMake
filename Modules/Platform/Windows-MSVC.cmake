@@ -131,14 +131,18 @@ endif()
 # default to Debug builds
 set(CMAKE_BUILD_TYPE_INIT Debug)
 
+# Compute an architecture family from the architecture id.
+foreach(lang C CXX)
+  set(_MSVC_${lang}_ARCHITECTURE_FAMILY "${MSVC_${lang}_ARCHITECTURE_ID}")
+  if(_MSVC_${lang}_ARCHITECTURE_FAMILY MATCHES "^ARM")
+    set(_MSVC_${lang}_ARCHITECTURE_FAMILY "ARM")
+  elseif(_MSVC_${lang}_ARCHITECTURE_FAMILY MATCHES "^SH")
+    set(_MSVC_${lang}_ARCHITECTURE_FAMILY "SHx")
+  endif()
+endforeach()
+
 if(WINCE)
   foreach(lang C CXX)
-    set(_MSVC_${lang}_ARCHITECTURE_FAMILY "${MSVC_${lang}_ARCHITECTURE_ID}")
-    if(_MSVC_${lang}_ARCHITECTURE_FAMILY MATCHES "^ARM")
-      set(_MSVC_${lang}_ARCHITECTURE_FAMILY "ARM")
-    elseif(_MSVC_${lang}_ARCHITECTURE_FAMILY MATCHES "^SH")
-      set(_MSVC_${lang}_ARCHITECTURE_FAMILY "SHx")
-    endif()
     string(TOUPPER "${_MSVC_${lang}_ARCHITECTURE_FAMILY}" _MSVC_${lang}_ARCHITECTURE_FAMILY_UPPER)
   endforeach()
 

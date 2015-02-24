@@ -127,7 +127,8 @@ struct Range
 {
   typedef const_iterator_ const_iterator;
   typedef typename std::iterator_traits<const_iterator>::value_type value_type;
-  typedef typename std::iterator_traits<const_iterator>::difference_type difference_type;
+  typedef typename std::iterator_traits<const_iterator>::difference_type
+    difference_type;
   Range(const_iterator begin_, const_iterator end_)
     : Begin(begin_), End(end_) {}
   const_iterator begin() const { return Begin; }

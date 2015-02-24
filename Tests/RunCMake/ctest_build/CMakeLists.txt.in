@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
-project(CTestBuild@CASE_NAME@ NONE)
+project(CTestBuild@CASE_NAME@)
 include(CTest)
 add_test(NAME RunCMakeVersion COMMAND "${CMAKE_COMMAND}" --version)
+add_executable(compile_error EXCLUDE_FROM_ALL
+  @RunCMake_SOURCE_DIR@/../../CTestTestFailure/badCode.cxx)

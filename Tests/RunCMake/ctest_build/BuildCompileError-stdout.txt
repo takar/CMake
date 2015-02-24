@@ -1,0 +1,16 @@
+Run dashboard with model Experimental
+   Source directory: .*/Tests/RunCMake/ctest_build/BuildCompileError
+   Build directory: .*/Tests/RunCMake/ctest_build/BuildCompileError-build
+   Reading ctest configuration file: .*/Tests/RunCMake/ctest_build/BuildCompileError/CTestConfig.cmake
+   Site: test-site
+   Build name: test-build-name
+   Use Experimental tag: [0-9-]+
+Configure project
+   Each . represents 1024 bytes of output
+    . Size of output: [0-9]+K
+Build project
+   Each symbol represents 1024 bytes of output.
+   '!' represents an error and '\*' a warning.
+    . Size of output: [0-9]+K
+   [1-9] Compiler errors
+   0 Compiler warnings

@@ -42,7 +42,6 @@ int cmCTestUploadHandler::ProcessHandler()
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Cannot open Upload.xml file" << std::endl);
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
   std::string buildname = cmCTest::SafeBuildIdField(

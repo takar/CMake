@@ -23,7 +23,6 @@ cmCTestGenericHandler::cmCTestGenericHandler()
   this->SubmitIndex = 0;
   this->AppendXML = false;
   this->Quiet = false;
-  this->ScriptErrorOccurred = false;
 }
 
 //----------------------------------------------------------------------

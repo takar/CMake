@@ -141,19 +141,14 @@ bool cmCTestHandlerCommand
   cmSystemTools::ChangeDirectory(
     this->CTest->GetCTestConfiguration("BuildDirectory"));
   int res = handler->ProcessHandler();
-  cmSystemTools::ChangeDirectory(current_dir);
-
-  if (handler->GetScriptErrorOccurred())
-    {
-    cmSystemTools::SetErrorOccured();
-    }
-  else if ( this->Values[ct_RETURN_VALUE] && *this->Values[ct_RETURN_VALUE])
+  if ( this->Values[ct_RETURN_VALUE] && *this->Values[ct_RETURN_VALUE])
     {
     std::ostringstream str;
     str << res;
     this->Makefile->AddDefinition(
       this->Values[ct_RETURN_VALUE], str.str().c_str());
     }
+  cmSystemTools::ChangeDirectory(current_dir);
   return true;
 }
 

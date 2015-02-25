@@ -929,7 +929,7 @@ bool cmCTestSubmitHandler::SubmitUsingCP(
                << "\tNumber of files: " << files.size() << "\n"
                << "\tremoteprefix: " << remoteprefix << "\n"
                << "\tdestination: " << destination << std::endl);
-    return false;
+    return 0;
     }
 
   cmCTest::SetOfStrings::const_iterator file;
@@ -1097,14 +1097,12 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Upload file not specified\n");
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
   if (!cmSystemTools::FileExists(file))
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Upload file not found: '" << file << "'\n");
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
   cmCTestCurl curl(this->CTest);
@@ -1122,7 +1120,6 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Only http and https are supported for CDASH_UPLOAD\n");
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
   char md5sum[33];
@@ -1165,7 +1162,6 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Error in HttpRequest\n" << response);
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
   cmCTestOptionalLog(this->CTest, HANDLER_VERBOSE_OUTPUT,
@@ -1177,7 +1173,6 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "error parsing json string [" << response << "]\n"
                << reader.getFormattedErrorMessages() << "\n");
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
   if(json["status"].asInt() != 0)
@@ -1185,7 +1180,6 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Bad status returned from CDash: "
                << json["status"].asInt());
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
   if(json["datafilesmd5"].isArray())
@@ -1204,7 +1198,6 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "bad datafilesmd5 value in response "
                << response << "\n");
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
 
@@ -1219,7 +1212,6 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "error uploading to CDash. "
                << file << " " << url << " " << fstr.str());
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
   if(!reader.parse(response, json))
@@ -1227,7 +1219,6 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "error parsing json string [" << response << "]\n"
                << reader.getFormattedErrorMessages() << "\n");
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
   cmCTestOptionalLog(this->CTest, HANDLER_VERBOSE_OUTPUT,
@@ -1258,7 +1249,6 @@ int cmCTestSubmitHandler::ProcessHandler()
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Cannot find BuildDirectory  key in the DartConfiguration.tcl"
       << std::endl);
-    this->SetScriptErrorOccurred(true);
     return -1;
     }
 
@@ -1467,7 +1457,6 @@ int cmCTestSubmitHandler::ProcessHandler()
         "   Problems when submitting via FTP"
         << std::endl);
       ofs << "   Problems when submitting via FTP" << std::endl;
-      this->SetScriptErrorOccurred(true);
       return -1;
       }
     if(!this->CDash)
@@ -1485,7 +1474,6 @@ int cmCTestSubmitHandler::ProcessHandler()
         cmCTestLog(this->CTest, ERROR_MESSAGE,
                    "   Problems when triggering via HTTP" << std::endl);
         ofs << "   Problems when triggering via HTTP" << std::endl;
-        this->SetScriptErrorOccurred(true);
         return -1;
         }
       cmCTestOptionalLog(this->CTest, HANDLER_OUTPUT,
@@ -1529,7 +1517,6 @@ int cmCTestSubmitHandler::ProcessHandler()
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "   Problems when submitting via HTTP" << std::endl);
       ofs << "   Problems when submitting via HTTP" << std::endl;
-      this->SetScriptErrorOccurred(true);
       return -1;
       }
     if(!this->CDash)
@@ -1545,7 +1532,6 @@ int cmCTestSubmitHandler::ProcessHandler()
         cmCTestLog(this->CTest, ERROR_MESSAGE,
                    "   Problems when triggering via HTTP" << std::endl);
         ofs << "   Problems when triggering via HTTP" << std::endl;
-        this->SetScriptErrorOccurred(true);
         return -1;
         }
       }
@@ -1581,7 +1567,6 @@ int cmCTestSubmitHandler::ProcessHandler()
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "   Problems when submitting via XML-RPC" << std::endl);
       ofs << "   Problems when submitting via XML-RPC" << std::endl;
-      this->SetScriptErrorOccurred(true);
       return -1;
       }
     cmCTestOptionalLog(this->CTest, HANDLER_OUTPUT, "   Submission successful"
@@ -1592,7 +1577,6 @@ int cmCTestSubmitHandler::ProcessHandler()
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "   Submission method \"xmlrpc\" not compiled into CTest!"
                << std::endl);
-    this->SetScriptErrorOccurred(true);
     return -1;
 #endif
     }
@@ -1621,7 +1605,6 @@ int cmCTestSubmitHandler::ProcessHandler()
         "   Problems when submitting via SCP"
         << std::endl);
       ofs << "   Problems when submitting via SCP" << std::endl;
-      this->SetScriptErrorOccurred(true);
       return -1;
       }
     cmSystemTools::ChangeDirectory(oldWorkingDirectory);
@@ -1655,7 +1638,6 @@ int cmCTestSubmitHandler::ProcessHandler()
         "   Problems when submitting via CP"
         << std::endl);
       ofs << "   Problems when submitting via cp" << std::endl;
-      this->SetScriptErrorOccurred(true);
       return -1;
       }
     cmSystemTools::ChangeDirectory(oldWorkingDirectory);
@@ -1667,7 +1649,6 @@ int cmCTestSubmitHandler::ProcessHandler()
 
   cmCTestLog(this->CTest, ERROR_MESSAGE, "   Unknown submission method: \""
     << dropMethod << "\"" << std::endl);
-  this->SetScriptErrorOccurred(true);
   return -1;
 }
 

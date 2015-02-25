@@ -183,7 +183,6 @@ bool cmCTestCoverageHandler::StartCoverageLogFile(
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE, "Cannot open log file: "
       << covLogFilename << std::endl);
-    this->SetScriptErrorOccurred(true);
     return false;
     }
   std::string local_start_time = this->CTest->CurrentTime();
@@ -349,7 +348,6 @@ int cmCTestCoverageHandler::ProcessHandler()
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Cannot create LastCoverage.log file" << std::endl);
-    this->SetScriptErrorOccurred(true);
     }
 
   ofs << "Performing coverage: " << elapsed_time_start << std::endl;
@@ -1007,7 +1005,6 @@ int cmCTestCoverageHandler::HandleGCovCoverage(
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Could not find gcov." << std::endl);
-    this->SetScriptErrorOccurred(true);
     return 0;
     }
   std::string gcovExtraFlags

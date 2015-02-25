@@ -175,7 +175,6 @@ int cmCTestMemCheckHandler::PreProcessHandler()
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Problem executing pre-memcheck command(s)." << std::endl);
-    this->SetScriptErrorOccurred(true);
     return 0;
     }
   return 1;
@@ -188,7 +187,6 @@ int cmCTestMemCheckHandler::PostProcessHandler()
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Problem executing post-memcheck command(s)." << std::endl);
-    this->SetScriptErrorOccurred(true);
     return 0;
     }
   return 1;
@@ -648,7 +646,6 @@ bool cmCTestMemCheckHandler::InitializeMemoryChecking()
             "Cannot find memory checker suppression file: "
             << this->CTest->GetCTestConfiguration(
               "MemoryCheckSuppressionFile") << std::endl);
-          this->SetScriptErrorOccurred(true);
           return false;
           }
         std::string suppressions = "--suppressions="
@@ -674,7 +671,6 @@ bool cmCTestMemCheckHandler::InitializeMemoryChecking()
                      "Cannot find memory checker suppression file: "
                      << this->CTest->GetCTestConfiguration(
                        "MemoryCheckSuppressionFile").c_str() << std::endl);
-          this->SetScriptErrorOccurred(true);
           return false;
           }
         std::string filterFiles = "/FilterFiles="
@@ -746,7 +742,6 @@ bool cmCTestMemCheckHandler::InitializeMemoryChecking()
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "Do not understand memory checker: " << this->MemoryTester
         << std::endl);
-      this->SetScriptErrorOccurred(true);
       return false;
     }
 
@@ -1295,7 +1290,6 @@ void cmCTestMemCheckHandler::TestOutputFileNames(int test,
       std::string log = "Cannot find memory tester output file: "
         + ofile;
       cmCTestLog(this->CTest, ERROR_MESSAGE, log.c_str() << std::endl);
-      this->SetScriptErrorOccurred(true);
       ofile = "";
       }
     else
@@ -1309,7 +1303,6 @@ void cmCTestMemCheckHandler::TestOutputFileNames(int test,
     std::string log = "Cannot find memory tester output file: "
       + ofile;
     cmCTestLog(this->CTest, ERROR_MESSAGE, log.c_str() << std::endl);
-    this->SetScriptErrorOccurred(true);
     ofile = "";
     }
   files.push_back(ofile);

@@ -235,7 +235,6 @@ bool cmCTestSubmitHandler::SubmitUsingFTP(const std::string& localprefix,
           << local_file << std::endl);
         ::curl_easy_cleanup(curl);
         ::curl_global_cleanup();
-        this->SetScriptErrorOccurred(true);
         return false;
         }
       unsigned long filelen = cmSystemTools::FileLength(local_file);
@@ -315,7 +314,6 @@ bool cmCTestSubmitHandler::SubmitUsingFTP(const std::string& localprefix,
         *this->LogFile << std::endl;
         ::curl_easy_cleanup(curl);
         ::curl_global_cleanup();
-        this->SetScriptErrorOccurred(true);
         return false;
         }
       // always cleanup
@@ -479,7 +477,6 @@ bool cmCTestSubmitHandler::SubmitUsingHTTP(const std::string& localprefix,
           << local_file << std::endl);
         ::curl_easy_cleanup(curl);
         ::curl_global_cleanup();
-        this->SetScriptErrorOccurred(true);
         return false;
         }
       unsigned long filelen = cmSystemTools::FileLength(local_file);
@@ -624,7 +621,6 @@ bool cmCTestSubmitHandler::SubmitUsingHTTP(const std::string& localprefix,
           }
         ::curl_easy_cleanup(curl);
         ::curl_global_cleanup();
-        this->SetScriptErrorOccurred(true);
         return false;
         }
       // always cleanup
@@ -787,7 +783,6 @@ bool cmCTestSubmitHandler::TriggerUsingHTTP(
           }
         ::curl_easy_cleanup(curl);
         ::curl_global_cleanup();
-        this->SetScriptErrorOccurred(true);
         return false;
         }
 
@@ -913,7 +908,6 @@ bool cmCTestSubmitHandler::SubmitUsingSCP(
   cmsysProcess_Delete(cp);
   if ( problems )
     {
-    this->SetScriptErrorOccurred(true);
     return false;
     }
   return true;
@@ -935,8 +929,7 @@ bool cmCTestSubmitHandler::SubmitUsingCP(
                << "\tNumber of files: " << files.size() << "\n"
                << "\tremoteprefix: " << remoteprefix << "\n"
                << "\tdestination: " << destination << std::endl);
-    this->SetScriptErrorOccurred(true);
-    return 0;
+    return false;
     }
 
   cmCTest::SetOfStrings::const_iterator file;
@@ -1003,7 +996,6 @@ bool cmCTestSubmitHandler::SubmitUsingXMLRPC(const std::string& localprefix,
       {
       cmCTestLog(this->CTest, ERROR_MESSAGE, "  Cannot find file: "
         << local_file.c_str() << std::endl);
-      this->SetScriptErrorOccurred(true);
       return false;
       }
 
@@ -1014,7 +1006,6 @@ bool cmCTestSubmitHandler::SubmitUsingXMLRPC(const std::string& localprefix,
       {
       cmCTestLog(this->CTest, ERROR_MESSAGE, "  File too big: "
         << local_file.c_str() << std::endl);
-      this->SetScriptErrorOccurred(true);
       return false;
       }
     size_t fileSize = static_cast<size_t>(st.st_size);
@@ -1023,7 +1014,6 @@ bool cmCTestSubmitHandler::SubmitUsingXMLRPC(const std::string& localprefix,
       {
       cmCTestLog(this->CTest, ERROR_MESSAGE, "  Cannot open file: "
         << local_file.c_str() << std::endl);
-      this->SetScriptErrorOccurred(true);
       return false;
       }
 
@@ -1034,7 +1024,6 @@ bool cmCTestSubmitHandler::SubmitUsingXMLRPC(const std::string& localprefix,
       fclose(fp);
       cmCTestLog(this->CTest, ERROR_MESSAGE, "  Cannot read file: "
         << local_file.c_str() << std::endl);
-      this->SetScriptErrorOccurred(true);
       return false;
       }
     fclose(fp);
@@ -1052,7 +1041,6 @@ bool cmCTestSubmitHandler::SubmitUsingXMLRPC(const std::string& localprefix,
         << env.fault_string << " (" << env.fault_code << ")" << std::endl);
       xmlrpc_env_clean(&env);
       xmlrpc_client_cleanup();
-      this->SetScriptErrorOccurred(true);
       return false;
       }
 

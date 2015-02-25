@@ -2,6 +2,4 @@ cmake_minimum_required(VERSION 3.1)
 project(CTestTest@CASE_NAME@ NONE)
 include(CTest)
 add_test(NAME RunCMakeVersion COMMAND "${CMAKE_COMMAND}" --version)
-
-add_test(NAME CMakeVersionFail COMMAND "${CMAKE_COMMAND}" --version)
-set_tests_properties(CMakeVersionFail PROPERTIES WILL_FAIL TRUE)
+@CMAKELISTS_EXTRA_CODE@

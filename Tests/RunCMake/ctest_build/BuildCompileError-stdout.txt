@@ -12,5 +12,5 @@ Build project
    Each symbol represents 1024 bytes of output.
    '!' represents an error and '\*' a warning.
     . Size of output: [0-9]+K
-   [1-9] Compiler errors
-   0 Compiler warnings
+   [1-9][0-9]* Compiler errors
+   [0-9]+ Compiler warnings

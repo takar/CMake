@@ -7,4 +7,5 @@ function(run_ctest_test CASE_NAME)
   run_ctest(${CASE_NAME})
 endfunction()
 
-run_ctest_test(TestQuiet QUIET)
+run_ctest_test(TestQuiet QUIET EXCLUDE Fail)
+run_ctest_test(TestFail INCLUDE Fail)

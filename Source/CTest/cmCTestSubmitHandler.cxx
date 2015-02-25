@@ -235,6 +235,7 @@ bool cmCTestSubmitHandler::SubmitUsingFTP(const std::string& localprefix,
           << local_file << std::endl);
         ::curl_easy_cleanup(curl);
         ::curl_global_cleanup();
+        this->SetScriptErrorOccurred(true);
         return false;
         }
       unsigned long filelen = cmSystemTools::FileLength(local_file);
@@ -314,6 +315,7 @@ bool cmCTestSubmitHandler::SubmitUsingFTP(const std::string& localprefix,
         *this->LogFile << std::endl;
         ::curl_easy_cleanup(curl);
         ::curl_global_cleanup();
+        this->SetScriptErrorOccurred(true);
         return false;
         }
       // always cleanup
@@ -477,6 +479,7 @@ bool cmCTestSubmitHandler::SubmitUsingHTTP(const std::string& localprefix,
           << local_file << std::endl);
         ::curl_easy_cleanup(curl);
         ::curl_global_cleanup();
+        this->SetScriptErrorOccurred(true);
         return false;
         }
       unsigned long filelen = cmSystemTools::FileLength(local_file);
@@ -621,6 +624,7 @@ bool cmCTestSubmitHandler::SubmitUsingHTTP(const std::string& localprefix,
           }
         ::curl_easy_cleanup(curl);
         ::curl_global_cleanup();
+        this->SetScriptErrorOccurred(true);
         return false;
         }
       // always cleanup
@@ -783,6 +787,7 @@ bool cmCTestSubmitHandler::TriggerUsingHTTP(
           }
         ::curl_easy_cleanup(curl);
         ::curl_global_cleanup();
+        this->SetScriptErrorOccurred(true);
         return false;
         }
 
@@ -908,6 +913,7 @@ bool cmCTestSubmitHandler::SubmitUsingSCP(
   cmsysProcess_Delete(cp);
   if ( problems )
     {
+    this->SetScriptErrorOccurred(true);
     return false;
     }
   return true;
@@ -929,6 +935,7 @@ bool cmCTestSubmitHandler::SubmitUsingCP(
                << "\tNumber of files: " << files.size() << "\n"
                << "\tremoteprefix: " << remoteprefix << "\n"
                << "\tdestination: " << destination << std::endl);
+    this->SetScriptErrorOccurred(true);
     return 0;
     }
 
@@ -996,6 +1003,7 @@ bool cmCTestSubmitHandler::SubmitUsingXMLRPC(const std::string& localprefix,
       {
       cmCTestLog(this->CTest, ERROR_MESSAGE, "  Cannot find file: "
         << local_file.c_str() << std::endl);
+      this->SetScriptErrorOccurred(true);
       return false;
       }
 
@@ -1006,6 +1014,7 @@ bool cmCTestSubmitHandler::SubmitUsingXMLRPC(const std::string& localprefix,
       {
       cmCTestLog(this->CTest, ERROR_MESSAGE, "  File too big: "
         << local_file.c_str() << std::endl);
+      this->SetScriptErrorOccurred(true);
       return false;
       }
     size_t fileSize = static_cast<size_t>(st.st_size);
@@ -1014,6 +1023,7 @@ bool cmCTestSubmitHandler::SubmitUsingXMLRPC(const std::string& localprefix,
       {
       cmCTestLog(this->CTest, ERROR_MESSAGE, "  Cannot open file: "
         << local_file.c_str() << std::endl);
+      this->SetScriptErrorOccurred(true);
       return false;
       }
 
@@ -1024,6 +1034,7 @@ bool cmCTestSubmitHandler::SubmitUsingXMLRPC(const std::string& localprefix,
       fclose(fp);
       cmCTestLog(this->CTest, ERROR_MESSAGE, "  Cannot read file: "
         << local_file.c_str() << std::endl);
+      this->SetScriptErrorOccurred(true);
       return false;
       }
     fclose(fp);
@@ -1041,6 +1052,7 @@ bool cmCTestSubmitHandler::SubmitUsingXMLRPC(const std::string& localprefix,
         << env.fault_string << " (" << env.fault_code << ")" << std::endl);
       xmlrpc_env_clean(&env);
       xmlrpc_client_cleanup();
+      this->SetScriptErrorOccurred(true);
       return false;
       }
 
@@ -1097,12 +1109,14 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Upload file not specified\n");
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   if (!cmSystemTools::FileExists(file))
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Upload file not found: '" << file << "'\n");
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   cmCTestCurl curl(this->CTest);
@@ -1120,6 +1134,7 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Only http and https are supported for CDASH_UPLOAD\n");
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   char md5sum[33];
@@ -1162,6 +1177,7 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Error in HttpRequest\n" << response);
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   cmCTestOptionalLog(this->CTest, HANDLER_VERBOSE_OUTPUT,
@@ -1173,6 +1189,7 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "error parsing json string [" << response << "]\n"
                << reader.getFormattedErrorMessages() << "\n");
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   if(json["status"].asInt() != 0)
@@ -1180,6 +1197,7 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "Bad status returned from CDash: "
                << json["status"].asInt());
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   if(json["datafilesmd5"].isArray())
@@ -1198,6 +1216,7 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "bad datafilesmd5 value in response "
                << response << "\n");
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
 
@@ -1212,6 +1231,7 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "error uploading to CDash. "
                << file << " " << url << " " << fstr.str());
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   if(!reader.parse(response, json))
@@ -1219,6 +1239,7 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "error parsing json string [" << response << "]\n"
                << reader.getFormattedErrorMessages() << "\n");
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   cmCTestOptionalLog(this->CTest, HANDLER_VERBOSE_OUTPUT,
@@ -1249,6 +1270,7 @@ int cmCTestSubmitHandler::ProcessHandler()
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Cannot find BuildDirectory  key in the DartConfiguration.tcl"
       << std::endl);
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
 
@@ -1457,6 +1479,7 @@ int cmCTestSubmitHandler::ProcessHandler()
         "   Problems when submitting via FTP"
         << std::endl);
       ofs << "   Problems when submitting via FTP" << std::endl;
+      this->SetScriptErrorOccurred(true);
       return -1;
       }
     if(!this->CDash)
@@ -1474,6 +1497,7 @@ int cmCTestSubmitHandler::ProcessHandler()
         cmCTestLog(this->CTest, ERROR_MESSAGE,
                    "   Problems when triggering via HTTP" << std::endl);
         ofs << "   Problems when triggering via HTTP" << std::endl;
+        this->SetScriptErrorOccurred(true);
         return -1;
         }
       cmCTestOptionalLog(this->CTest, HANDLER_OUTPUT,
@@ -1517,6 +1541,7 @@ int cmCTestSubmitHandler::ProcessHandler()
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "   Problems when submitting via HTTP" << std::endl);
       ofs << "   Problems when submitting via HTTP" << std::endl;
+      this->SetScriptErrorOccurred(true);
       return -1;
       }
     if(!this->CDash)
@@ -1532,6 +1557,7 @@ int cmCTestSubmitHandler::ProcessHandler()
         cmCTestLog(this->CTest, ERROR_MESSAGE,
                    "   Problems when triggering via HTTP" << std::endl);
         ofs << "   Problems when triggering via HTTP" << std::endl;
+        this->SetScriptErrorOccurred(true);
         return -1;
         }
       }
@@ -1567,6 +1593,7 @@ int cmCTestSubmitHandler::ProcessHandler()
       cmCTestLog(this->CTest, ERROR_MESSAGE,
         "   Problems when submitting via XML-RPC" << std::endl);
       ofs << "   Problems when submitting via XML-RPC" << std::endl;
+      this->SetScriptErrorOccurred(true);
       return -1;
       }
     cmCTestOptionalLog(this->CTest, HANDLER_OUTPUT, "   Submission successful"
@@ -1577,6 +1604,7 @@ int cmCTestSubmitHandler::ProcessHandler()
     cmCTestLog(this->CTest, ERROR_MESSAGE,
                "   Submission method \"xmlrpc\" not compiled into CTest!"
                << std::endl);
+    this->SetScriptErrorOccurred(true);
     return -1;
 #endif
     }
@@ -1605,6 +1633,7 @@ int cmCTestSubmitHandler::ProcessHandler()
         "   Problems when submitting via SCP"
         << std::endl);
       ofs << "   Problems when submitting via SCP" << std::endl;
+      this->SetScriptErrorOccurred(true);
       return -1;
       }
     cmSystemTools::ChangeDirectory(oldWorkingDirectory);
@@ -1638,6 +1667,7 @@ int cmCTestSubmitHandler::ProcessHandler()
         "   Problems when submitting via CP"
         << std::endl);
       ofs << "   Problems when submitting via cp" << std::endl;
+      this->SetScriptErrorOccurred(true);
       return -1;
       }
     cmSystemTools::ChangeDirectory(oldWorkingDirectory);
@@ -1649,6 +1679,7 @@ int cmCTestSubmitHandler::ProcessHandler()
 
   cmCTestLog(this->CTest, ERROR_MESSAGE, "   Unknown submission method: \""
     << dropMethod << "\"" << std::endl);
+  this->SetScriptErrorOccurred(true);
   return -1;
 }
 

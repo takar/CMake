@@ -204,6 +204,7 @@ int cmCTestUpdateHandler::ProcessHandler()
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "Cannot find SourceDirectory  key in the DartConfiguration.tcl"
       << std::endl);
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
 
@@ -253,6 +254,7 @@ int cmCTestUpdateHandler::ProcessHandler()
     {
     cmCTestLog(this->CTest, ERROR_MESSAGE, "Cannot open log file"
       << std::endl);
+    this->SetScriptErrorOccurred(true);
     return -1;
     }
   std::string start_time = this->CTest->CurrentTime();
@@ -318,12 +320,14 @@ int cmCTestUpdateHandler::ProcessHandler()
     cmCTestLog(this->CTest, ERROR_MESSAGE,
       "   There are modified or conflicting files in the repository"
       << std::endl);
+    this->SetScriptErrorOccurred(true);
     }
   if(!updated)
     {
     os << "Update command failed:\n" << vc->GetUpdateCommandLine();
     cmCTestLog(this->CTest, ERROR_MESSAGE, "   Update command failed: "
                << vc->GetUpdateCommandLine() << "\n");
+    this->SetScriptErrorOccurred(true);
     }
   os << "</UpdateReturnStatus>" << std::endl;
   os << "</Update>" << std::endl;
@@ -424,6 +428,7 @@ bool cmCTestUpdateHandler::SelectVCS()
         }
       e << " configuration key.";
       cmCTestLog(this->CTest, ERROR_MESSAGE, e.str() << std::endl);
+      this->SetScriptErrorOccurred(true);
       return false;
       }
     }

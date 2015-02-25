@@ -90,12 +90,6 @@ public:
   void SetQuiet(bool b) { this->Quiet = b; }
   bool GetQuiet() { return this->Quiet; }
 
-  /**
-   * Get/Set whether or not a script-level error occurred.
-   */
-  bool GetScriptErrorOccurred() { return this->ScriptErrorOccurred; }
-  void SetScriptErrorOccurred(bool b) { this->ScriptErrorOccurred = b; }
-
 protected:
   bool StartResultingXML(cmCTest::Part part,
                          const char* name, cmGeneratedFileStream& xofs);
@@ -103,7 +97,6 @@ protected:
 
   bool AppendXML;
   bool Quiet;
-  bool ScriptErrorOccurred;
   cmSystemTools::OutputOption HandlerVerbose;
   cmCTest *CTest;
   t_StringToString Options;

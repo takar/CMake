@@ -8,8 +8,6 @@ run_cmake(NotAFeature_OriginDebugGenex)
 run_cmake(NotAFeature_OriginDebugTransitive)
 run_cmake(NotAFeature_OriginDebugCommand)
 
-run_cmake(NotAStandard)
-
 run_cmake(generate_feature_list)
 file(READ
   "${RunCMake_BINARY_DIR}/generate_feature_list-build/c_features.txt"
@@ -45,6 +43,8 @@ else()
 endif()
 
 if(CXX_STANDARD_DEFAULT)
+  run_cmake(NotAStandard)
+
   foreach(standard 98 11)
     file(READ
       "${RunCMake_BINARY_DIR}/generate_feature_list-build/cxx${standard}_flag.txt"

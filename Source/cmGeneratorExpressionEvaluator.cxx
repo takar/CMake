@@ -817,7 +817,7 @@ static const struct CompileLanguageNode : public cmGeneratorExpressionNode
   std::string Evaluate(const std::vector<std::string> &parameters,
                        cmGeneratorExpressionContext *context,
                        const GeneratorExpressionContent *content,
-                       cmGeneratorExpressionDAGChecker *) const
+                       cmGeneratorExpressionDAGChecker *dagChecker) const
   {
     if(context->Language.empty())
       {
@@ -848,11 +848,20 @@ static const struct CompileLanguageNode : public cmGeneratorExpressionNode
           "generators.");
       return std::string();
       }
+    else if (gg->GetName().find("Xcode") != std::string::npos)
+      {
+      if (dagChecker && dagChecker->EvaluatingCompileDefinitions())
+        {
+        reportError(context, content->GetOriginalExpression(),
+            "$<COMPILE_LANGUAGE:...> may only be used with COMPILE_OPTIONS "
+            "with the Xcode generator.");
+        return std::string();
+        }
+      }
     else
       {
       if(gg->GetName().find("Makefiles") == std::string::npos &&
-              gg->GetName().find("Ninja") == std::string::npos &&
-              gg->GetName().find("Xcode") == std::string::npos)
+              gg->GetName().find("Ninja") == std::string::npos)
         {
         reportError(context, content->GetOriginalExpression(),
             "$<COMPILE_LANGUAGE:...> not supported for this generator.");

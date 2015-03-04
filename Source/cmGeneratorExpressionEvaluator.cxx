@@ -850,7 +850,8 @@ static const struct CompileLanguageNode : public cmGeneratorExpressionNode
       }
     else if (gg->GetName().find("Xcode") != std::string::npos)
       {
-      if (dagChecker && dagChecker->EvaluatingCompileDefinitions())
+      if (dagChecker && (dagChecker->EvaluatingCompileDefinitions()
+          || dagChecker->EvaluatingIncludeDirectories()))
         {
         reportError(context, content->GetOriginalExpression(),
             "$<COMPILE_LANGUAGE:...> may only be used with COMPILE_OPTIONS "

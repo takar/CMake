@@ -43,6 +43,9 @@ add_executable(consumer
 )
 
 if (CMAKE_GENERATOR MATCHES "Makefiles" OR CMAKE_GENERATOR MATCHES "Ninja")
+  target_sources(consumer PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/consumer.c"
+  )
   target_include_directories(consumer
     PRIVATE
       $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/cxx_only>

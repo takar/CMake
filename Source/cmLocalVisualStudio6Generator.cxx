@@ -1779,12 +1779,12 @@ void cmLocalVisualStudio6Generator
     std::set<std::string> minsizeDefinesSet;
     std::set<std::string> debugrelDefinesSet;
 
-    this->AddCompileDefinitions(definesSet, &target, "", "");
-    this->AddCompileDefinitions(debugDefinesSet, &target, "DEBUG", "");
-    this->AddCompileDefinitions(releaseDefinesSet, &target, "RELEASE", "");
-    this->AddCompileDefinitions(minsizeDefinesSet, &target, "MINSIZEREL", "");
+    this->AddCompileDefinitions(definesSet, &target, "", "C");
+    this->AddCompileDefinitions(debugDefinesSet, &target, "DEBUG", "C");
+    this->AddCompileDefinitions(releaseDefinesSet, &target, "RELEASE", "C");
+    this->AddCompileDefinitions(minsizeDefinesSet, &target, "MINSIZEREL", "C");
     this->AddCompileDefinitions(debugrelDefinesSet, &target,
-                                "RELWITHDEBINFO", "");
+                                "RELWITHDEBINFO", "C");
 
     std::string defines = " ";
     std::string debugDefines = " ";

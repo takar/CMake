@@ -14,7 +14,6 @@ target_compile_definitions(target_compile_definitions
 
 add_executable(consumer
   "${CMAKE_CURRENT_SOURCE_DIR}/consumer.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/consumer.c"
 )
 
 target_compile_definitions(consumer
@@ -28,6 +27,9 @@ target_compile_definitions(consumer
 )
 
 if (CMAKE_GENERATOR MATCHES "Makefiles" OR CMAKE_GENERATOR MATCHES "Ninja")
+  target_sources(consumer PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/consumer.c"
+  )
   target_compile_definitions(consumer
     PRIVATE
       CONSUMER_LANG_$<COMPILE_LANGUAGE>

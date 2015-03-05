@@ -2005,6 +2005,12 @@ void cmCTest::HandleCommandLineArguments(size_t &i,
     this->SetParallelLevel(plevel);
     this->ParallelLevelSetInCli = true;
     }
+  if(this->CheckArgument(arg, "--repeat-until-fail") && i < args.size() - 1)
+    {
+    i++;
+    this->RepeatTests = atoi(args[i].c_str());
+    this->RepeatUntilFail = true;
+    }
 
   if(this->CheckArgument(arg, "--no-compress-output"))
     {

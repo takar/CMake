@@ -2583,6 +2583,13 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
   ADD_TEST_MACRO(CTestTestSerialOrder ${CMAKE_CTEST_COMMAND}
     --output-on-failure -C "\${CTestTest_CONFIG}")
 
+  add_test_macro(CTestTestRunUntilFail ${CMAKE_CTEST_COMMAND}
+    --repeat-until-fail 4 -C "\${CTestTest_CONFIG}")
+  set_tests_properties(CTestTestRunUntilFail PROPERTIES
+    PASS_REGULAR_EXPRESSION
+    "1/2.*Test #1:.* initialization.*Passed.*Test #2.*test1.*Failed"
+  )
+
   if(NOT BORLAND)
     set(CTestLimitDashJ_CTEST_OPTIONS --force-new-ctest-process)
     add_test_macro(CTestLimitDashJ ${CMAKE_CTEST_COMMAND} -j 4

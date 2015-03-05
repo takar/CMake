@@ -22,13 +22,13 @@ cmGeneratorExpressionContext::cmGeneratorExpressionContext(
   : Backtrace(backtrace),
     Makefile(mf),
     Config(config),
+    Language(language),
     HeadTarget(headTarget),
     CurrentTarget(currentTarget),
     Quiet(quiet),
     HadError(false),
     HadContextSensitiveCondition(false),
     HadHeadSensitiveCondition(false),
-    EvaluateForBuildsystem(evaluateForBuildsystem),
-    Language(language)
+    EvaluateForBuildsystem(evaluateForBuildsystem)
 {
 }

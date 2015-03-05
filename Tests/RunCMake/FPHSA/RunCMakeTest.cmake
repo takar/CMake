@@ -1,5 +1,7 @@
 include(RunCMake)
 
+run_cmake(BadFoundVar)
+
 # The pseudo module will "find" a package with the given version. Check if the
 # version selection code in FPHSA works correctly.
 set(RunCMake_TEST_OPTIONS "-DCMAKE_MODULE_PATH=${CMAKE_CURRENT_LIST_DIR}" "-DPseudo_VERSION=1.2.3.4.5")

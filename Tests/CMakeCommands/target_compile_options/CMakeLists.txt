@@ -21,10 +21,12 @@ endif()
 
 add_executable(consumer
   "${CMAKE_CURRENT_SOURCE_DIR}/consumer.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/consumer.c"
 )
 
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+  target_sources(consumer PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/consumer.c"
+  )
   target_compile_options(consumer
     PRIVATE
       -DCONSUMER_LANG_$<COMPILE_LANGUAGE>

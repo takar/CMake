@@ -271,7 +271,8 @@ bool cmCPackWIXGenerator::PackageFilesImpl()
     std::string const& sourceFilename = this->WixSources[i];
 
     std::string objectFilename =
-      cmSystemTools::GetFilenameWithoutExtension(sourceFilename) + ".wixobj";
+      cmSystemTools::GetFilenameWithoutLastExtension(sourceFilename) +
+      ".wixobj";
 
     if(!RunCandleCommand(sourceFilename, objectFilename))
       {

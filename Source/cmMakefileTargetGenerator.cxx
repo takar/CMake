@@ -1025,15 +1025,21 @@ void cmMakefileTargetGenerator::WriteMakeRule(
     // but only if the output was acually created.
     std::string const out = this->Convert(*o, cmLocalGenerator::HOME_OUTPUT,
                                           cmLocalGenerator::SHELL);
-    std::vector<std::string> output_commands(
-      1,"@$(CMAKE_COMMAND) -E touch_nocreate " + out);
+    std::vector<std::string> output_commands;
+    if (!symbolic)
+      {
+      output_commands.push_back("@$(CMAKE_COMMAND) -E touch_nocreate " + out);
+      }
     this->LocalGenerator->WriteMakeRule(os, 0, *o, output_depends,
                                         output_commands, symbolic, in_help);
 
-    // At build time, remove the first output if this one does not exist
-    // so that make will rerun the real commands that create this one.
-    MultipleOutputPairsType::value_type p(*o, outputs[0]);
-    this->MultipleOutputPairs.insert(p);
+    if (!symbolic)
+      {
+      // At build time, remove the first output if this one does not exist
+      // so that "make" will rerun the real commands that create this one.
+      MultipleOutputPairsType::value_type p(*o, outputs[0]);
+      this->MultipleOutputPairs.insert(p);
+      }
     }
 }
 

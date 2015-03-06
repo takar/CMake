@@ -475,6 +475,7 @@ bool cmCPackWIXGenerator::CreateWiXSourceFiles()
 
   featureDefinitions.AddAttribute("Title", cpackPackageName);
   featureDefinitions.AddAttribute("Level", "1");
+  this->Patch->ApplyFragment("#PRODUCTFEATURE", featureDefinitions);
 
   const char* package = GetOption("CPACK_WIX_CMAKE_PACKAGE_REGISTRY");
   if(package)

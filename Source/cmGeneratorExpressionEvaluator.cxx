@@ -841,14 +841,15 @@ static const struct CompileLanguageNode : public cmGeneratorExpressionNode
       return std::string();
       }
 
-    if (gg->GetName().find("Visual Studio") != std::string::npos)
+    std::string genName = gg->GetName();
+    if (genName.find("Visual Studio") != std::string::npos)
       {
       reportError(context, content->GetOriginalExpression(),
           "$<COMPILE_LANGUAGE:...> may not be used with Visual Studio "
           "generators.");
       return std::string();
       }
-    else if (gg->GetName().find("Xcode") != std::string::npos)
+    else if (genName.find("Xcode") != std::string::npos)
       {
       if (dagChecker && (dagChecker->EvaluatingCompileDefinitions()
           || dagChecker->EvaluatingIncludeDirectories()))
@@ -861,8 +862,9 @@ static const struct CompileLanguageNode : public cmGeneratorExpressionNode
       }
     else
       {
-      if(gg->GetName().find("Makefiles") == std::string::npos &&
-              gg->GetName().find("Ninja") == std::string::npos)
+      if(genName.find("Makefiles") == std::string::npos &&
+              genName.find("Ninja") == std::string::npos &&
+              genName.find("Watcom WMake") == std::string::npos)
         {
         reportError(context, content->GetOriginalExpression(),
             "$<COMPILE_LANGUAGE:...> not supported for this generator.");

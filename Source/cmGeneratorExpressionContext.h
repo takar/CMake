@@ -12,11 +12,11 @@
 #ifndef cmGeneratorExpressionContext_h
 #define cmGeneratorExpressionContext_h
 
+#include "cmListFileCache.h"
+
 #include <set>
 #include <map>
 #include <string>
-
-#include "cmListFileCache.h"
 
 class cmTarget;
 

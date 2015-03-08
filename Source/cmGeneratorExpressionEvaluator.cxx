@@ -17,6 +17,7 @@
 #include "cmGeneratorExpression.h"
 #include "cmLocalGenerator.h"
 #include "cmSourceFile.h"
+#include "cmAlgorithms.h"
 
 #include <cmsys/String.h>
 

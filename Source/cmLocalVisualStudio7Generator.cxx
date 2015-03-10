@@ -395,9 +395,9 @@ cmVS7FlagTable cmLocalVisualStudio7GeneratorFortranFlagTable[] =
   {"OpenMP", "Qopenmp-stubs", "", "OpenMPSequentialCode", 0},
   {"Traceback", "traceback", "", "true", 0},
   {"Traceback", "notraceback", "", "false", 0},
-  {"FloatingPointExceptionHandling", "fpe:0", "", "fpe0"},
-  {"FloatingPointExceptionHandling", "fpe:1", "", "fpe1"},
-  {"FloatingPointExceptionHandling", "fpe:3", "", "fpe3"},
+  {"FloatingPointExceptionHandling", "fpe:0", "", "fpe0", 0},
+  {"FloatingPointExceptionHandling", "fpe:1", "", "fpe1", 0},
+  {"FloatingPointExceptionHandling", "fpe:3", "", "fpe3", 0},
 
   {"ModulePath", "module:", "", "",
    cmVS7FlagTable::UserValueRequired},

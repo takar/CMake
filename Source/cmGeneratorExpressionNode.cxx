@@ -12,6 +12,7 @@
 
 #include "cmGeneratorExpressionNode.h"
 #include "cmGlobalGenerator.h"
+#include "cmAlgorithms.h"
 
 //----------------------------------------------------------------------------
 std::string cmGeneratorExpressionNode::EvaluateDependentExpression(

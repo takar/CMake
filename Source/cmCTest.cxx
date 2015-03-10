@@ -329,6 +329,8 @@ cmCTest::cmCTest()
   this->OutputTestOutputOnTestFailure = false;
   this->ComputedCompressTestOutput = false;
   this->ComputedCompressMemCheckOutput = false;
+  this->RepeatTests = 1; // default to run each test once
+  this->RepeatUntilFail = false;
   if(cmSystemTools::GetEnv("CTEST_OUTPUT_ON_FAILURE"))
     {
     this->OutputTestOutputOnTestFailure = true;
@@ -2005,6 +2007,12 @@ void cmCTest::HandleCommandLineArguments(size_t &i,
     int plevel = atoi(arg.substr(2).c_str());
     this->SetParallelLevel(plevel);
     this->ParallelLevelSetInCli = true;
+    }
+  if(this->CheckArgument(arg, "--repeat-until-fail") && i < args.size() - 1)
+    {
+    i++;
+    this->RepeatTests = atoi(args[i].c_str());
+    this->RepeatUntilFail = true;
     }
 
   if(this->CheckArgument(arg, "--no-compress-output"))

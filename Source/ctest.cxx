@@ -49,6 +49,9 @@ static const char * cmDocumentationOptions[][2] =
   {"-F", "Enable failover."},
   {"-j <jobs>, --parallel <jobs>", "Run the tests in parallel using the "
    "given number of jobs."},
+  {"--repeat-until-fail <tries>", "Run each test <tries> times "
+   "unless the test fails at that point stop repeating. Useful for finding"
+   " random failuers."},
   {"-Q,--quiet", "Make ctest quiet."},
   {"-O <file>, --output-log <file>", "Output to log file"},
   {"-N,--show-only", "Disable actual execution of tests."},

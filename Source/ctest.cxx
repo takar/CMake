@@ -49,9 +49,6 @@ static const char * cmDocumentationOptions[][2] =
   {"-F", "Enable failover."},
   {"-j <jobs>, --parallel <jobs>", "Run the tests in parallel using the "
    "given number of jobs."},
-  {"--repeat-until-fail <tries>", "Run each test <tries> times "
-   "unless the test fails at that point stop repeating. Useful for finding"
-   " random failuers."},
   {"-Q,--quiet", "Make ctest quiet."},
   {"-O <file>, --output-log <file>", "Output to log file"},
   {"-N,--show-only", "Disable actual execution of tests."},
@@ -78,6 +75,8 @@ static const char * cmDocumentationOptions[][2] =
    "Run a specific number of tests by number."},
   {"-U, --union", "Take the Union of -I and -R"},
   {"--rerun-failed", "Run only the tests that failed previously"},
+  {"--repeat-until-fail N", "Run each test N times"
+   " until the test runs N times or the test fails."},
   {"--max-width <width>", "Set the max width for a test name to output"},
   {"--interactive-debug-mode [0|1]", "Set the interactive mode to 0 or 1."},
   {"--no-label-summary", "Disable timing summary information for labels."},

@@ -62,12 +62,20 @@ set(Matlab_SCRIPT_TO_RUN
 
 set(Matlab_LOG_FILE "${output_directory}/${test_name}.log")
 
+set(devnull)
+if(UNIX)
+  set(devnull INPUT_FILE /dev/null)
+elseif(WIN32)
+  set(devnull INPUT_FILE NUL)
+endif()
+
 execute_process(
   COMMAND "${Matlab_PROGRAM}" ${Matlab_UNIT_TESTS_CMD} -logfile "${test_name}.log" -r "${Matlab_SCRIPT_TO_RUN}"
   RESULT_VARIABLE res
   TIMEOUT ${test_timeout}
   OUTPUT_QUIET # we do not want the output twice
   WORKING_DIRECTORY "${output_directory}"
+  ${devnull}
   )
 
 if(NOT EXISTS ${Matlab_LOG_FILE})

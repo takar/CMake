@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.0)
+project(${RunCMake_TEST} NONE)
+include(${RunCMake_TEST}.cmake)
+add_test(hello ${CMAKE_COMMAND} -E echo hello)
+add_test(goodbye ${CMAKE_COMMAND} -E echo goodbye)

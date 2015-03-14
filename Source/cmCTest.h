@@ -540,8 +540,9 @@ private:
   bool AddVariableDefinition(const std::string &arg);
 
   //! parse and process most common command line arguments
-  void HandleCommandLineArguments(size_t &i,
-                                  std::vector<std::string> &args);
+  bool HandleCommandLineArguments(size_t &i,
+                                  std::vector<std::string> &args,
+                                  std::string& errormsg);
 
   //! hande the -S -SP and -SR arguments
   void HandleScriptArguments(size_t &i,

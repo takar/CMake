@@ -1986,11 +1986,11 @@ bool cmCTest::CheckArgument(const std::string& arg, const char* varg1,
 //----------------------------------------------------------------------
 // Processes one command line argument (and its arguments if any)
 // for many simple options and then returns
-void cmCTest::HandleCommandLineArguments(size_t &i,
-                                         std::vector<std::string> &args)
+bool cmCTest::HandleCommandLineArguments(size_t &i,
+                                         std::vector<std::string> &args,
+                                         std::string& errormsg)
 {
   std::string arg = args[i];
-
   if(this->CheckArgument(arg, "-F"))
     {
     this->Failover = true;
@@ -2008,11 +2008,25 @@ void cmCTest::HandleCommandLineArguments(size_t &i,
     this->SetParallelLevel(plevel);
     this->ParallelLevelSetInCli = true;
     }
-  if(this->CheckArgument(arg, "--repeat-until-fail") && i < args.size() - 1)
+  if(this->CheckArgument(arg, "--repeat-until-fail"))
     {
+    if( i >= args.size() - 1)
+      {
+      errormsg = "Usage: ctest --repeat-until-fail N";
+      return false;
+      }
     i++;
-    this->RepeatTests = atoi(args[i].c_str());
-    this->RepeatUntilFail = true;
+    long repeat = 1;
+    if(!cmSystemTools::StringToLong(args[i].c_str(), &repeat))
+      {
+      errormsg = "Usage: ctest --repeat-until-fail N";
+      return false;
+      }
+    this->RepeatTests = repeat;
+    if(repeat > 1)
+      {
+      this->RepeatUntilFail = true;
+      }
     }
 
   if(this->CheckArgument(arg, "--no-compress-output"))
@@ -2199,6 +2213,7 @@ void cmCTest::HandleCommandLineArguments(size_t &i,
     this->GetHandler("test")->SetPersistentOption("RerunFailed", "true");
     this->GetHandler("memcheck")->SetPersistentOption("RerunFailed", "true");
     }
+  return true;
 }
 
 //----------------------------------------------------------------------
@@ -2281,7 +2296,12 @@ int cmCTest::Run(std::vector<std::string> &args, std::string* output)
   for(size_t i=1; i < args.size(); ++i)
     {
     // handle the simple commandline arguments
-    this->HandleCommandLineArguments(i,args);
+    std::string errormsg;
+    if(!this->HandleCommandLineArguments(i,args, errormsg))
+      {
+      cmSystemTools::Error(errormsg.c_str());
+      return 1;
+      }
 
     // handle the script arguments -S -SR -SP
     this->HandleScriptArguments(i,args,SRArgumentSpecified);

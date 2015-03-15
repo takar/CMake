@@ -2567,6 +2567,16 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
     --output-log "${CMake_BINARY_DIR}/Tests/CTestTestParallel/testOutput.log"
     )
 
+  configure_file("${CMake_SOURCE_DIR}/Tests/CTestTestVerboseOutput/test.cmake.in"
+    "${CMake_BINARY_DIR}/Tests/CTestTestVerboseOutput/test.cmake" @ONLY ESCAPE_QUOTES)
+  add_test(CTestTestVerboseOutput ${CMAKE_CTEST_COMMAND}
+    -S "${CMake_BINARY_DIR}/Tests/CTestTestVerboseOutput/test.cmake" -VV
+    --output-log "${CMake_BINARY_DIR}/Tests/CTestTest2/testOutput.log"
+    )
+  set_property(TEST CTestTestVerboseOutput PROPERTY PASS_REGULAR_EXPRESSION
+    "Environment variables:.*foo=bar.*this=that"
+  )
+
   configure_file(
     "${CMake_SOURCE_DIR}/Tests/CTestTestSkipReturnCode/test.cmake.in"
     "${CMake_BINARY_DIR}/Tests/CTestTestSkipReturnCode/test.cmake"

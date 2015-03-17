@@ -1,1 +1,0 @@
-file(WRITE "${TEST_OUTPUT_FILE}" "0")

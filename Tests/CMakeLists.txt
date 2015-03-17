@@ -2571,7 +2571,7 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
     "${CMake_BINARY_DIR}/Tests/CTestTestVerboseOutput/test.cmake" @ONLY ESCAPE_QUOTES)
   add_test(CTestTestVerboseOutput ${CMAKE_CTEST_COMMAND}
     -S "${CMake_BINARY_DIR}/Tests/CTestTestVerboseOutput/test.cmake" -VV
-    --output-log "${CMake_BINARY_DIR}/Tests/CTestTest2/testOutput.log"
+    --output-log "${CMake_BINARY_DIR}/Tests/CTestTestVerboseOutput/testOutput.log"
     -C "\${CTestTest_CONFIG}"
     )
   set_property(TEST CTestTestVerboseOutput PROPERTY PASS_REGULAR_EXPRESSION

@@ -194,11 +194,10 @@ Options
  subsequent calls to ctest with the --rerun-failed option will run
  the set of tests that most recently failed (if any).
 
-``--repeat-until-fail N``
- Run each test N times until N runs or a test fails.
+``--repeat-until-fail <n>``
+ Require each test to run ``<n>`` times without failing in order to pass.
 
- This option allows you to run each test multiple times until a test failes.
- This is useful in finding random failures in test cases.
+ This is useful in finding sporadic failures in test cases.
 
 ``--max-width <width>``
  Set the max width for a test name to output

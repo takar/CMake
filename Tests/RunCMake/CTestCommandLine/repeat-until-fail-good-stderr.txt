@@ -1,1 +1,1 @@
-No tests were found!!!
+^No tests were found!!!$

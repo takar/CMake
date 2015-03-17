@@ -2012,14 +2012,15 @@ bool cmCTest::HandleCommandLineArguments(size_t &i,
     {
     if( i >= args.size() - 1)
       {
-      errormsg = "Usage: ctest --repeat-until-fail N";
+      errormsg = "'--repeat-until-fail' requires an argument";
       return false;
       }
     i++;
     long repeat = 1;
     if(!cmSystemTools::StringToLong(args[i].c_str(), &repeat))
       {
-      errormsg = "Usage: ctest --repeat-until-fail N";
+      errormsg = "'--repeat-until-fail' given non-integer value '"
+        + args[i] + "'";
       return false;
       }
     this->RepeatTests = repeat;

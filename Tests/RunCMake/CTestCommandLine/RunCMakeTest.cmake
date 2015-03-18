@@ -16,4 +16,5 @@ set(RunCMake_TEST_OPTIONS -DCMAKE_VERBOSE_MAKEFILE=1)
 run_cmake(Build)
 unset(RunCMake_TEST_OPTIONS)
 run_cmake_command(repeat-until-fail-tests ${CMAKE_CTEST_COMMAND}
+  -C Debug
   --repeat-until-fail 3 )

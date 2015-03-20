@@ -45,8 +45,7 @@ The following variables are set by including this module:
 
 .. variable:: XCTest_EXECUTABLE
 
-  The ``XCTEST_EXECUTABLE`` variable contains the path to the xctest
-  command line tool used to execute XCTest bundles.
+  The path to the xctest command line tool used to execute XCTest bundles.
 
 .. variable:: XCTest_INCLUDE_DIRS
 

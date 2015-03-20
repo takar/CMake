@@ -5,9 +5,10 @@ FindXCTest
 Functions to help creating and executing XCTest bundles.
 
 An XCTest bundle is a CFBundle with a special product-type
-and bundle extension. For more information about XCTest visit
-the Mac Developer library at:
-http://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/testing_with_xcode/
+and bundle extension. The Mac Developer Library provides more
+information in the `Testing with Xcode`_ document.
+
+.. _Testing with Xcode: http://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/testing_with_xcode/
 
 Module Functions
 ^^^^^^^^^^^^^^^^
@@ -45,8 +46,7 @@ The following variables are set by including this module:
 
 .. variable:: XCTest_EXECUTABLE
 
-  The ``XCTEST_EXECUTABLE`` variable contains the path to the xctest
-  command line tool used to execute XCTest bundles.
+  The path to the xctest command line tool used to execute XCTest bundles.
 
 .. variable:: XCTest_INCLUDE_DIRS
 

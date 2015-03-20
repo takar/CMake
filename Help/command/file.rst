@@ -92,9 +92,12 @@ store it in a ``<variable>``.
 
 ::
 
-  file(GLOB <variable> [LIST_DIRECTORIES true|false] [RELATIVE <path>] [<globbing-expressions>...])
-  file(GLOB_RECURSE <variable> [LIST_DIRECTORIES true|false] [RELATIVE <path>]
-       [FOLLOW_SYMLINKS] [<globbing-expressions>...])
+  file(GLOB <variable>
+       [LIST_DIRECTORIES true|false] [RELATIVE <path>]
+       [<globbing-expressions>...])
+  file(GLOB_RECURSE <variable> [FOLLOW_SYMLINKS]
+       [LIST_DIRECTORIES true|false] [RELATIVE <path>]
+       [<globbing-expressions>...])
 
 Generate a list of files that match the ``<globbing-expressions>`` and
 store it into the ``<variable>``.  Globbing expressions are similar to

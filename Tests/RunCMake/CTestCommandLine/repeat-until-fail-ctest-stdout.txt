@@ -1,4 +1,4 @@
-^Test project .*/Tests/RunCMake/CTestCommandLine/Build-build
+^Test project .*/Tests/RunCMake/CTestCommandLine/repeat-until-fail-build
     Start 1: initialization
     Test #1: initialization ...................   Passed    [0-9.]+ sec
     Start 1: initialization
@@ -24,7 +24,7 @@
 +
 75% tests passed, 1 tests failed out of 4
 +
-Total Test time \(real\) =   [0-9.]+ sec
+Total Test time \(real\) = +[0-9.]+ sec
 +
 The following tests FAILED:
 [	 ]+2 - test1 \(Failed\)$

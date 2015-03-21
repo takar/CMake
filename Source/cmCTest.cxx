@@ -2023,7 +2023,7 @@ bool cmCTest::HandleCommandLineArguments(size_t &i,
         + args[i] + "'";
       return false;
       }
-    this->RepeatTests = repeat;
+    this->RepeatTests = static_cast<int>(repeat);
     if(repeat > 1)
       {
       this->RepeatUntilFail = true;

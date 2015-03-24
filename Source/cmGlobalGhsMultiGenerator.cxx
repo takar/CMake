@@ -249,6 +249,9 @@ void cmGlobalGhsMultiGenerator::Generate() {
       UpdateBuildFiles(tgts);
     }
   }
+
+  cmDeleteAll(TargetFolderBuildStreams);
+  this->TargetFolderBuildStreams.clear();
 }
 
 void cmGlobalGhsMultiGenerator::GenerateBuildCommand(

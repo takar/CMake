@@ -8,6 +8,8 @@ name if it is expected to be in the ``PATH``.
 The tool selected depends on the :variable:`CMAKE_GENERATOR` used
 to configure the project:
 
+* The Green Hills MULTI generator sets this to ``GHS-MULTI``
+
 * The Makefile generators set this to ``make``, ``gmake``, or
   a generator-specific tool (e.g. ``nmake`` for "NMake Makefiles").
 

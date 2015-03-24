@@ -181,6 +181,7 @@ Variables that Describe the System
    /variable/CMAKE_SYSTEM_VERSION
    /variable/CYGWIN
    /variable/ENV
+   /variable/GHS-MULTI
    /variable/MINGW
    /variable/MSVC10
    /variable/MSVC11

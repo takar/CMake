@@ -354,7 +354,8 @@ void cmGhsMultiTargetGenerator::WriteObjectDir(
 }
 
 std::string
-cmGhsMultiTargetGenerator::GetOutputDirectory(const std::string &config) const {
+cmGhsMultiTargetGenerator
+::GetOutputDirectory(const std::string &config) const {
   std::string outputDir(AbsBuildFilePath);
 
   const char *runtimeOutputProp =

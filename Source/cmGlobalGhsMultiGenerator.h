@@ -82,9 +82,10 @@ protected:
   virtual void GenerateBuildCommand(
       std::vector<std::string> &makeCommand, const std::string &makeProgram,
       const std::string &projectName, const std::string &projectDir,
-      const std::string &targetName, const std::string &config, bool fast,
-      bool verbose,
-      std::vector<std::string> const &makeOptions = std::vector<std::string>());
+      const std::string &targetName, const std::string &config,
+      bool fast, bool verbose,
+      std::vector<std::string> const &makeOptions =
+      std::vector<std::string>());
 
 private:
   std::string const &GetGhsBuildCommand();

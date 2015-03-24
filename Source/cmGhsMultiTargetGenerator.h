@@ -38,7 +38,7 @@ public:
   const char *GetAbsBuildFilePath() const { return AbsBuildFilePath.c_str(); }
   const char *GetRelBuildFileName() const { return RelBuildFileName.c_str(); }
   const char *GetAbsBuildFileName() const { return AbsBuildFileName.c_str(); }
-  const char *GetAbsOutputFileName() const { return AbsOutputFileName.c_str(); }
+  const char *GetAbsOutputFileName() const {return AbsOutputFileName.c_str();}
 
 private:
   cmGlobalGhsMultiGenerator *GetGlobalGenerator() const;

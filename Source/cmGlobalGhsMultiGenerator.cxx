@@ -78,7 +78,8 @@ void cmGlobalGhsMultiGenerator::FindMakeProgram(cmMakefile *mf) {
   // directly instead of needing a helper module to do it, so we
   // do not actually need to put CMAKE_MAKE_PROGRAM into the cache.
   if (cmSystemTools::IsOff(mf->GetDefinition("CMAKE_MAKE_PROGRAM"))) {
-    mf->AddDefinition("CMAKE_MAKE_PROGRAM", this->GetGhsBuildCommand().c_str());
+    mf->AddDefinition("CMAKE_MAKE_PROGRAM",
+                      this->GetGhsBuildCommand().c_str());
   }
 }
 
@@ -101,7 +102,8 @@ std::string cmGlobalGhsMultiGenerator::FindGhsBuildCommand() {
 std::string cmGlobalGhsMultiGenerator::GetCompRoot() {
   std::string output;
 
-  const std::vector<std::string> potentialDirsHardPaths(GetCompRootHardPaths());
+  const std::vector<std::string>
+    potentialDirsHardPaths(GetCompRootHardPaths());
   const std::vector<std::string> potentialDirsRegistry(GetCompRootRegistry());
 
   std::vector<std::string> potentialDirsComplete;
@@ -143,14 +145,14 @@ std::vector<std::string> cmGlobalGhsMultiGenerator::GetCompRootRegistry() {
   std::vector<std::string> output(2);
   cmsys::SystemTools::ReadRegistryValue(
       "HKEY_LOCAL_"
-      "MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Unin"
-      "stall\\"
+      "MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\"
+      "Windows\\CurrentVersion\\Uninstall\\"
       "GreenHillsSoftwared771f1b4;InstallLocation",
       output[0]);
   cmsys::SystemTools::ReadRegistryValue(
       "HKEY_LOCAL_"
-      "MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Unin"
-      "stall\\"
+      "MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\"
+      "Windows\\CurrentVersion\\Uninstall\\"
       "GreenHillsSoftware9881cef6;InstallLocation",
       output[1]);
   return output;
@@ -257,7 +259,8 @@ void cmGlobalGhsMultiGenerator::GenerateBuildCommand(
     std::vector<std::string> const &makeOptions) {
   makeCommand.push_back(this->SelectMakeProgram(makeProgram));
 
-  makeCommand.insert(makeCommand.end(), makeOptions.begin(), makeOptions.end());
+  makeCommand.insert(makeCommand.end(),
+                     makeOptions.begin(), makeOptions.end());
   if (!targetName.empty()) {
     if (targetName == "clean") {
       makeCommand.push_back("-clean");

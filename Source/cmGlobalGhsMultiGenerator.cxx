@@ -21,7 +21,7 @@
 const char *cmGlobalGhsMultiGenerator::FILE_EXTENSION = ".gpj";
 
 cmGlobalGhsMultiGenerator::cmGlobalGhsMultiGenerator() : OSDirRelative(false) {
-  this->FindMakeProgramFile = "CMakeGreenHillsFindMake.cmake";
+  this->GhsBuildCommandInitialized = false;
 }
 
 cmGlobalGhsMultiGenerator::~cmGlobalGhsMultiGenerator() {

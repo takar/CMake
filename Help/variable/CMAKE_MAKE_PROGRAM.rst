@@ -8,8 +8,6 @@ name if it is expected to be in the ``PATH``.
 The tool selected depends on the :variable:`CMAKE_GENERATOR` used
 to configure the project:
 
-* The Green Hills MULTI generator sets this to ``GHS-MULTI``
-
 * The Makefile generators set this to ``make``, ``gmake``, or
   a generator-specific tool (e.g. ``nmake`` for "NMake Makefiles").
 
@@ -57,6 +55,10 @@ to configure the project:
   a user or project explicitly adds ``CMAKE_MAKE_PROGRAM`` to
   the CMake cache then CMake will use the specified value if
   possible.
+
+* The :generator:`Green Hills MULTI` generator sets this to ``gbuild``.
+  If a user or project explicitly adds ``CMAKE_MAKE_PROGRAM`` to
+  the CMake cache then CMake will use the specified value.
 
 The ``CMAKE_MAKE_PROGRAM`` variable is set for use by project code.
 The value is also used by the :manual:`cmake(1)` ``--build`` and

@@ -214,7 +214,7 @@ void cmGlobalGhsMultiGenerator::OpenBuildFileStream() {
   WriteMacros();
   WriteHighLevelDirectives();
 
-  GhsMultiGpj::WriteGpjTag(GhsMultiGpj::Types::PROJECT, GetBuildFileStream());
+  GhsMultiGpj::WriteGpjTag(GhsMultiGpj::PROJECT, GetBuildFileStream());
   WriteDisclaimer(GetBuildFileStream());
   *GetBuildFileStream() << "# Top Level Project File" << std::endl;
   if (fBspName.length() > 0) {
@@ -236,7 +236,7 @@ void cmGlobalGhsMultiGenerator::CloseBuildFileStream(
 void cmGlobalGhsMultiGenerator::Generate() {
   this->cmGlobalGenerator::Generate();
 
-  if (this->LocalGenerators.size() > 0) {
+  if (!this->LocalGenerators.empty()) {
     this->OpenBuildFileStream();
 
     // Build all the folder build files
@@ -322,7 +322,7 @@ void cmGlobalGhsMultiGenerator::AddFilesUpToPath(
   std::vector<cmsys::String> splitPath =
       cmSystemTools::SplitString(workingPath);
   std::string workingRelPath(relPath);
-  if (relPath.size() > 0 && '/' != relPath.back()) {
+  if (!cmHasLiteralSuffix(relPath, "/")) {
     workingRelPath += "/";
   }
   std::string pathUpTo;
@@ -417,7 +417,7 @@ void cmGlobalGhsMultiGenerator::UpdateBuildFiles(
   for (cmGeneratorTargetsType::const_iterator tgtsI = tgts.begin();
        tgtsI != tgts.end(); ++tgtsI) {
     cmGhsMultiTargetGenerator gmtg(tgtsI->first);
-    if (gmtg.GetSources().size() > 0 && gmtg.IncludeThisTarget()) {
+    if (!gmtg.GetSources().empty() && gmtg.IncludeThisTarget()) {
       char const *rawFolderName = tgtsI->first->GetProperty("FOLDER");
       if (NULL == rawFolderName) {
         rawFolderName = "";
@@ -427,7 +427,7 @@ void cmGlobalGhsMultiGenerator::UpdateBuildFiles(
           TargetFolderBuildStreams.find(folderName)) {
         AddFilesUpToPath(GetBuildFileStream(), &TargetFolderBuildStreams,
                          this->GetCMakeInstance()->GetHomeOutputDirectory(),
-                         folderName, GhsMultiGpj::Types::PROJECT);
+                         folderName, GhsMultiGpj::PROJECT);
       }
       std::vector<cmsys::String> splitPath =
           cmSystemTools::SplitString(gmtg.GetRelBuildFileName());

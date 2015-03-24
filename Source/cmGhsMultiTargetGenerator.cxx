@@ -32,7 +32,7 @@ cmGhsMultiTargetGenerator::cmGhsMultiTargetGenerator(cmTarget const *target)
 
   char const *folderProp = this->Target->GetProperty("FOLDER");
   RelBuildFilePath = NULL == folderProp ? "" : folderProp;
-  if (RelBuildFilePath.size() > 0 && '/' != RelBuildFilePath.back()) {
+  if (!RelBuildFilePath.empty() && '/' != RelBuildFilePath.back()) {
     RelBuildFilePath += "/";
   }
   RelBuildFilePath += Target->GetName() + "/";
@@ -40,13 +40,13 @@ cmGhsMultiTargetGenerator::cmGhsMultiTargetGenerator(cmTarget const *target)
   RelOutputFileName = RelBuildFilePath + Target->GetName() + ".a";
 
   RelBuildFileName = RelBuildFilePath;
-  if (RelBuildFileName.size() > 0 && '/' != RelBuildFileName.back()) {
+  if (!RelBuildFileName.empty() && '/' != RelBuildFileName.back()) {
     RelBuildFileName += "/";
   }
   RelBuildFileName += BuildFileName;
 
   std::string absPathToRoot(this->Makefile->GetHomeOutputDirectory());
-  if (absPathToRoot.size() > 0 && '/' != absPathToRoot.back()) {
+  if (!absPathToRoot.empty() && '/' != absPathToRoot.back()) {
     absPathToRoot += "/";
   }
   AbsBuildFilePath = absPathToRoot + RelBuildFilePath;
@@ -61,7 +61,7 @@ cmGhsMultiTargetGenerator::~cmGhsMultiTargetGenerator()
 
 void cmGhsMultiTargetGenerator::Generate() {
   std::vector<cmSourceFile *> objectSources = GetSources();
-  if (objectSources.size() > 0 && IncludeThisTarget()) {
+  if (!objectSources.empty() && IncludeThisTarget()) {
     if (!cmSystemTools::FileExists(AbsBuildFilePath.c_str())) {
       cmSystemTools::MakeDirectory(AbsBuildFilePath.c_str());
     }
@@ -286,13 +286,13 @@ void cmGhsMultiTargetGenerator::WriteCustomCommandsHelper(
       cmCustomCommandLine const &command = *commandI;
       for (cmCustomCommandLine::const_iterator commandLineI = command.begin();
            commandLineI != command.end(); ++commandLineI) {
-        if (command.size() > 0) {
+        if (!command.empty()) {
           *GetFolderBuildStreams()
               << (command.begin() == commandLineI ? "'" : " ");
         }
         *GetFolderBuildStreams() << *commandLineI;
       }
-      if (command.size() > 0) {
+      if (!command.empty()) {
         *GetFolderBuildStreams() << "'" << std::endl;
       }
     }
@@ -346,7 +346,7 @@ void cmGhsMultiTargetGenerator::WriteObjectLangOverride(
 void cmGhsMultiTargetGenerator::WriteObjectDir(
     cmGeneratedFileStream *fileStream, std::string const &dir) {
   std::string workingDir(dir);
-  if (workingDir.size() > 0 && '/' != workingDir.back()) {
+  if (!workingDir.empty() && '/' != workingDir.back()) {
     workingDir += "/";
   }
   workingDir += "Objs";

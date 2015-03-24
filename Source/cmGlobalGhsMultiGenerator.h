@@ -93,7 +93,7 @@ private:
   std::string GetCompRoot();
   std::vector<std::string> GetCompRootHardPaths();
   std::vector<std::string> GetCompRootRegistry();
-  void OpenBuildFileStream(cmMakefile *makefile);
+  void OpenBuildFileStream();
 
   void WriteMacros();
   void WriteHighLevelDirectives();

@@ -174,8 +174,7 @@ void cmGlobalGhsMultiGenerator::OpenBuildFileStream(
   *filestream << "#!gbuild" << std::endl;
 }
 
-void cmGlobalGhsMultiGenerator::OpenBuildFileStream(
-    cmMakefile *const makefile) {
+void cmGlobalGhsMultiGenerator::OpenBuildFileStream() {
   // Compute GHS MULTI's build file path.
   std::string buildFilePath =
       this->GetCMakeInstance()->GetHomeOutputDirectory();
@@ -238,8 +237,7 @@ void cmGlobalGhsMultiGenerator::Generate() {
   this->cmGlobalGenerator::Generate();
 
   if (this->LocalGenerators.size() > 0) {
-    cmLocalGenerator *sampLG = this->LocalGenerators[0];
-    this->OpenBuildFileStream(sampLG->GetMakefile());
+    this->OpenBuildFileStream();
 
     // Build all the folder build files
     for (unsigned int i = 0; i < this->LocalGenerators.size(); ++i) {

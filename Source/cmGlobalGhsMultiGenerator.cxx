@@ -214,7 +214,7 @@ void cmGlobalGhsMultiGenerator::OpenBuildFileStream() {
   WriteMacros();
   WriteHighLevelDirectives();
 
-  GhsMultiGpj::WriteGpjTag(GhsMultiGpj::Types::PROJECT, GetBuildFileStream());
+  GhsMultiGpj::WriteGpjTag(GhsMultiGpj::PROJECT, GetBuildFileStream());
   WriteDisclaimer(GetBuildFileStream());
   *GetBuildFileStream() << "# Top Level Project File" << std::endl;
   if (fBspName.length() > 0) {
@@ -427,7 +427,7 @@ void cmGlobalGhsMultiGenerator::UpdateBuildFiles(
           TargetFolderBuildStreams.find(folderName)) {
         AddFilesUpToPath(GetBuildFileStream(), &TargetFolderBuildStreams,
                          this->GetCMakeInstance()->GetHomeOutputDirectory(),
-                         folderName, GhsMultiGpj::Types::PROJECT);
+                         folderName, GhsMultiGpj::PROJECT);
       }
       std::vector<cmsys::String> splitPath =
           cmSystemTools::SplitString(gmtg.GetRelBuildFileName());

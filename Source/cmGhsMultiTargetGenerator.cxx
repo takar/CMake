@@ -119,9 +119,9 @@ std::vector<cmSourceFile *> cmGhsMultiTargetGenerator::GetSources() const {
 GhsMultiGpj::Types cmGhsMultiTargetGenerator::GetGpjTag() const {
   GhsMultiGpj::Types output;
   if (IsTargetGroup()) {
-    output = GhsMultiGpj::Types::INTERGRITY_APPLICATION;
+    output = GhsMultiGpj::INTERGRITY_APPLICATION;
   } else {
-    output = GhsMultiGpj::Types::PROGRAM;
+    output = GhsMultiGpj::PROGRAM;
   }
   return output;
 }
@@ -137,12 +137,12 @@ void cmGhsMultiTargetGenerator::WriteTypeSpecifics(const std::string &config,
   std::string outputDir(GetOutputDirectory(config));
   std::string outputFilename(GetOutputFilename(config));
 
-  if (Target->GetType() == cmTarget::TargetType::STATIC_LIBRARY) {
+  if (Target->GetType() == cmTarget::STATIC_LIBRARY) {
     *GetFolderBuildStreams() << "    -relobj" << std::endl;
     *GetFolderBuildStreams() << "    {optgroup=GhsCommonOptions} -o \""
                              << outputDir << outputFilename << ".a\""
                              << std::endl;
-  } else if (Target->GetType() == cmTarget::TargetType::EXECUTABLE) {
+  } else if (Target->GetType() == cmTarget::EXECUTABLE) {
     if (notKernel && !IsTargetGroup()) {
       *GetFolderBuildStreams() << "    -relprog" << std::endl;
     }
@@ -259,9 +259,9 @@ void cmGhsMultiTargetGenerator::WriteTargetLinkLibraries() {
 
 void cmGhsMultiTargetGenerator::WriteCustomCommands() {
   WriteCustomCommandsHelper(this->Target->GetPreBuildCommands(),
-                            cmTarget::CustomCommandType::PRE_BUILD);
+                            cmTarget::PRE_BUILD);
   WriteCustomCommandsHelper(this->Target->GetPostBuildCommands(),
-                            cmTarget::CustomCommandType::POST_BUILD);
+                            cmTarget::POST_BUILD);
 }
 
 void cmGhsMultiTargetGenerator::WriteCustomCommandsHelper(
@@ -274,10 +274,10 @@ void cmGhsMultiTargetGenerator::WriteCustomCommandsHelper(
     for (cmCustomCommandLines::const_iterator commandI = commands.begin();
          commandI != commands.end(); ++commandI) {
       switch (commandType) {
-      case cmTarget::CustomCommandType::PRE_BUILD:
+      case cmTarget::PRE_BUILD:
         *GetFolderBuildStreams() << "    :preexecShellSafe=";
         break;
-      case cmTarget::CustomCommandType::POST_BUILD:
+      case cmTarget::POST_BUILD:
         *GetFolderBuildStreams() << "    :postexecShellSafe=";
         break;
       default:
@@ -312,7 +312,7 @@ void cmGhsMultiTargetGenerator::WriteSources(
     cmGlobalGhsMultiGenerator::AddFilesUpToPath(
         GetFolderBuildStreams(), &FolderBuildStreams,
         this->Makefile->GetHomeOutputDirectory(), sgPath,
-        GhsMultiGpj::Types::SUBPROJECT, RelBuildFilePath);
+        GhsMultiGpj::SUBPROJECT, RelBuildFilePath);
 
     if ((*si)->GetExtension() == ".int") {
       *this->FolderBuildStreams[sgPath] << "\"" << (*si)->GetFullPath() << "\""

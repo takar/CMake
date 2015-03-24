@@ -32,7 +32,7 @@ cmGhsMultiTargetGenerator::cmGhsMultiTargetGenerator(cmTarget const *target)
 
   char const *folderProp = this->Target->GetProperty("FOLDER");
   RelBuildFilePath = NULL == folderProp ? "" : folderProp;
-  if (!RelBuildFilePath.empty() && '/' != RelBuildFilePath.back()) {
+  if (!cmHasLiteralSuffix(RelBuildFilePath, "/")) {
     RelBuildFilePath += "/";
   }
   RelBuildFilePath += Target->GetName() + "/";
@@ -40,13 +40,13 @@ cmGhsMultiTargetGenerator::cmGhsMultiTargetGenerator(cmTarget const *target)
   RelOutputFileName = RelBuildFilePath + Target->GetName() + ".a";
 
   RelBuildFileName = RelBuildFilePath;
-  if (!RelBuildFileName.empty() && '/' != RelBuildFileName.back()) {
+  if (!cmHasLiteralSuffix(RelBuildFileName, "/")) {
     RelBuildFileName += "/";
   }
   RelBuildFileName += BuildFileName;
 
   std::string absPathToRoot(this->Makefile->GetHomeOutputDirectory());
-  if (!absPathToRoot.empty() && '/' != absPathToRoot.back()) {
+  if (!cmHasLiteralSuffix(absPathToRoot, "/")) {
     absPathToRoot += "/";
   }
   AbsBuildFilePath = absPathToRoot + RelBuildFilePath;
@@ -346,7 +346,7 @@ void cmGhsMultiTargetGenerator::WriteObjectLangOverride(
 void cmGhsMultiTargetGenerator::WriteObjectDir(
     cmGeneratedFileStream *fileStream, std::string const &dir) {
   std::string workingDir(dir);
-  if (!workingDir.empty() && '/' != workingDir.back()) {
+  if (!cmHasLiteralSuffix(workingDir, "/")) {
     workingDir += "/";
   }
   workingDir += "Objs";

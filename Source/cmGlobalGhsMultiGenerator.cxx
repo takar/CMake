@@ -322,7 +322,7 @@ void cmGlobalGhsMultiGenerator::AddFilesUpToPath(
   std::vector<cmsys::String> splitPath =
       cmSystemTools::SplitString(workingPath);
   std::string workingRelPath(relPath);
-  if (!relPath.empty() && '/' != relPath.back()) {
+  if (!cmHasLiteralSuffix(relPath, "/")) {
     workingRelPath += "/";
   }
   std::string pathUpTo;

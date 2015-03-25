@@ -20,15 +20,18 @@ cmLocalGhsMultiGenerator::cmLocalGhsMultiGenerator() {}
 
 cmLocalGhsMultiGenerator::~cmLocalGhsMultiGenerator() {}
 
-void cmLocalGhsMultiGenerator::Generate() {
+void cmLocalGhsMultiGenerator::Generate()
+{
   cmGeneratorTargetsType tgts = this->GetMakefile()->GetGeneratorTargets();
-  if (!tgts.empty()) {
+  if (!tgts.empty())
+    {
     for (cmGeneratorTargetsType::iterator l = tgts.begin(); l != tgts.end();
-         ++l) {
+         ++l)
+      {
       cmGhsMultiTargetGenerator tg(l->second->Target);
       tg.Generate();
+      }
     }
-  }
 }
 
 // Implemented in:
@@ -36,13 +39,15 @@ void cmLocalGhsMultiGenerator::Generate() {
 // Used in:
 //   Source/cmMakefile.cxx
 //   Source/cmGlobalGenerator.cxx
-void cmLocalGhsMultiGenerator::Configure() {
+void cmLocalGhsMultiGenerator::Configure()
+{
   // Compute the path to use when referencing the current output
   // directory from the top output directory.
   this->HomeRelativeOutputPath =
-      this->Convert(this->Makefile->GetStartOutputDirectory(), HOME_OUTPUT);
-  if (this->HomeRelativeOutputPath == ".") {
+    this->Convert(this->Makefile->GetStartOutputDirectory(), HOME_OUTPUT);
+  if (this->HomeRelativeOutputPath == ".")
+    {
     this->HomeRelativeOutputPath = "";
-  }
+    }
   this->cmLocalGenerator::Configure();
 }

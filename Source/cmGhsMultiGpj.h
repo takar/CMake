@@ -14,9 +14,11 @@
 
 class cmGeneratedFileStream;
 
-class GhsMultiGpj {
+class GhsMultiGpj
+{
 public:
-  enum Types {
+  enum Types
+  {
     INTERGRITY_APPLICATION,
     PROJECT,
     PROGRAM,

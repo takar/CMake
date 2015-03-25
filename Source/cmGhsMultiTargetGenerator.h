@@ -24,7 +24,8 @@ class cmSourceFile;
 class cmGeneratedFileStream;
 class cmCustomCommand;
 
-class cmGhsMultiTargetGenerator {
+class cmGhsMultiTargetGenerator
+{
 public:
   cmGhsMultiTargetGenerator(cmTarget const *target);
 
@@ -35,17 +36,30 @@ public:
   bool IncludeThisTarget();
   std::vector<cmSourceFile *> GetSources() const;
   GhsMultiGpj::Types GetGpjTag() const;
-  const char *GetAbsBuildFilePath() const { return AbsBuildFilePath.c_str(); }
-  const char *GetRelBuildFileName() const { return RelBuildFileName.c_str(); }
-  const char *GetAbsBuildFileName() const { return AbsBuildFileName.c_str(); }
-  const char *GetAbsOutputFileName() const {return AbsOutputFileName.c_str();}
+  const char *GetAbsBuildFilePath() const
+  {
+    return this->AbsBuildFilePath.c_str();
+  }
+  const char *GetRelBuildFileName() const
+  {
+    return this->RelBuildFileName.c_str();
+  }
+  const char *GetAbsBuildFileName() const
+  {
+    return this->AbsBuildFileName.c_str();
+  }
+  const char *GetAbsOutputFileName() const
+  {
+    return this->AbsOutputFileName.c_str();
+  }
 
 private:
   cmGlobalGhsMultiGenerator *GetGlobalGenerator() const;
-  cmGeneratedFileStream *GetFolderBuildStreams() {
-    return FolderBuildStreams[""];
+  cmGeneratedFileStream *GetFolderBuildStreams()
+  {
+    return this->FolderBuildStreams[""];
   };
-  bool IsTargetGroup() const { return TargetGroup; }
+  bool IsTargetGroup() const { return this->TargetGroup; }
 
   void WriteTypeSpecifics(const std::string &config, bool notKernel);
   void WriteDebugOptions(std::string const &config, bool notKernel);
@@ -82,8 +96,7 @@ private:
   std::string RelBuildFileName;
   std::string RelOutputFileName;
   std::string AbsOutputFileName;
-  std::map<std::string, cmGeneratedFileStream*>
-      FolderBuildStreams;
+  std::map<std::string, cmGeneratedFileStream *> FolderBuildStreams;
   bool TargetGroup;
   bool DynamicDownload;
   static std::string const DDOption;

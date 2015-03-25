@@ -22,7 +22,8 @@ class cmGeneratedFileStream;
  * cmLocalGhsMultiGenerator produces a set of .gpj
  * file for each target in its mirrored directory.
  */
-class cmLocalGhsMultiGenerator : public cmLocalGenerator {
+class cmLocalGhsMultiGenerator : public cmLocalGenerator
+{
 public:
   cmLocalGhsMultiGenerator();
 
@@ -30,7 +31,8 @@ public:
 
   /// @returns the relative path between the HomeOutputDirectory and this
   /// local generators StartOutputDirectory.
-  std::string GetHomeRelativeOutputPath() const {
+  std::string GetHomeRelativeOutputPath() const
+  {
     return this->HomeRelativeOutputPath;
   }
 
@@ -41,7 +43,7 @@ public:
 
   /// Overloaded methods. @see cmLocalGenerator::Configure()
   virtual void Configure();
-  const char *GetBuildFileName() { return BuildFileName.c_str(); }
+  const char *GetBuildFileName() { return this->BuildFileName.c_str(); }
 
 protected:
   virtual bool CustomCommandUseLocal() const { return true; }

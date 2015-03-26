@@ -64,7 +64,7 @@ int cmCPackArchiveGenerator::addOneComponentToArchive(cmArchiveWrite& archive,
     filePrefix += "/";
     }
   const char* installPrefix = this->GetOption("CPACK_PACKAGING_INSTALL_PREFIX");
-  if(installPrefix && installPrefix[0] == '/')
+  if(installPrefix && installPrefix[0] == '/' && installPrefix[1] != 0)
     {
     // add to file prefix and remove the leading '/'
     filePrefix += installPrefix+1;

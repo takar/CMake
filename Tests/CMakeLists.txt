@@ -1041,9 +1041,9 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
     if(APPLE)
       set(CPackComponents_BUILD_OPTIONS -DCPACK_BINARY_DRAGNDROP:BOOL=ON)
     endif()
-    if(NSIS_MAKENSIS_EXECUTABLE)
+    if(NOT NSIS_MAKENSIS_EXECUTABLE)
       set(CPackComponents_BUILD_OPTIONS ${CPackComponents_BUILD_OPTIONS}
-        -DCPACK_BINARY_NSIS:BOOL=ON)
+        -DCPACK_BINARY_NSIS:BOOL=OFF)
     endif()
 
     add_test(CPackComponentsPrefix ${CMAKE_CTEST_COMMAND}

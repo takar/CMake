@@ -818,6 +818,7 @@ void cmake::SetArgs(const std::vector<std::string>& args,
         if(i >= args.size())
           {
           cmSystemTools::Error("No generator specified for -G");
+          this->PrintGeneratorList();
           return;
           }
         value = args[i];
@@ -828,6 +829,7 @@ void cmake::SetArgs(const std::vector<std::string>& args,
         {
         cmSystemTools::Error("Could not create named generator ",
                              value.c_str());
+        this->PrintGeneratorList();
         }
       else
         {
@@ -1961,6 +1963,16 @@ void cmake::GetGeneratorDocumentation(std::vector<cmDocumentationEntry>& v)
     }
 }
 
+void cmake::PrintGeneratorList()
+{
+  cmDocumentation doc;
+  std::vector<cmDocumentationEntry> generators;
+  this->GetGeneratorDocumentation(generators);
+  doc.AppendSection("Generators",generators);
+  std::cerr << "\n";
+  doc.PrintDocumentation(cmDocumentation::ListGenerators, std::cerr);
+}
+
 void cmake::UpdateConversionPathTable()
 {
   // Update the path conversion table with any specified file:
@@ -2438,6 +2450,7 @@ int cmake::GetSystemInformation(std::vector<std::string>& args)
         if(i >= args.size())
           {
           cmSystemTools::Error("No generator specified for -G");
+          this->PrintGeneratorList();
           return -1;
           }
         value = args[i];
@@ -2448,6 +2461,7 @@ int cmake::GetSystemInformation(std::vector<std::string>& args)
         {
         cmSystemTools::Error("Could not create named generator ",
                              value.c_str());
+        this->PrintGeneratorList();
         }
       else
         {

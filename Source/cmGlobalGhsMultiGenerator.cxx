@@ -19,6 +19,7 @@
 #include <cmAlgorithms.h>
 
 const char *cmGlobalGhsMultiGenerator::FILE_EXTENSION = ".gpj";
+const char *cmGlobalGhsMultiGenerator::DEFAULT_MAKE_PROGRAM = "gbuild";
 
 cmGlobalGhsMultiGenerator::cmGlobalGhsMultiGenerator()
   : OSDirRelative(false)
@@ -104,10 +105,13 @@ std::string const &cmGlobalGhsMultiGenerator::GetGhsBuildCommand()
 
 std::string cmGlobalGhsMultiGenerator::FindGhsBuildCommand()
 {
-  std::string makeProgram = cmSystemTools::FindProgram("gbuild");
+  std::vector<std::string> userPaths;
+  userPaths.push_back(this->GetCompRoot());
+  std::string makeProgram =
+    cmSystemTools::FindProgram(DEFAULT_MAKE_PROGRAM, userPaths);
   if (makeProgram.empty())
     {
-    makeProgram = "gbuild";
+    makeProgram = DEFAULT_MAKE_PROGRAM;
     }
   return makeProgram;
 }

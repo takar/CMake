@@ -120,6 +120,7 @@ private:
   bool OSDirRelative;
   bool GhsBuildCommandInitialized;
   std::string GhsBuildCommand;
+  static const char *DEFAULT_MAKE_PROGRAM;
 };
 
 #endif

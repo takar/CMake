@@ -4,43 +4,6 @@
 #
 # The builtin (binary) CPack RPM generator (Unix only)
 #
-# Packaging of symbolic links
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-#
-# CPackRPM supports packaging of symbolic links.
-#
-# ::
-#
-#   execute_process(COMMAND ${CMAKE_COMMAND}
-#     -E create_symlink <relative_path_location> <symlink_name>)
-#   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/<symlink_name>
-#     DESTINATION <symlink_location> COMPONENT libraries)
-#
-# Symbolic links will be optimized (paths will be shortened if possible)
-# before being added to the package or if multiple relocation paths are
-# detected, a post install symlink relocation script will be generated.
-#
-# Symbolic links may point to locations that are not packaged by the same
-# package (either a different component or even not packaged at all) but
-# those locations will be treated as if they were a part of the package
-# while determining if symlink should be either created or present in a
-# post install script - depending on relocation paths.
-#
-# Currenty there are a few limitations though:
-#
-# * Only symbolic links with relative path can be packaged.
-#
-# * For component based packaging component interdependency is not checked
-#   when processing symbolic links. Symbolic links pointing to content of
-#   a different component are treated the same way as if pointing to location
-#   that will not be packaged.
-#
-# * Symbolic links pointing to a location through one or more intermediate
-#   symbolic links will not be handled differently - if the intermediate
-#   symbolic link(s) is also on a relocatable path, relocating it during
-#   package installation may cause initial symbolic link to point to an
-#   invalid location.
-#
 # Variables specific to CPack RPM generator
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #
@@ -455,6 +418,41 @@
 #
 #  May be used to remove CPACK_PACKAGING_INSTALL_PREFIX and CPACK_RPM_<COMPONENT>_PACKAGE_PREFIX
 #  from relocatable RPM prefix paths.
+#
+# Packaging of Symbolic Links
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#
+# CPackRPM supports packaging of symbolic links::
+#
+#   execute_process(COMMAND ${CMAKE_COMMAND}
+#     -E create_symlink <relative_path_location> <symlink_name>)
+#   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/<symlink_name>
+#     DESTINATION <symlink_location> COMPONENT libraries)
+#
+# Symbolic links will be optimized (paths will be shortened if possible)
+# before being added to the package or if multiple relocation paths are
+# detected, a post install symlink relocation script will be generated.
+#
+# Symbolic links may point to locations that are not packaged by the same
+# package (either a different component or even not packaged at all) but
+# those locations will be treated as if they were a part of the package
+# while determining if symlink should be either created or present in a
+# post install script - depending on relocation paths.
+#
+# Currenty there are a few limitations though:
+#
+# * Only symbolic links with relative path can be packaged.
+#
+# * For component based packaging component interdependency is not checked
+#   when processing symbolic links. Symbolic links pointing to content of
+#   a different component are treated the same way as if pointing to location
+#   that will not be packaged.
+#
+# * Symbolic links pointing to a location through one or more intermediate
+#   symbolic links will not be handled differently - if the intermediate
+#   symbolic link(s) is also on a relocatable path, relocating it during
+#   package installation may cause initial symbolic link to point to an
+#   invalid location.
 
 #=============================================================================
 # Copyright 2007-2009 Kitware, Inc.

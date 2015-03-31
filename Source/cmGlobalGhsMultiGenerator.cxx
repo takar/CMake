@@ -59,13 +59,13 @@ void cmGlobalGhsMultiGenerator::EnableLanguage(
   mf->AddDefinition("CMAKE_C_COMPILER",
                     std::string(ghsCompRootStart + "ccarm.exe").c_str());
   mf->AddDefinition("CMAKE_C_COMPILER_ID_RUN", "TRUE");
-  mf->AddDefinition("CMAKE_C_COMPILER_ID", "GHSC");
+  mf->AddDefinition("CMAKE_C_COMPILER_ID", "GHS");
   mf->AddDefinition("CMAKE_C_COMPILER_FORCED", "TRUE");
 
   mf->AddDefinition("CMAKE_CXX_COMPILER",
                     std::string(ghsCompRootStart + "cxarm.exe").c_str());
   mf->AddDefinition("CMAKE_CXX_COMPILER_ID_RUN", "TRUE");
-  mf->AddDefinition("CMAKE_CXX_COMPILER_ID", "GHSCXX");
+  mf->AddDefinition("CMAKE_CXX_COMPILER_ID", "GHS");
   mf->AddDefinition("CMAKE_CXX_COMPILER_FORCED", "TRUE");
 
   if (!ghsCompRoot.empty())

@@ -19,6 +19,7 @@
 #include <cmAlgorithms.h>
 
 const char *cmGlobalGhsMultiGenerator::FILE_EXTENSION = ".gpj";
+const char *cmGlobalGhsMultiGenerator::DEFAULT_MAKE_PROGRAM = "gbuild";
 
 cmGlobalGhsMultiGenerator::cmGlobalGhsMultiGenerator()
   : OSDirRelative(false)
@@ -58,13 +59,13 @@ void cmGlobalGhsMultiGenerator::EnableLanguage(
   mf->AddDefinition("CMAKE_C_COMPILER",
                     std::string(ghsCompRootStart + "ccarm.exe").c_str());
   mf->AddDefinition("CMAKE_C_COMPILER_ID_RUN", "TRUE");
-  mf->AddDefinition("CMAKE_C_COMPILER_ID", "GHSC");
+  mf->AddDefinition("CMAKE_C_COMPILER_ID", "GHS");
   mf->AddDefinition("CMAKE_C_COMPILER_FORCED", "TRUE");
 
   mf->AddDefinition("CMAKE_CXX_COMPILER",
                     std::string(ghsCompRootStart + "cxarm.exe").c_str());
   mf->AddDefinition("CMAKE_CXX_COMPILER_ID_RUN", "TRUE");
-  mf->AddDefinition("CMAKE_CXX_COMPILER_ID", "GHSCXX");
+  mf->AddDefinition("CMAKE_CXX_COMPILER_ID", "GHS");
   mf->AddDefinition("CMAKE_CXX_COMPILER_FORCED", "TRUE");
 
   if (!ghsCompRoot.empty())
@@ -104,10 +105,13 @@ std::string const &cmGlobalGhsMultiGenerator::GetGhsBuildCommand()
 
 std::string cmGlobalGhsMultiGenerator::FindGhsBuildCommand()
 {
-  std::string makeProgram = cmSystemTools::FindProgram("gbuild");
+  std::vector<std::string> userPaths;
+  userPaths.push_back(this->GetCompRoot());
+  std::string makeProgram =
+    cmSystemTools::FindProgram(DEFAULT_MAKE_PROGRAM, userPaths);
   if (makeProgram.empty())
     {
-    makeProgram = "gbuild";
+    makeProgram = DEFAULT_MAKE_PROGRAM;
     }
   return makeProgram;
 }

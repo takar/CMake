@@ -559,13 +559,13 @@ void cmVisualStudio10TargetGenerator::WriteXamlFilesGroup()
       std::string obj = (*oi)->GetFullPath();
       std::string xamlType;
       const char * xamlTypeProperty = (*oi)->GetProperty("VS_XAML_TYPE");
-      if (xamlTypeProperty == nullptr)
+      if (xamlTypeProperty)
         {
-        xamlType = "Page";
+        xamlType = xamlTypeProperty;
         }
       else
         {
-        xamlType = xamlTypeProperty;
+        xamlType = "Page";
         }
 
       this->WriteSource(xamlType, *oi, ">\n");

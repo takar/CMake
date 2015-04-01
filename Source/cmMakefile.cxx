@@ -101,7 +101,6 @@ cmMakefile::cmMakefile(): Internal(new Internals)
 
   this->AddDefaultDefinitions();
   this->Initialize();
-  this->PreOrder = false;
   this->GeneratingBuildSystem = false;
 
   this->SuppressWatches = false;
@@ -113,14 +112,11 @@ cmMakefile::cmMakefile(const cmMakefile& mf): Internal(new Internals)
   this->Internal->VarInitStack.push(mf.Internal->VarInitStack.top());
   this->Internal->VarUsageStack.push(mf.Internal->VarUsageStack.top());
 
-  this->Prefix = mf.Prefix;
-  this->AuxSourceDirectories = mf.AuxSourceDirectories;
   this->cmStartDirectory = mf.cmStartDirectory;
   this->StartOutputDirectory = mf.StartOutputDirectory;
   this->cmHomeDirectory = mf.cmHomeDirectory;
   this->HomeOutputDirectory = mf.HomeOutputDirectory;
   this->cmCurrentListFile = mf.cmCurrentListFile;
-  this->ProjectName = mf.ProjectName;
   this->Targets = mf.Targets;
   this->SourceFiles = mf.SourceFiles;
   this->Tests = mf.Tests;
@@ -145,9 +141,7 @@ cmMakefile::cmMakefile(const cmMakefile& mf): Internal(new Internals)
   this->LocalGenerator = mf.LocalGenerator;
   this->FunctionBlockers = mf.FunctionBlockers;
   this->MacrosList = mf.MacrosList;
-  this->SubDirectoryOrder = mf.SubDirectoryOrder;
   this->Properties = mf.Properties;
-  this->PreOrder = mf.PreOrder;
   this->WarnUnused = mf.WarnUnused;
   this->Initialize();
   this->CheckSystemVars = mf.CheckSystemVars;
@@ -253,7 +247,7 @@ void cmMakefile::Print() const
   std::cout << " this->cmHomeDirectory; " <<
     this->cmHomeDirectory << std::endl;
   std::cout << " this->ProjectName; "
-            <<  this->ProjectName << std::endl;
+            <<  this->GetDefinition("PROJECT_NAME") << std::endl;
   this->PrintStringVector("this->LinkDirectories", this->LinkDirectories);
 #if defined(CMAKE_BUILD_WITH_CMAKE)
   for( std::vector<cmSourceGroup>::const_iterator i =
@@ -1664,9 +1658,6 @@ void cmMakefile::InitializeFromParent()
   // link directories
   this->LinkDirectories = parent->LinkDirectories;
 
-  // the initial project name
-  this->ProjectName = parent->ProjectName;
-
   // Copy include regular expressions.
   this->IncludeFileRegularExpression = parent->IncludeFileRegularExpression;
   this->ComplainFileRegularExpression = parent->ComplainFileRegularExpression;
@@ -1697,7 +1688,7 @@ void cmMakefile::ConfigureSubDirectory(cmLocalGenerator *lg2)
 }
 
 void cmMakefile::AddSubDirectory(const std::string& sub,
-                                 bool excludeFromAll, bool preorder)
+                                 bool excludeFromAll)
 {
   // the source path must be made full if it isn't already
   std::string srcPath = sub;
@@ -1719,13 +1710,13 @@ void cmMakefile::AddSubDirectory(const std::string& sub,
 
 
   this->AddSubDirectory(srcPath, binPath,
-                        excludeFromAll, preorder, false);
+                        excludeFromAll, false);
 }
 
 
 void cmMakefile::AddSubDirectory(const std::string& srcPath,
                                  const std::string& binPath,
-                                 bool excludeFromAll, bool preorder,
+                                 bool excludeFromAll,
                                  bool immediate)
 {
   // Make sure the binary directory is unique.
@@ -1747,7 +1738,6 @@ void cmMakefile::AddSubDirectory(const std::string& srcPath,
     {
     lg2->GetMakefile()->SetProperty("EXCLUDE_FROM_ALL", "TRUE");
     }
-  lg2->GetMakefile()->SetPreOrder(preorder);
 
   if (immediate)
     {
@@ -1999,12 +1989,6 @@ void cmMakefile::RemoveCacheDefinition(const std::string& name)
   this->GetCacheManager()->RemoveCacheEntry(name);
 }
 
-void cmMakefile::SetProjectName(const char* p)
-{
-  this->ProjectName = p;
-}
-
-
 void cmMakefile::AddGlobalLinkInformation(const std::string& name,
                                           cmTarget& target)
 {
@@ -2255,11 +2239,6 @@ void cmMakefile::AddSourceGroup(const std::vector<std::string>& name,
 }
 
 #endif
-
-void cmMakefile::AddExtraDirectory(const char* dir)
-{
-  this->AuxSourceDirectories.push_back(dir);
-}
 
 static bool mightExpandVariablesCMP0019(const char* s)
 {

@@ -338,7 +338,8 @@ public:
    */
   const char* GetProjectName() const
     {
-      return this->GetDefinition("PROJECT_NAME");
+      const char* def = this->GetDefinition("PROJECT_NAME");
+      return def ? def : "";
     }
 
   /** Get the configurations to be generated.  */

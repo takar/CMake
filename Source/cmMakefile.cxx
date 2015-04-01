@@ -117,6 +117,7 @@ cmMakefile::cmMakefile(const cmMakefile& mf): Internal(new Internals)
   this->cmHomeDirectory = mf.cmHomeDirectory;
   this->HomeOutputDirectory = mf.HomeOutputDirectory;
   this->cmCurrentListFile = mf.cmCurrentListFile;
+  this->ProjectName = mf.ProjectName;
   this->Targets = mf.Targets;
   this->SourceFiles = mf.SourceFiles;
   this->Tests = mf.Tests;
@@ -247,7 +248,7 @@ void cmMakefile::Print() const
   std::cout << " this->cmHomeDirectory; " <<
     this->cmHomeDirectory << std::endl;
   std::cout << " this->ProjectName; "
-            <<  this->GetDefinition("PROJECT_NAME") << std::endl;
+            <<  this->ProjectName << std::endl;
   this->PrintStringVector("this->LinkDirectories", this->LinkDirectories);
 #if defined(CMAKE_BUILD_WITH_CMAKE)
   for( std::vector<cmSourceGroup>::const_iterator i =
@@ -1658,6 +1659,9 @@ void cmMakefile::InitializeFromParent()
   // link directories
   this->LinkDirectories = parent->LinkDirectories;
 
+  // the initial project name
+  this->ProjectName = parent->ProjectName;
+
   // Copy include regular expressions.
   this->IncludeFileRegularExpression = parent->IncludeFileRegularExpression;
   this->ComplainFileRegularExpression = parent->ComplainFileRegularExpression;
@@ -1988,6 +1992,12 @@ void cmMakefile::RemoveCacheDefinition(const std::string& name)
 {
   this->GetCacheManager()->RemoveCacheEntry(name);
 }
+
+void cmMakefile::SetProjectName(const char* p)
+{
+  this->ProjectName = p;
+}
+
 
 void cmMakefile::AddGlobalLinkInformation(const std::string& name,
                                           cmTarget& target)

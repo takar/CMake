@@ -334,12 +334,16 @@ public:
   void RemoveCacheDefinition(const std::string& name);
 
   /**
+   * Specify the name of the project for this build.
+   */
+  void SetProjectName(const char*);
+
+  /**
    * Get the name of the project for this build.
    */
   const char* GetProjectName() const
     {
-      const char* def = this->GetDefinition("PROJECT_NAME");
-      return def ? def : "";
+      return this->ProjectName.c_str();
     }
 
   /** Get the configurations to be generated.  */

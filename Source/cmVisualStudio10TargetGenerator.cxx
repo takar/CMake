@@ -553,8 +553,8 @@ void cmVisualStudio10TargetGenerator::WriteXamlFilesGroup()
   if (!xamlObjs.empty())
     {
     this->WriteString("<ItemGroup>\n", 1);
-    for (std::vector<cmSourceFile const*>::const_iterator oi = xamlObjs.begin();
-      oi != xamlObjs.end(); ++oi)
+    for (std::vector<cmSourceFile const*>::const_iterator
+           oi = xamlObjs.begin(); oi != xamlObjs.end(); ++oi)
       {
       std::string obj = (*oi)->GetFullPath();
       std::string xamlType;

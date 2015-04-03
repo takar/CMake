@@ -37,10 +37,10 @@ Each ``<item>`` may be:
 * **A full path to a library file**: The generated link line will
   normally preserve the full path to the file.  However, there are
   some cases where CMake must ask the linker to search for the library
-  (e.g. ``-lfoo``), such as when it appears in a system library directory
-  that the compiler front-end may replace with an alternative.
-  Either way, the buildsystem will have a dependency to re-link
-  ``<target>`` if the library file changes.
+  (e.g. ``/usr/lib/libfoo.so`` becomes ``-lfoo``), such as when it
+  appears in a system library directory that the compiler front-end
+  may replace with an alternative.  Either way, the buildsystem will
+  have a dependency to re-link ``<target>`` if the library file changes.
 
   If the library file is in a Mac OSX framework, the ``Headers`` directory
   of the framework will also be processed as a
@@ -48,7 +48,7 @@ Each ``<item>`` may be:
   effect as passing the framework directory as an include directory.
 
 * **A plain library name**: The generated link line will ask the linker
-  to search for the library (e.g. ``-lfoo``).
+  to search for the library (e.g. ``foo`` becomes ``-lfoo`` or ``foo.lib``).
 
 * **A link flag**: Item names starting with ``-``, but not ``-l`` or
   ``-framework``, are treated as linker flags.  Note that such flags will
@@ -66,6 +66,11 @@ Each ``<item>`` may be:
   optional.  Higher granularity may be achieved for per-configuration
   rules by creating and linking to
   :ref:`IMPORTED library targets <Imported Targets>`.
+
+Items containing ``::``, such as ``Foo::Bar``, are assumed to be
+:ref:`IMPORTED <Imported Targets>` or :ref:`ALIAS <Alias Targets>` library
+target names and will cause an error if no such target exists.
+See policy :policy:`CMP0028`.
 
 Arguments to ``target_link_libraries`` may use "generator expressions"
 with the syntax ``$<...>``.  Note however, that generator expressions

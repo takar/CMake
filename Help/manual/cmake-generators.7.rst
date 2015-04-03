@@ -56,7 +56,6 @@ one may launch CMake from any environment.
 .. toctree::
    :maxdepth: 1
 
-   /generator/Green Hills MULTI
    /generator/Visual Studio 6
    /generator/Visual Studio 7
    /generator/Visual Studio 7 .NET 2003

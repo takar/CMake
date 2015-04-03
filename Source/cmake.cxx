@@ -63,7 +63,6 @@
 #    include "cmGlobalBorlandMakefileGenerator.h"
 #    include "cmGlobalNMakeMakefileGenerator.h"
 #    include "cmGlobalJOMMakefileGenerator.h"
-#    include "cmGlobalGhsMultiGenerator.h"
 #    define CMAKE_HAVE_VS_GENERATORS
 #  endif
 #  include "cmGlobalMSYSMakefileGenerator.h"
@@ -1842,8 +1841,6 @@ void cmake::AddDefaultGenerators()
     cmGlobalNMakeMakefileGenerator::NewFactory());
   this->Generators.push_back(
     cmGlobalJOMMakefileGenerator::NewFactory());
-  this->Generators.push_back(
-    cmGlobalGhsMultiGenerator::NewFactory());
 # endif
   this->Generators.push_back(
     cmGlobalMSYSMakefileGenerator::NewFactory());

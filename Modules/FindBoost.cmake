@@ -405,8 +405,6 @@ function(_Boost_GUESS_COMPILER_PREFIX _ret)
     else()
       set (_boost_COMPILER "-il")
     endif()
-  elseif (GHSMULTI)
-    set(_boost_COMPILER "-ghs")
   elseif (MSVC14)
     set(_boost_COMPILER "-vc140")
   elseif (MSVC12)
@@ -779,8 +777,7 @@ endif()
 # ------------------------------------------------------------------------
 
 set(Boost_LIB_PREFIX "")
-if ( (GHSMULTI AND Boost_USE_STATIC_LIBS) OR
-    (WIN32 AND Boost_USE_STATIC_LIBS AND NOT CYGWIN) )
+if ( WIN32 AND Boost_USE_STATIC_LIBS AND NOT CYGWIN)
   set(Boost_LIB_PREFIX "lib")
 endif()
 

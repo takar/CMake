@@ -27,16 +27,21 @@ ctest_coverage_collect_gcov(
   GCOV_OPTIONS -P "@CMake_SOURCE_DIR@/Tests/CTestCoverageCollectGCOV/fakegcov.cmake")
 
 execute_process(COMMAND
-      ${CMAKE_COMMAND} -E tar tf ${tar_file}
-      OUTPUT_VARIABLE out
-      WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+  ${CMAKE_COMMAND} -E tar tf ${tar_file}
+  OUTPUT_VARIABLE out
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+string(REPLACE "\n" ";" out "${out}")
+list(SORT out)
 
 set(expected_out
-"Testing/CoverageInfo/main.cpp.gcov
-Testing/CoverageInfo/extra.cpp.gcov
-Testing/CoverageInfo/data.json
-CMakeFiles/myexecutable.dir/Labels.json
-")
+  CMakeFiles/myexecutable.dir/Labels.json
+  Testing/CoverageInfo/data.json
+  Testing/CoverageInfo/extra.cpp.gcov
+  Testing/CoverageInfo/main.cpp.gcov
+)
 
 if("${out}" STREQUAL "${expected_out}")
   message("PASSED with correct output: ${out}")

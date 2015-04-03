@@ -2345,6 +2345,7 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
     "${CMake_BINARY_DIR}/Tests/CTestCoverageCollectGCOV/test.cmake"
     @ONLY ESCAPE_QUOTES)
   add_test(CTestCoverageCollectGCOV ${CMAKE_CTEST_COMMAND}
+    -C \${CTEST_CONFIGURATION_TYPE}
     -S "${CMake_BINARY_DIR}/Tests/CTestCoverageCollectGCOV/test.cmake" -VV
     --output-log "${CMake_BINARY_DIR}/Tests/CTestCoverageCollectGCOV/testOut.log"
     )

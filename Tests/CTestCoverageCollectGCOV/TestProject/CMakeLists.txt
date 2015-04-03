@@ -4,21 +4,29 @@ project(TestProject CXX)
 
 include(CTest)
 
-add_executable(myexecutable
+set(SOURCES
   main.cpp
   3rdparty/foo.cpp
   extra/extra.cpp
 )
 
+add_executable(myexecutable ${SOURCES})
+
 set_property(SOURCE main.cpp APPEND PROPERTY LABELS SourceLabel)
 set_property(TARGET myexecutable APPEND PROPERTY LABELS TargetLabel)
 
+set(MYEXECUTABLE_INFO_FILE "${CMAKE_CURRENT_BINARY_DIR}/myexecutable_info.cmake")
+
+file(WRITE "${MYEXECUTABLE_INFO_FILE}" "
+  set(TARGET myexecutable)
+  set(SOURCE_DIR \"${CMAKE_CURRENT_SOURCE_DIR}\")
+  set(SOURCES \"${SOURCES}\")
+")
+
 add_custom_command(TARGET myexecutable
   POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -
-    -DTARGET=myexecutable
-    "-DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
-    "-DSOURCES=$<TARGET_PROPERTY:myexecutable,SOURCES>"
+  COMMAND ${CMAKE_COMMAND}
+    "-DINFO_FILE=${MYEXECUTABLE_INFO_FILE}"
     -P "${CMAKE_CURRENT_SOURCE_DIR}/fake_compile_time_gcno.cmake"
   VERBATIM
 )

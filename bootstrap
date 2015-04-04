@@ -302,6 +302,7 @@ CMAKE_CXX_SOURCES="\
   cmCommandsForBootstrap \
   cmTarget \
   cmTest \
+  cmConfiguration \
   cmCustomCommand \
   cmCustomCommandGenerator \
   cmCacheManager \

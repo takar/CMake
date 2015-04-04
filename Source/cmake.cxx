@@ -21,6 +21,7 @@
 #include "cmTest.h"
 #include "cmDocumentationFormatter.h"
 #include "cmAlgorithms.h"
+#include "cmConfiguration.h"
 
 #if defined(CMAKE_BUILD_WITH_CMAKE)
 # include "cmGraphVizWriter.h"
@@ -133,6 +134,8 @@ cmake::cmake()
   this->FileComparison = new cmFileTimeComparison;
 
   this->Policies = new cmPolicies();
+  this->Configuration = new cmConfiguration(this);
+
   this->InitializeProperties();
 
 #ifdef __APPLE__
@@ -171,6 +174,7 @@ cmake::~cmake()
 {
   delete this->CacheManager;
   delete this->Policies;
+  delete this->Configuration;
   if (this->GlobalGenerator)
     {
     delete this->GlobalGenerator;

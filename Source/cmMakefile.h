@@ -776,10 +776,6 @@ public:
   ///enabled.
   void EnableLanguage(std::vector<std::string>const& languages, bool optional);
 
-  /**
-   * Set/Get the name of the parent directories CMakeLists file
-   * given a current CMakeLists file name
-   */
   cmCacheManager *GetCacheManager() const;
 
   /**
@@ -985,9 +981,8 @@ protected:
   // directories.
   std::set<std::string> SystemIncludeDirectories;
 
-  std::vector<std::string> ListFiles; // list of command files loaded
-  std::vector<std::string> OutputFiles; // list of command files loaded
-
+  std::vector<std::string> ListFiles;
+  std::vector<std::string> OutputFiles;
 
   cmTarget::LinkLibraryVectorType LinkLibraries;
 

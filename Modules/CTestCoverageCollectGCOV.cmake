@@ -152,7 +152,7 @@ function(ctest_coverage_collect_gcov)
 
   set(gcov_files)
   foreach(gcov_file ${unfiltered_gcov_files})
-    file(STRINGS ${binary_dir}/${gcov_file} first_line LIMIT_COUNT 1)
+    file(STRINGS ${binary_dir}/${gcov_file} first_line LIMIT_COUNT 1 ENCODING UTF-8)
 
     set(is_excluded false)
     if(first_line MATCHES "^        -:    0:Source:(.*)$")

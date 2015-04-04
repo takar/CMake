@@ -7,7 +7,7 @@ endforeach()
 get_filename_component(gcda_name ${gcda_file} NAME)
 string(REPLACE ".gcda" ".gcov" gcov_name "${gcda_name}")
 
-file(STRINGS "${gcda_file}" source_file LIMIT_COUNT 1)
+file(STRINGS "${gcda_file}" source_file LIMIT_COUNT 1 ENCODING UTF-8)
 
 file(WRITE "${CMAKE_SOURCE_DIR}/${gcov_name}"
   "        -:    0:Source:${source_file}"

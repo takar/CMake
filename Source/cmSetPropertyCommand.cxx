@@ -453,7 +453,7 @@ bool cmSetPropertyCommand::HandleCacheMode()
     cmMakefile* mf = this->GetMakefile();
     cmake* cm = mf->GetCMakeInstance();
     const char* existingValue
-                          = cm->GetCacheManager()->GetCacheEntryValue(*ni);
+                          = cm->GetConfiguration()->GetCacheEntryValue(*ni);
     if(existingValue)
       {
       if(!this->HandleCacheEntry(*ni))
@@ -479,20 +479,19 @@ bool cmSetPropertyCommand::HandleCacheEntry(std::string const& cacheKey)
   // Set or append the property.
   const char* name = this->PropertyName.c_str();
   const char* value = this->PropertyValue.c_str();
-  cmCacheManager* manager = this->Makefile->GetCacheManager();
+  cmConfiguration* config = this->Makefile->GetConfiguration();
   if (this->Remove)
     {
-    manager->RemoveCacheEntryProperty(cacheKey, name);
-    return true;
+    config->RemoveCacheEntryProperty(cacheKey, name);
     }
   if(this->AppendMode)
     {
-    manager->AppendCacheEntryProperty(cacheKey, name, value,
-                                      this->AppendAsString);
+    config->AppendCacheEntryProperty(cacheKey, name, value,
+                                     this->AppendAsString);
     }
   else
     {
-    manager->SetCacheEntryProperty(cacheKey, name, value);
+    config->SetCacheEntryProperty(cacheKey, name, value);
     }
 
   return true;

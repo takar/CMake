@@ -13,6 +13,7 @@
 
 #include "cmSystemTools.h"
 #include "cmMakefile.h"
+#include "cmConfiguration.h"
 
 #include "cmCommandArgumentLexer.h"
 
@@ -90,7 +91,7 @@ char* cmCommandArgumentParserHelper::ExpandSpecialVariable(const char* key,
     }
   if ( strcmp(key, "CACHE") == 0 )
     {
-    if(const char* c = this->Makefile->GetCacheManager()
+    if(const char* c = this->Makefile->GetConfiguration()
                            ->GetInitializedCacheValue(var))
       {
       if(this->EscapeQuotes)

@@ -200,9 +200,9 @@ void QCMake::setProperties(const QCMakePropertyList& newProps)
   for(std::vector<std::string>::const_iterator it = cacheKeys.begin();
       it != cacheKeys.end(); ++it)
     {
-    cmCacheManager::CacheEntryType t = config->GetCacheEntryType(*it);
-    if(t == cmCacheManager::INTERNAL ||
-       t == cmCacheManager::STATIC)
+    cmConfiguration::CacheEntryType t = config->GetCacheEntryType(*it);
+    if(t == cmConfiguration::INTERNAL ||
+       t == cmConfiguration::STATIC)
       {
       continue;
       }
@@ -249,28 +249,28 @@ void QCMake::setProperties(const QCMakePropertyList& newProps)
       this->CMakeInstance->AddCacheEntry(s.Key.toLocal8Bit().data(),
                             s.Value.toBool() ? "ON" : "OFF",
                             s.Help.toLocal8Bit().data(),
-                            cmCacheManager::BOOL);
+                            cmConfiguration::BOOL);
       }
     else if(s.Type == QCMakeProperty::STRING)
       {
       this->CMakeInstance->AddCacheEntry(s.Key.toLocal8Bit().data(),
                             s.Value.toString().toLocal8Bit().data(),
                             s.Help.toLocal8Bit().data(),
-                            cmCacheManager::STRING);
+                            cmConfiguration::STRING);
       }
     else if(s.Type == QCMakeProperty::PATH)
       {
       this->CMakeInstance->AddCacheEntry(s.Key.toLocal8Bit().data(),
                             s.Value.toString().toLocal8Bit().data(),
                             s.Help.toLocal8Bit().data(),
-                            cmCacheManager::PATH);
+                            cmConfiguration::PATH);
       }
     else if(s.Type == QCMakeProperty::FILEPATH)
       {
       this->CMakeInstance->AddCacheEntry(s.Key.toLocal8Bit().data(),
                             s.Value.toString().toLocal8Bit().data(),
                             s.Help.toLocal8Bit().data(),
-                            cmCacheManager::FILEPATH);
+                            cmConfiguration::FILEPATH);
       }
     }
 
@@ -286,10 +286,10 @@ QCMakePropertyList QCMake::properties() const
   for (std::vector<std::string>::const_iterator i = cacheKeys.begin();
         i != cacheKeys.end(); ++i)
     {
-    cmCacheManager::CacheEntryType t = config->GetCacheEntryType(*i);
-    if(t == cmCacheManager::INTERNAL ||
-       t == cmCacheManager::STATIC ||
-       t == cmCacheManager::UNINITIALIZED)
+    cmConfiguration::CacheEntryType t = config->GetCacheEntryType(*i);
+    if(t == cmConfiguration::INTERNAL ||
+       t == cmConfiguration::STATIC ||
+       t == cmConfiguration::UNINITIALIZED)
       {
       continue;
       }
@@ -302,20 +302,20 @@ QCMakePropertyList QCMake::properties() const
                             config->GetCacheEntryProperty(*i, "HELPSTRING"));
     prop.Value = QString::fromLocal8Bit(cachedValue);
     prop.Advanced = config->GetCacheEntryPropertyAsBool(*i, "ADVANCED");
-    if(t == cmCacheManager::BOOL)
+    if(t == cmConfiguration::BOOL)
       {
       prop.Type = QCMakeProperty::BOOL;
       prop.Value = cmSystemTools::IsOn(cachedValue);
       }
-    else if(t == cmCacheManager::PATH)
+    else if(t == cmConfiguration::PATH)
       {
       prop.Type = QCMakeProperty::PATH;
       }
-    else if(t == cmCacheManager::FILEPATH)
+    else if(t == cmConfiguration::FILEPATH)
       {
       prop.Type = QCMakeProperty::FILEPATH;
       }
-    else if(t == cmCacheManager::STRING)
+    else if(t == cmConfiguration::STRING)
       {
       prop.Type = QCMakeProperty::STRING;
       const char* stringsProperty =

@@ -10,7 +10,6 @@
   See the License for more information.
 ============================================================================*/
 #include "cmTryRunCommand.h"
-#include "cmCacheManager.h"
 #include "cmTryCompileCommand.h"
 #include <cmsys/FStream.hxx>
 
@@ -217,7 +216,7 @@ void cmTryRunCommand::RunExecutable(const std::string& runArgs,
     }
   this->Makefile->AddCacheDefinition(this->RunResultVariable, retChar,
                                      "Result of TRY_RUN",
-                                     cmCacheManager::INTERNAL);
+                                     cmConfiguration::INTERNAL);
 }
 
 /* This is only used when cross compiling. Instead of running the
@@ -262,7 +261,7 @@ void cmTryRunCommand::DoNotRunExecutable(const std::string& runArgs,
     this->Makefile->AddCacheDefinition(this->RunResultVariable,
                                        "PLEASE_FILL_OUT-FAILED_TO_RUN",
                                        comment.c_str(),
-                                       cmCacheManager::STRING);
+                                       cmConfiguration::STRING);
 
     cmConfiguration* config = this->Makefile->GetConfiguration();
     const char* existingValue
@@ -290,7 +289,7 @@ void cmTryRunCommand::DoNotRunExecutable(const std::string& runArgs,
       this->Makefile->AddCacheDefinition(internalRunOutputName,
                                          "PLEASE_FILL_OUT-NOTFOUND",
                                          comment.c_str(),
-                                         cmCacheManager::STRING);
+                                         cmConfiguration::STRING);
       cmConfiguration* config = this->Makefile->GetConfiguration();
       const char* existing =
           config->GetCacheEntryValue(internalRunOutputName);

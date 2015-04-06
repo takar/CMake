@@ -39,7 +39,7 @@ bool cmMarkAsAdvancedCommand
     cmConfiguration* config = this->Makefile->GetConfiguration();
     if (!config->GetCacheEntryValue(variable))
       {
-      config->AddCacheEntry(variable, 0, 0, cmCacheManager::UNINITIALIZED);
+      config->AddCacheEntry(variable, 0, 0, cmConfiguration::UNINITIALIZED);
       overwrite = true;
       }
     if (!config->GetCacheEntryValue(variable))

@@ -338,7 +338,7 @@ bool cmake::SetCacheArgs(const std::vector<std::string>& args)
           }
         }
       std::string var, value;
-      cmCacheManager::CacheEntryType type = cmCacheManager::UNINITIALIZED;
+      cmConfiguration::CacheEntryType type = cmConfiguration::UNINITIALIZED;
       if(cmCacheManager::ParseEntry(entry, var, value, type))
         {
         // The value is transformed if it is a filepath for example, so
@@ -412,9 +412,9 @@ bool cmake::SetCacheArgs(const std::vector<std::string>& args)
       for (std::vector<std::string>::const_iterator it = cacheKeys.begin();
             it != cacheKeys.end(); ++it)
         {
-        cmCacheManager::CacheEntryType t =
+        cmConfiguration::CacheEntryType t =
             this->Configuration->GetCacheEntryType(*it);
-        if(t != cmCacheManager::STATIC)
+        if(t != cmConfiguration::STATIC)
           {
           if (regex.find(it->c_str()))
             {
@@ -979,14 +979,14 @@ int cmake::AddCMakePaths()
   // Save the value in the cache
   this->CacheManager->AddCacheEntry
     ("CMAKE_COMMAND", cmSystemTools::GetCMakeCommand().c_str(),
-     "Path to CMake executable.", cmCacheManager::INTERNAL);
+     "Path to CMake executable.", cmConfiguration::INTERNAL);
 #ifdef CMAKE_BUILD_WITH_CMAKE
   this->CacheManager->AddCacheEntry
     ("CMAKE_CTEST_COMMAND", cmSystemTools::GetCTestCommand().c_str(),
-     "Path to ctest program executable.", cmCacheManager::INTERNAL);
+     "Path to ctest program executable.", cmConfiguration::INTERNAL);
   this->CacheManager->AddCacheEntry
     ("CMAKE_CPACK_COMMAND", cmSystemTools::GetCPackCommand().c_str(),
-     "Path to cpack program executable.", cmCacheManager::INTERNAL);
+     "Path to cpack program executable.", cmConfiguration::INTERNAL);
 #endif
   if(!cmSystemTools::FileExists(
        (cmSystemTools::GetCMakeRoot()+"/Modules/CMake.cmake").c_str()))
@@ -1000,7 +1000,7 @@ int cmake::AddCMakePaths()
     }
   this->CacheManager->AddCacheEntry
     ("CMAKE_ROOT", cmSystemTools::GetCMakeRoot().c_str(),
-     "Path to CMake installation.", cmCacheManager::INTERNAL);
+     "Path to CMake installation.", cmConfiguration::INTERNAL);
 
   return 1;
 }
@@ -1242,7 +1242,7 @@ struct SaveCacheEntry
   std::string key;
   std::string value;
   std::string help;
-  cmCacheManager::CacheEntryType type;
+  cmConfiguration::CacheEntryType type;
 };
 
 int cmake::HandleDeleteCacheVariables(const std::string& var)
@@ -1315,7 +1315,7 @@ int cmake::Configure()
         AddCacheEntry("CMAKE_SUPPRESS_DEVELOPER_WARNINGS", "TRUE",
                       "Suppress Warnings that are meant for"
                       " the author of the CMakeLists.txt files.",
-                      cmCacheManager::INTERNAL);
+                      cmConfiguration::INTERNAL);
       }
     else
       {
@@ -1323,7 +1323,7 @@ int cmake::Configure()
         AddCacheEntry("CMAKE_SUPPRESS_DEVELOPER_WARNINGS", "FALSE",
                       "Suppress Warnings that are meant for"
                       " the author of the CMakeLists.txt files.",
-                      cmCacheManager::INTERNAL);
+                      cmConfiguration::INTERNAL);
       }
     }
   int ret = this->ActualConfigure();
@@ -1359,7 +1359,7 @@ int cmake::ActualConfigure()
        this->GetHomeDirectory(),
        "Start directory with the top level CMakeLists.txt file for this "
        "project",
-       cmCacheManager::INTERNAL);
+       cmConfiguration::INTERNAL);
     }
 
   // no generator specified on the command line
@@ -1468,11 +1468,11 @@ int cmake::ActualConfigure()
     this->CacheManager->AddCacheEntry("CMAKE_GENERATOR",
                                       this->GlobalGenerator->GetName().c_str(),
                                       "Name of generator.",
-                                      cmCacheManager::INTERNAL);
+                                      cmConfiguration::INTERNAL);
     this->CacheManager->AddCacheEntry("CMAKE_EXTRA_GENERATOR",
                         this->GlobalGenerator->GetExtraGeneratorName().c_str(),
                         "Name of external makefile project generator.",
-                        cmCacheManager::INTERNAL);
+                        cmConfiguration::INTERNAL);
     }
 
   if(const char* platformName =
@@ -1500,7 +1500,7 @@ int cmake::ActualConfigure()
     this->CacheManager->AddCacheEntry("CMAKE_GENERATOR_PLATFORM",
                                       this->GeneratorPlatform.c_str(),
                                       "Name of generator platform.",
-                                      cmCacheManager::INTERNAL);
+                                      cmConfiguration::INTERNAL);
     }
 
   if(const char* tsName =
@@ -1528,7 +1528,7 @@ int cmake::ActualConfigure()
     this->CacheManager->AddCacheEntry("CMAKE_GENERATOR_TOOLSET",
                                       this->GeneratorToolset.c_str(),
                                       "Name of generator toolset.",
-                                      cmCacheManager::INTERNAL);
+                                      cmConfiguration::INTERNAL);
     }
 
   // reset any system configuration information, except for when we are
@@ -1566,7 +1566,7 @@ int cmake::ActualConfigure()
       this->Configuration->AddCacheEntry
         ("LIBRARY_OUTPUT_PATH", "",
          "Single output directory for building all libraries.",
-         cmCacheManager::PATH);
+         cmConfiguration::PATH);
       }
     if(!this->Configuration
             ->GetInitializedCacheValue("EXECUTABLE_OUTPUT_PATH"))
@@ -1574,7 +1574,7 @@ int cmake::ActualConfigure()
       this->Configuration->AddCacheEntry
         ("EXECUTABLE_OUTPUT_PATH", "",
          "Single output directory for building all executables.",
-         cmCacheManager::PATH);
+         cmConfiguration::PATH);
       }
     }
   if(!this->Configuration
@@ -1583,7 +1583,7 @@ int cmake::ActualConfigure()
     this->Configuration->AddCacheEntry
       ("CMAKE_USE_RELATIVE_PATHS", "OFF",
        "If true, cmake will use relative paths in makefiles and projects.",
-       cmCacheManager::BOOL);
+       cmConfiguration::BOOL);
     if (!this->Configuration->GetCacheEntryProperty("CMAKE_USE_RELATIVE_PATHS",
                                                     "ADVANCED"))
       {
@@ -1808,7 +1808,7 @@ void cmake::AddCacheEntry(const std::string& key, const char* value,
 {
   this->CacheManager->AddCacheEntry(key, value,
                                     helpString,
-                                    cmCacheManager::CacheEntryType(type));
+                                    cmConfiguration::CacheEntryType(type));
 }
 
 const char* cmake::GetCacheDefinition(const std::string& name) const
@@ -1880,7 +1880,7 @@ void cmake::AddDefaultGenerators()
 bool cmake::ParseCacheEntry(const std::string& entry,
                             std::string& var,
                             std::string& value,
-                            cmCacheManager::CacheEntryType& type)
+                            cmConfiguration::CacheEntryType& type)
 {
   return cmCacheManager::ParseEntry(entry, var, value, type);
 }

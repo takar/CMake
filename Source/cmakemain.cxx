@@ -19,7 +19,6 @@
 #include "cmake.h"
 #include "cmcmd.h"
 #include "cmConfiguration.h"
-#include "cmCacheManager.h"
 #include "cmListFileCache.h"
 #include "cmSourceFile.h"
 #include "cmGlobalGenerator.h"
@@ -335,10 +334,10 @@ int do_cmake(int ac, char const* const* av)
     for (std::vector<std::string>::const_iterator it = keys.begin();
         it != keys.end(); ++it)
       {
-      cmCacheManager::CacheEntryType t =
+      cmConfiguration::CacheEntryType t =
           cm.GetConfiguration()->GetCacheEntryType(*it);
-      if ( t != cmCacheManager::INTERNAL && t != cmCacheManager::STATIC &&
-        t != cmCacheManager::UNINITIALIZED )
+      if ( t != cmConfiguration::INTERNAL && t != cmConfiguration::STATIC &&
+        t != cmConfiguration::UNINITIALIZED )
         {
         const char* advancedProp =
             cm.GetConfiguration()->GetCacheEntryProperty(*it, "ADVANCED");
@@ -351,7 +350,7 @@ int do_cmake(int ac, char const* const* av)
                                                    "HELPSTRING") << std::endl;
             }
           std::cout << *it << ":" <<
-            cmCacheManager::TypeToString(t)
+            cmConfiguration::CacheEntryTypeToString(t)
             << "=" << cm.GetConfiguration()->GetCacheEntryValue(*it)
             << std::endl;
           if ( list_help )

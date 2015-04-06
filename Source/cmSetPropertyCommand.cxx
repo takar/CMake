@@ -14,7 +14,6 @@
 #include "cmSetTestsPropertiesCommand.h"
 #include "cmSetSourceFilesPropertiesCommand.h"
 
-#include "cmCacheManager.h"
 
 //----------------------------------------------------------------------------
 cmSetPropertyCommand::cmSetPropertyCommand()
@@ -426,7 +425,7 @@ bool cmSetPropertyCommand::HandleCacheMode()
     }
   else if(this->PropertyName == "TYPE")
     {
-    if(!cmCacheManager::IsType(this->PropertyValue.c_str()))
+    if(!cmConfiguration::IsCacheEntryType(this->PropertyValue.c_str()))
       {
       std::ostringstream e;
       e << "given invalid CACHE entry TYPE \"" << this->PropertyValue << "\"";
@@ -452,11 +451,11 @@ bool cmSetPropertyCommand::HandleCacheMode()
     // Get the source file.
     cmMakefile* mf = this->GetMakefile();
     cmake* cm = mf->GetCMakeInstance();
-    cmCacheManager::CacheIterator it =
-      cm->GetCacheManager()->GetCacheIterator(ni->c_str());
-    if(!it.IsAtEnd())
+    const char* existingValue
+                          = cm->GetConfiguration()->GetCacheEntryValue(*ni);
+    if(existingValue)
       {
-      if(!this->HandleCacheEntry(it))
+      if(!this->HandleCacheEntry(*ni))
         {
         return false;
         }
@@ -474,22 +473,24 @@ bool cmSetPropertyCommand::HandleCacheMode()
 }
 
 //----------------------------------------------------------------------------
-bool cmSetPropertyCommand::HandleCacheEntry(cmCacheManager::CacheIterator& it)
+bool cmSetPropertyCommand::HandleCacheEntry(std::string const& cacheKey)
 {
   // Set or append the property.
   const char* name = this->PropertyName.c_str();
   const char* value = this->PropertyValue.c_str();
+  cmConfiguration* config = this->Makefile->GetConfiguration();
   if (this->Remove)
     {
-    value = 0;
+    config->RemoveCacheEntryProperty(cacheKey, name);
     }
   if(this->AppendMode)
     {
-    it.AppendProperty(name, value, this->AppendAsString);
+    config->AppendCacheEntryProperty(cacheKey, name, value,
+                                     this->AppendAsString);
     }
   else
     {
-    it.SetProperty(name, value);
+    config->SetCacheEntryProperty(cacheKey, name, value);
     }
 
   return true;

@@ -285,7 +285,7 @@ void cmGlobalXCodeGenerator::EnableLanguage(std::vector<std::string>const&
         "Semicolon separated list of supported configuration types, "
         "only supports Debug, Release, MinSizeRel, and RelWithDebInfo, "
         "anything else will be ignored.",
-        cmCacheManager::STRING);
+        cmConfiguration::STRING);
       }
     }
   mf->AddDefinition("CMAKE_GENERATOR_NO_COMPILER_ENV", "1");
@@ -2754,7 +2754,7 @@ std::string cmGlobalXCodeGenerator::GetOrCreateId(const std::string& name,
     }
 
   this->CMakeInstance->AddCacheEntry(guidStoreName.c_str(),
-    id.c_str(), "Stored Xcode object GUID", cmCacheManager::INTERNAL);
+    id.c_str(), "Stored Xcode object GUID", cmConfiguration::INTERNAL);
 
   return id;
 }
@@ -3703,7 +3703,7 @@ cmGlobalXCodeGenerator::OutputXCodeProject(cmLocalGenerator* root,
 
   // Since this call may have created new cache entries, save the cache:
   //
-  root->GetMakefile()->GetCacheManager()->SaveCache(
+  root->GetMakefile()->GetCMakeInstance()->SaveCache(
     root->GetMakefile()->GetHomeOutputDirectory());
 }
 

@@ -12,6 +12,7 @@
 #include "cmGetPropertyCommand.h"
 
 #include "cmake.h"
+#include "cmConfiguration.h"
 #include "cmTest.h"
 #include "cmGlobalGenerator.h"
 #include "cmLocalGenerator.h"
@@ -391,11 +392,10 @@ bool cmGetPropertyCommand::HandleCacheMode()
     }
 
   const char* value = 0;
-  cmCacheManager::CacheIterator it =
-    this->Makefile->GetCacheManager()->GetCacheIterator(this->Name.c_str());
-  if(!it.IsAtEnd())
+  if(this->Makefile->GetConfiguration()->GetCacheEntryValue(this->Name))
     {
-    value = it.GetProperty(this->PropertyName);
+    value = this->Makefile->GetConfiguration()
+                ->GetCacheEntryProperty(this->Name, this->PropertyName);
     }
   this->StoreResult(value);
   return true;

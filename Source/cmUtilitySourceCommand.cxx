@@ -11,6 +11,8 @@
 ============================================================================*/
 #include "cmUtilitySourceCommand.h"
 
+#include "cmCacheManager.h"
+
 // cmUtilitySourceCommand
 bool cmUtilitySourceCommand
 ::InitialPass(std::vector<std::string> const& args, cmExecutionStatus &)
@@ -52,11 +54,13 @@ bool cmUtilitySourceCommand
     }
   else
     {
+    cmCacheManager *manager =
+        this->Makefile->GetCMakeInstance()->GetCacheManager();
     haveCacheValue = (cacheValue &&
      (strstr(cacheValue, "(IntDir)") == 0 ||
       (intDir && strcmp(intDir, "$(IntDir)") == 0)) &&
-     (this->Makefile->GetCacheMajorVersion() != 0 &&
-      this->Makefile->GetCacheMinorVersion() != 0 ));
+     (manager->GetCacheMajorVersion() != 0 &&
+      manager->GetCacheMinorVersion() != 0 ));
     }
 
   if(haveCacheValue)
@@ -116,14 +120,14 @@ bool cmUtilitySourceCommand
   this->Makefile->AddCacheDefinition(cacheEntry,
                                  utilityExecutable.c_str(),
                                  "Path to an internal program.",
-                                 cmCacheManager::FILEPATH);
+                                 cmConfiguration::FILEPATH);
   // add a value into the cache that maps from the
   // full path to the name of the project
   cmSystemTools::ConvertToUnixSlashes(utilityExecutable);
   this->Makefile->AddCacheDefinition(utilityExecutable,
                                  utilityName.c_str(),
                                  "Executable to project name.",
-                                 cmCacheManager::INTERNAL);
+                                 cmConfiguration::INTERNAL);
 
   return true;
 }

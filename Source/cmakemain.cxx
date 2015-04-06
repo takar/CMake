@@ -18,7 +18,7 @@
 
 #include "cmake.h"
 #include "cmcmd.h"
-#include "cmCacheManager.h"
+#include "cmConfiguration.h"
 #include "cmListFileCache.h"
 #include "cmSourceFile.h"
 #include "cmGlobalGenerator.h"
@@ -328,25 +328,31 @@ int do_cmake(int ac, char const* const* av)
   int res = cm.Run(args, view_only);
   if ( list_cached || list_all_cached )
     {
-    cmCacheManager::CacheIterator it =
-      cm.GetCacheManager()->GetCacheIterator();
     std::cout << "-- Cache values" << std::endl;
-    for ( it.Begin(); !it.IsAtEnd(); it.Next() )
+    std::vector<std::string> keys =
+        cm.GetConfiguration()->GetCacheEntryKeys();
+    for (std::vector<std::string>::const_iterator it = keys.begin();
+        it != keys.end(); ++it)
       {
-      cmCacheManager::CacheEntryType t = it.GetType();
-      if ( t != cmCacheManager::INTERNAL && t != cmCacheManager::STATIC &&
-        t != cmCacheManager::UNINITIALIZED )
+      cmConfiguration::CacheEntryType t =
+          cm.GetConfiguration()->GetCacheEntryType(*it);
+      if ( t != cmConfiguration::INTERNAL && t != cmConfiguration::STATIC &&
+        t != cmConfiguration::UNINITIALIZED )
         {
-        bool advanced = it.PropertyExists("ADVANCED");
-        if ( list_all_cached || !advanced)
+        const char* advancedProp =
+            cm.GetConfiguration()->GetCacheEntryProperty(*it, "ADVANCED");
+        if ( list_all_cached || !advancedProp)
           {
           if ( list_help )
             {
-            std::cout << "// " << it.GetProperty("HELPSTRING") << std::endl;
+            std::cout << "// "
+                      << cm.GetConfiguration()->GetCacheEntryProperty(*it,
+                                                   "HELPSTRING") << std::endl;
             }
-          std::cout << it.GetName() << ":" <<
-            cmCacheManager::TypeToString(it.GetType())
-            << "=" << it.GetValue() << std::endl;
+          std::cout << *it << ":" <<
+            cmConfiguration::CacheEntryTypeToString(t)
+            << "=" << cm.GetConfiguration()->GetCacheEntryValue(*it)
+            << std::endl;
           if ( list_help )
             {
             std::cout << std::endl;

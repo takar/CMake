@@ -12,7 +12,6 @@
 #ifndef cmMakefile_h
 #define cmMakefile_h
 
-#include "cmCacheManager.h"
 #include "cmExecutionStatus.h"
 #include "cmListFileCache.h"
 #include "cmPolicies.h"
@@ -23,6 +22,7 @@
 #include "cmGeneratorTarget.h"
 #include "cmExpandedCommandArgument.h"
 #include "cmake.h"
+#include "cmConfiguration.h"
 
 #if defined(CMAKE_BUILD_WITH_CMAKE)
 #include "cmSourceGroup.h"
@@ -62,14 +62,6 @@ class cmMakefile
   class Internals;
   cmsys::auto_ptr<Internals> Internal;
 public:
-  /**
-   * Return the major and minor version of the cmake that
-   * was used to write the currently loaded cache, note
-   * this method will not work before the cache is loaded.
-   */
-  unsigned int GetCacheMajorVersion() const;
-  unsigned int GetCacheMinorVersion() const;
-
   /* Check for unused variables in this scope */
   void CheckForUnusedVariables() const;
   /* Mark a variable as used */
@@ -314,7 +306,7 @@ public:
   ///! Add a definition to this makefile and the global cmake cache.
   void AddCacheDefinition(const std::string& name, const char* value,
                           const char* doc,
-                          cmCacheManager::CacheEntryType type,
+                          cmConfiguration::CacheEntryType type,
                           bool force = false);
 
   /**
@@ -773,7 +765,7 @@ public:
   ///enabled.
   void EnableLanguage(std::vector<std::string>const& languages, bool optional);
 
-  cmCacheManager *GetCacheManager() const;
+  cmConfiguration *GetConfiguration() const;
 
   /**
    * Get the variable watch. This is used to determine when certain variables

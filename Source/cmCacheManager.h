@@ -14,6 +14,8 @@
 
 #include "cmStandardIncludes.h"
 #include "cmPropertyMap.h"
+#include "cmConfiguration.h"
+
 class cmMakefile;
 class cmMarkAsAdvancedCommand;
 class cmake;
@@ -30,21 +32,22 @@ public:
   cmCacheManager(cmake* cm);
   class CacheIterator;
   friend class cmCacheManager::CacheIterator;
-  enum CacheEntryType{ BOOL=0, PATH, FILEPATH, STRING, INTERNAL,STATIC,
-                       UNINITIALIZED };
 
 private:
   struct CacheEntry
   {
     std::string Value;
-    CacheEntryType Type;
+    cmConfiguration::CacheEntryType Type;
     cmPropertyMap Properties;
     const char* GetProperty(const std::string&) const;
     void SetProperty(const std::string& property, const char* value);
     void AppendProperty(const std::string& property, const char* value,
                         bool asString=false);
     bool Initialized;
-    CacheEntry() : Value(""), Type(UNINITIALIZED), Initialized(false)
+    CacheEntry()
+      : Value(""),
+        Type(cmConfiguration::UNINITIALIZED),
+        Initialized(false)
       {}
   };
 
@@ -68,8 +71,10 @@ public:
     std::string GetValue() const { return this->GetEntry().Value; }
     bool GetValueAsBool() const;
     void SetValue(const char*);
-    CacheEntryType GetType() const { return this->GetEntry().Type; }
-    void SetType(CacheEntryType ty) { this->GetEntry().Type = ty; }
+    cmConfiguration::CacheEntryType GetType() const
+    { return this->GetEntry().Type; }
+    void SetType(cmConfiguration::CacheEntryType ty)
+    { this->GetEntry().Type = ty; }
     bool Initialized() { return this->GetEntry().Initialized; }
     cmCacheManager &Container;
     std::map<std::string, CacheEntry>::iterator Position;
@@ -93,17 +98,6 @@ public:
     {
       return CacheIterator(*this);
     }
-
-  /**
-   * Types for the cache entries.  These are useful as
-   * hints for a cache editor program.  Path should bring
-   * up a file chooser, BOOL a check box, and STRING a
-   * text entry box, FILEPATH is a full path to a file which
-   * can be different than just a path input
-   */
-  static CacheEntryType StringToType(const char*);
-  static const char* TypeToString(CacheEntryType);
-  static bool IsType(const char*);
 
   ///! Load a cache for given makefile.  Loads from path/CMakeCache.txt.
   bool LoadCache(const std::string& path);
@@ -134,10 +128,85 @@ public:
   static bool ParseEntry(const std::string& entry,
                          std::string& var,
                          std::string& value,
-                         CacheEntryType& type);
+                         cmConfiguration::CacheEntryType& type);
 
   ///! Get a value from the cache given a key
-  const char* GetCacheValue(const std::string& key) const;
+  const char* GetInitializedCacheValue(const std::string& key) const;
+
+  const char* GetCacheEntryValue(const std::string& key)
+  {
+    cmCacheManager::CacheIterator it = this->GetCacheIterator(key.c_str());
+    if (it.IsAtEnd())
+      {
+      return 0;
+      }
+    return it.GetValue().c_str();
+  }
+
+  const char* GetCacheEntryProperty(std::string const& key,
+                                    std::string const& propName)
+  {
+    return this->GetCacheIterator(key.c_str()).GetProperty(propName);
+  }
+
+  cmConfiguration::CacheEntryType GetCacheEntryType(std::string const& key)
+  {
+    return this->GetCacheIterator(key.c_str()).GetType();
+  }
+
+  bool GetCacheEntryPropertyAsBool(std::string const& key,
+                                   std::string const& propName)
+  {
+    return this->GetCacheIterator(key.c_str()).GetPropertyAsBool(propName);
+  }
+
+  void SetCacheEntryProperty(std::string const& key,
+                             std::string const& propName,
+                             std::string const& value)
+  {
+    this->GetCacheIterator(key.c_str()).SetProperty(propName, value.c_str());
+  }
+
+  void SetCacheEntryBoolProperty(std::string const& key,
+                                 std::string const& propName,
+                                 bool value)
+  {
+    this->GetCacheIterator(key.c_str()).SetProperty(propName, value);
+  }
+
+  void SetCacheEntryValue(std::string const& key,
+                          std::string const& value)
+  {
+    this->GetCacheIterator(key.c_str()).SetValue(value.c_str());
+  }
+
+  void RemoveCacheEntryProperty(std::string const& key,
+                                std::string const& propName)
+  {
+    this->GetCacheIterator(key.c_str()).SetProperty(propName, (void*)0);
+  }
+
+  void AppendCacheEntryProperty(std::string const& key,
+                                std::string const& propName,
+                                std::string const& value,
+                                bool asString = false)
+  {
+    this->GetCacheIterator(key.c_str()).AppendProperty(propName,
+                                                       value.c_str(),
+                                                       asString);
+  }
+
+  std::vector<std::string> GetCacheEntryKeys()
+  {
+    std::vector<std::string> definitions;
+    definitions.reserve(this->GetSize());
+    cmCacheManager::CacheIterator cit = this->GetCacheIterator();
+    for ( cit.Begin(); !cit.IsAtEnd(); cit.Next() )
+      {
+      definitions.push_back(cit.GetName());
+      }
+    return definitions;
+  }
 
   /** Get the version of CMake that wrote the cache.  */
   unsigned int GetCacheMajorVersion() const
@@ -148,7 +217,8 @@ public:
 protected:
   ///! Add an entry into the cache
   void AddCacheEntry(const std::string& key, const char* value,
-                     const char* helpString, CacheEntryType type);
+                     const char* helpString,
+                     cmConfiguration::CacheEntryType type);
 
   ///! Get a cache entry object for a key
   CacheEntry *GetCacheEntry(const std::string& key);
@@ -174,6 +244,7 @@ private:
   // Only cmake and cmMakefile should be able to add cache values
   // the commands should never use the cmCacheManager directly
   friend class cmMakefile; // allow access to add cache values
+  friend class cmConfiguration; // allow access to add cache values
   friend class cmake; // allow access to add cache values
   friend class cmMarkAsAdvancedCommand; // allow access to add cache values
 };

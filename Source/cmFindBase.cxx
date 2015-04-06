@@ -12,6 +12,7 @@
 #include "cmFindBase.h"
 
 #include "cmAlgorithms.h"
+#include "cmConfiguration.h"
 
 cmFindBase::cmFindBase()
 {
@@ -366,18 +367,18 @@ bool cmFindBase::CheckForVariableInCache()
   if(const char* cacheValue =
      this->Makefile->GetDefinition(this->VariableName))
     {
-    cmCacheManager::CacheIterator it =
-      this->Makefile->GetCacheManager()->
-      GetCacheIterator(this->VariableName.c_str());
+    cmConfiguration* config = this->Makefile->GetConfiguration();
+    const char* cacheEntry = config->GetCacheEntryValue(this->VariableName);
     bool found = !cmSystemTools::IsNOTFOUND(cacheValue);
-    bool cached = !it.IsAtEnd();
+    bool cached = cacheEntry ? true : false;
     if(found)
       {
       // If the user specifies the entry on the command line without a
       // type we should add the type and docstring but keep the
       // original value.  Tell the subclass implementations to do
       // this.
-      if(cached && it.GetType() == cmCacheManager::UNINITIALIZED)
+      if(cached && config->GetCacheEntryType(this->VariableName)
+                                            == cmConfiguration::UNINITIALIZED)
         {
         this->AlreadyInCacheWithoutMetaInfo = true;
         }
@@ -385,7 +386,8 @@ bool cmFindBase::CheckForVariableInCache()
       }
     else if(cached)
       {
-      const char* hs = it.GetProperty("HELPSTRING");
+      const char* hs = config->GetCacheEntryProperty(this->VariableName,
+                                                     "HELPSTRING");
       this->VariableDocumentation = hs?hs:"(none)";
       }
     }

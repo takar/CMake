@@ -16,7 +16,7 @@
 #include <QCoreApplication>
 
 #include "cmake.h"
-#include "cmCacheManager.h"
+#include "cmConfiguration.h"
 #include "cmSystemTools.h"
 #include "cmExternalMakefileProjectGenerator.h"
 
@@ -94,7 +94,7 @@ void QCMake::setBinaryDirectory(const QString& _dir)
     {
     this->BinaryDirectory = QDir::fromNativeSeparators(dir);
     emit this->binaryDirChanged(this->BinaryDirectory);
-    cmCacheManager *cachem = this->CMakeInstance->GetCacheManager();
+    cmConfiguration *config = this->CMakeInstance->GetConfiguration();
     this->setGenerator(QString());
     if(!this->CMakeInstance->LoadCache(
       this->BinaryDirectory.toLocal8Bit().data()))
@@ -110,15 +110,15 @@ void QCMake::setBinaryDirectory(const QString& _dir)
 
     QCMakePropertyList props = this->properties();
     emit this->propertiesChanged(props);
-    const char* homeDir = cachem->GetCacheEntryValue("CMAKE_HOME_DIRECTORY");
+    const char* homeDir = config->GetCacheEntryValue("CMAKE_HOME_DIRECTORY");
     if (homeDir)
       {
       setSourceDirectory(QString::fromLocal8Bit(homeDir));
       }
-    const char* gen = cachem->GetCacheEntryValue("CMAKE_GENERATOR");
+    const char* gen = config->GetCacheEntryValue("CMAKE_GENERATOR");
     if (gen)
       {
-      const char* extraGen = cachem
+      const char* extraGen = config
                         ->GetInitializedCacheValue("CMAKE_EXTRA_GENERATOR");
       std::string curGen = cmExternalMakefileProjectGenerator::
         CreateFullGeneratorName(gen, extraGen? extraGen : "");
@@ -195,12 +195,12 @@ void QCMake::setProperties(const QCMakePropertyList& newProps)
   QStringList toremove;
 
   // set the value of properties
-  cmCacheManager *cachem = this->CMakeInstance->GetCacheManager();
-  std::vector<std::string> cacheKeys = cachem->GetCacheEntryKeys();
+  cmConfiguration *config = this->CMakeInstance->GetConfiguration();
+  std::vector<std::string> cacheKeys = config->GetCacheEntryKeys();
   for(std::vector<std::string>::const_iterator it = cacheKeys.begin();
       it != cacheKeys.end(); ++it)
     {
-    cmCacheManager::CacheEntryType t = cachem->GetCacheEntryType(*it);
+    cmCacheManager::CacheEntryType t = config->GetCacheEntryType(*it);
     if(t == cmCacheManager::INTERNAL ||
        t == cmCacheManager::STATIC)
       {
@@ -219,11 +219,11 @@ void QCMake::setProperties(const QCMakePropertyList& newProps)
       prop = props[idx];
       if(prop.Value.type() == QVariant::Bool)
         {
-        cachem->SetCacheEntryValue(*it, prop.Value.toBool() ? "ON" : "OFF");
+        config->SetCacheEntryValue(*it, prop.Value.toBool() ? "ON" : "OFF");
         }
       else
         {
-        cachem->SetCacheEntryValue(*it,
+        config->SetCacheEntryValue(*it,
                                    prop.Value.toString().toLocal8Bit().data());
         }
       props.removeAt(idx);
@@ -236,7 +236,7 @@ void QCMake::setProperties(const QCMakePropertyList& newProps)
     {
     this->CMakeInstance->UnwatchUnusedCli(s.toLocal8Bit().data());
 
-    cachem->RemoveCacheEntry(s.toLocal8Bit().data());
+    config->RemoveCacheEntry(s.toLocal8Bit().data());
     }
 
   // add some new properites
@@ -281,12 +281,12 @@ QCMakePropertyList QCMake::properties() const
 {
   QCMakePropertyList ret;
 
-  cmCacheManager *cachem = this->CMakeInstance->GetCacheManager();
-  std::vector<std::string> cacheKeys = cachem->GetCacheEntryKeys();
+  cmConfiguration *config = this->CMakeInstance->GetConfiguration();
+  std::vector<std::string> cacheKeys = config->GetCacheEntryKeys();
   for (std::vector<std::string>::const_iterator i = cacheKeys.begin();
         i != cacheKeys.end(); ++i)
     {
-    cmCacheManager::CacheEntryType t = cachem->GetCacheEntryType(*i);
+    cmCacheManager::CacheEntryType t = config->GetCacheEntryType(*i);
     if(t == cmCacheManager::INTERNAL ||
        t == cmCacheManager::STATIC ||
        t == cmCacheManager::UNINITIALIZED)
@@ -294,14 +294,14 @@ QCMakePropertyList QCMake::properties() const
       continue;
       }
 
-    const char* cachedValue = cachem->GetCacheEntryValue(*i);
+    const char* cachedValue = config->GetCacheEntryValue(*i);
 
     QCMakeProperty prop;
     prop.Key = QString::fromLocal8Bit(i->c_str());
     prop.Help = QString::fromLocal8Bit(
-                            cachem->GetCacheEntryProperty(*i, "HELPSTRING"));
+                            config->GetCacheEntryProperty(*i, "HELPSTRING"));
     prop.Value = QString::fromLocal8Bit(cachedValue);
-    prop.Advanced = cachem->GetCacheEntryPropertyAsBool(*i, "ADVANCED");
+    prop.Advanced = config->GetCacheEntryPropertyAsBool(*i, "ADVANCED");
     if(t == cmCacheManager::BOOL)
       {
       prop.Type = QCMakeProperty::BOOL;
@@ -319,7 +319,7 @@ QCMakePropertyList QCMake::properties() const
       {
       prop.Type = QCMakeProperty::STRING;
       const char* stringsProperty =
-                                cachem->GetCacheEntryProperty(*i, "STRINGS");
+                                config->GetCacheEntryProperty(*i, "STRINGS");
       if (stringsProperty)
         {
         prop.Strings = QString::fromLocal8Bit(stringsProperty).split(";");

@@ -10,6 +10,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmFindPathCommand.h"
+#include "cmCacheManager.h"
 
 #include <cmsys/Glob.hxx>
 
@@ -40,7 +41,7 @@ bool cmFindPathCommand
         this->VariableName, "",
         this->VariableDocumentation.c_str(),
         (this->IncludeFileInPath ?
-         cmConfiguration::FILEPATH :cmConfiguration::PATH)
+         cmCacheManager::FILEPATH :cmCacheManager::PATH)
         );
       }
     return true;
@@ -53,7 +54,7 @@ bool cmFindPathCommand
       (this->VariableName, result.c_str(),
        this->VariableDocumentation.c_str(),
        (this->IncludeFileInPath) ?
-       cmConfiguration::FILEPATH :cmConfiguration::PATH);
+       cmCacheManager::FILEPATH :cmCacheManager::PATH);
     return true;
     }
   this->Makefile->AddCacheDefinition
@@ -61,7 +62,7 @@ bool cmFindPathCommand
      (this->VariableName + "-NOTFOUND").c_str(),
      this->VariableDocumentation.c_str(),
      (this->IncludeFileInPath) ?
-     cmConfiguration::FILEPATH :cmConfiguration::PATH);
+     cmCacheManager::FILEPATH :cmCacheManager::PATH);
   return true;
 }
 

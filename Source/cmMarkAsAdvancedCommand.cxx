@@ -36,20 +36,20 @@ bool cmMarkAsAdvancedCommand
   for(; i < args.size(); ++i)
     {
     std::string variable = args[i];
-    cmConfiguration* config = this->Makefile->GetConfiguration();
-    if (!config->GetCacheEntryValue(variable))
+    cmCacheManager* manager = this->Makefile->GetCacheManager();
+    if (!manager->GetCacheEntryValue(variable))
       {
-      config->AddCacheEntry(variable, 0, 0, cmConfiguration::UNINITIALIZED);
+      manager->AddCacheEntry(variable, 0, 0, cmCacheManager::UNINITIALIZED);
       overwrite = true;
       }
-    if (!config->GetCacheEntryValue(variable))
+    if (!manager->GetCacheEntryValue(variable))
       {
       cmSystemTools::Error("This should never happen...");
       return false;
       }
-    if (!config->GetCacheEntryProperty(variable, "ADVANCED") || overwrite)
+    if (!manager->GetCacheEntryProperty(variable, "ADVANCED") || overwrite)
       {
-      config->SetCacheEntryProperty(variable, "ADVANCED", value);
+      manager->SetCacheEntryProperty(variable, "ADVANCED", value);
       }
     }
   return true;

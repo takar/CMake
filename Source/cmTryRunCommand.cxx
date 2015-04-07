@@ -10,6 +10,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmTryRunCommand.h"
+#include "cmCacheManager.h"
 #include "cmTryCompileCommand.h"
 #include <cmsys/FStream.hxx>
 
@@ -216,7 +217,7 @@ void cmTryRunCommand::RunExecutable(const std::string& runArgs,
     }
   this->Makefile->AddCacheDefinition(this->RunResultVariable, retChar,
                                      "Result of TRY_RUN",
-                                     cmConfiguration::INTERNAL);
+                                     cmCacheManager::INTERNAL);
 }
 
 /* This is only used when cross compiling. Instead of running the
@@ -261,14 +262,14 @@ void cmTryRunCommand::DoNotRunExecutable(const std::string& runArgs,
     this->Makefile->AddCacheDefinition(this->RunResultVariable,
                                        "PLEASE_FILL_OUT-FAILED_TO_RUN",
                                        comment.c_str(),
-                                       cmConfiguration::STRING);
+                                       cmCacheManager::STRING);
 
-    cmConfiguration* config = this->Makefile->GetConfiguration();
+    cmCacheManager* manager = this->Makefile->GetCacheManager();
     const char* existingValue
-                        = config->GetCacheEntryValue(this->RunResultVariable);
+                      = manager->GetCacheEntryValue(this->RunResultVariable);
     if (existingValue)
       {
-      config->SetCacheEntryProperty(this->RunResultVariable, "ADVANCED", "1");
+      manager->SetCacheEntryProperty(this->RunResultVariable, "ADVANCED", "1");
       }
 
     error = true;
@@ -289,14 +290,14 @@ void cmTryRunCommand::DoNotRunExecutable(const std::string& runArgs,
       this->Makefile->AddCacheDefinition(internalRunOutputName,
                                          "PLEASE_FILL_OUT-NOTFOUND",
                                          comment.c_str(),
-                                         cmConfiguration::STRING);
-      cmConfiguration* config = this->Makefile->GetConfiguration();
+                                         cmCacheManager::STRING);
+      cmCacheManager* manager = this->Makefile->GetCacheManager();
       const char* existing =
-          config->GetCacheEntryValue(internalRunOutputName);
+          manager->GetCacheEntryValue(internalRunOutputName);
       if (existing)
         {
-        config->SetCacheEntryProperty(internalRunOutputName,
-                                      "ADVANCED", "1");
+        manager->SetCacheEntryProperty(internalRunOutputName,
+                                       "ADVANCED", "1");
         }
 
       error = true;

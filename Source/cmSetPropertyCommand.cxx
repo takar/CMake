@@ -14,6 +14,7 @@
 #include "cmSetTestsPropertiesCommand.h"
 #include "cmSetSourceFilesPropertiesCommand.h"
 
+#include "cmCacheManager.h"
 
 //----------------------------------------------------------------------------
 cmSetPropertyCommand::cmSetPropertyCommand()
@@ -425,7 +426,7 @@ bool cmSetPropertyCommand::HandleCacheMode()
     }
   else if(this->PropertyName == "TYPE")
     {
-    if(!cmConfiguration::IsCacheEntryType(this->PropertyValue.c_str()))
+    if(!cmCacheManager::IsType(this->PropertyValue.c_str()))
       {
       std::ostringstream e;
       e << "given invalid CACHE entry TYPE \"" << this->PropertyValue << "\"";
@@ -452,7 +453,7 @@ bool cmSetPropertyCommand::HandleCacheMode()
     cmMakefile* mf = this->GetMakefile();
     cmake* cm = mf->GetCMakeInstance();
     const char* existingValue
-                          = cm->GetConfiguration()->GetCacheEntryValue(*ni);
+                          = cm->GetCacheManager()->GetCacheEntryValue(*ni);
     if(existingValue)
       {
       if(!this->HandleCacheEntry(*ni))
@@ -478,19 +479,20 @@ bool cmSetPropertyCommand::HandleCacheEntry(std::string const& cacheKey)
   // Set or append the property.
   const char* name = this->PropertyName.c_str();
   const char* value = this->PropertyValue.c_str();
-  cmConfiguration* config = this->Makefile->GetConfiguration();
+  cmCacheManager* manager = this->Makefile->GetCacheManager();
   if (this->Remove)
     {
-    config->RemoveCacheEntryProperty(cacheKey, name);
+    manager->RemoveCacheEntryProperty(cacheKey, name);
+    return true;
     }
   if(this->AppendMode)
     {
-    config->AppendCacheEntryProperty(cacheKey, name, value,
-                                     this->AppendAsString);
+    manager->AppendCacheEntryProperty(cacheKey, name, value,
+                                      this->AppendAsString);
     }
   else
     {
-    config->SetCacheEntryProperty(cacheKey, name, value);
+    manager->SetCacheEntryProperty(cacheKey, name, value);
     }
 
   return true;

@@ -1181,7 +1181,7 @@ void cmTarget::ClearDependencyInformation( cmMakefile& mf,
   if (this->RecordDependencies)
     {
     mf.AddCacheDefinition(depname, "",
-                          "Dependencies for target", cmConfiguration::STATIC);
+                          "Dependencies for target", cmCacheManager::STATIC);
     }
   else
     {
@@ -1369,7 +1369,7 @@ void cmTarget::AddLinkLibrary(cmMakefile& mf,
     dependencies += ";";
     mf.AddCacheDefinition( targetEntry, dependencies.c_str(),
                            "Dependencies for the target",
-                           cmConfiguration::STATIC );
+                           cmCacheManager::STATIC );
     }
 
 }

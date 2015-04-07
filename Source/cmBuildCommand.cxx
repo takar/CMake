@@ -147,6 +147,6 @@ bool cmBuildCommand
                                  makecommand.c_str(),
                                  "Command used to build entire project "
                                  "from the command line.",
-                                 cmConfiguration::STRING);
+                                 cmCacheManager::STRING);
   return true;
 }

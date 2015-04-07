@@ -297,13 +297,15 @@ the feature-appropriate include directory
   target_link_libraries(consumer_no foo)
 
 Supported Compilers
-===============================
+===================
 
-Currently the supported set of compilers for the
-:command:`target_compile_features` command and :prop_tgt:`CXX_STANDARD` target
-property is:
+CMake is currently aware of the language standards and features
+available from the following
+:variable:`compiler ids <CMAKE_<LANG>_COMPILER_ID>`
+as of the versions specified for each:
 
-- Apple Clang ("AppleClang") for Xcode versions 4.4 though 6.1.
-- GNU compiler versions 4.4 through 5.0 on UNIX and Apple ("GNU").
-- Microsoft Visual Studio ("MSVC") for versions 2010 through 2015.
-- Oracle SolarisStudio ("SunPro") version 12.4.
+* ``AppleClang``: Apple Clang for Xcode versions 4.4 though 6.2.
+* ``Clang``: Clang compiler versions 2.9 through 3.4.
+* ``GNU``: GNU compiler versions 4.4 through 5.0.
+* ``MSVC``: Microsoft Visual Studio versions 2010 through 2015.
+* ``SunPro``: Oracle SolarisStudio version 12.4.

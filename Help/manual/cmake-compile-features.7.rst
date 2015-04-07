@@ -295,3 +295,15 @@ the feature-appropriate include directory
 
   add_executable(consumer_no consumer_no.cpp)
   target_link_libraries(consumer_no foo)
+
+Supported Compilers
+===============================
+
+Currently the supported set of compilers for the
+:command:`target_compile_features` command and :prop_tgt:`CXX_STANDARD` target
+property is:
+
+- Apple Clang ("AppleClang") for Xcode versions 4.4 though 6.1.
+- GNU compiler versions 4.4 through 5.0 on UNIX and Apple ("GNU").
+- Microsoft Visual Studio ("MSVC") for versions 2010 through 2015.
+- Oracle SolarisStudio ("SunPro") version 12.4.

@@ -18,7 +18,7 @@
 #include "cmGlobalGenerator.h"
 #include "cmLocalGenerator.h"
 #include "cmCommands.h"
-#include "cmConfiguration.h"
+#include "cmCacheManager.h"
 #include "cmFunctionBlocker.h"
 #include "cmListFileCache.h"
 #include "cmCommandArgumentParserHelper.h"
@@ -1805,16 +1805,16 @@ void cmMakefile::AddDefinition(const std::string& name, const char* value)
 
 void cmMakefile::AddCacheDefinition(const std::string& name, const char* value,
                                     const char* doc,
-                                    cmConfiguration::CacheEntryType type,
+                                    cmCacheManager::CacheEntryType type,
                                     bool force)
 {
   bool haveVal = value ? true : false;
   std::string val = haveVal ? value : "";
   const char* existingValue =
-    this->GetConfiguration()->GetInitializedCacheValue(name);
+    this->GetCacheManager()->GetInitializedCacheValue(name);
   if(existingValue
-      && (this->GetConfiguration()->GetCacheEntryType(name)
-                                            == cmConfiguration::UNINITIALIZED))
+      && (this->GetCacheManager()->GetCacheEntryType(name)
+                                            == cmCacheManager::UNINITIALIZED))
     {
     // if this is not a force, then use the value from the cache
     // if it is a force, then use the value being passed in
@@ -1823,7 +1823,7 @@ void cmMakefile::AddCacheDefinition(const std::string& name, const char* value,
       val = existingValue;
       haveVal = true;
       }
-    if ( type == cmConfiguration::PATH || type == cmConfiguration::FILEPATH )
+    if ( type == cmCacheManager::PATH || type == cmCacheManager::FILEPATH )
       {
       std::vector<std::string>::size_type cc;
       std::vector<std::string> files;
@@ -1842,14 +1842,14 @@ void cmMakefile::AddCacheDefinition(const std::string& name, const char* value,
         nvalue += files[cc];
         }
 
-      this->GetConfiguration()->AddCacheEntry(name, nvalue.c_str(), doc, type);
-      val = this->GetConfiguration()->GetInitializedCacheValue(name);
+      this->GetCacheManager()->AddCacheEntry(name, nvalue.c_str(), doc, type);
+      val = this->GetCacheManager()->GetInitializedCacheValue(name);
       haveVal = true;
       }
 
     }
-  this->GetConfiguration()->AddCacheEntry(name, haveVal ? val.c_str() : 0,
-                                          doc, type);
+  this->GetCacheManager()->AddCacheEntry(name, haveVal ? val.c_str() : 0,
+                                         doc, type);
   // if there was a definition then remove it
   this->Internal->VarStack.top().Set(name, 0);
 }
@@ -1976,7 +1976,7 @@ void cmMakefile::RemoveDefinition(const std::string& name)
 
 void cmMakefile::RemoveCacheDefinition(const std::string& name)
 {
-  this->GetConfiguration()->RemoveCacheEntry(name);
+  this->GetCacheManager()->RemoveCacheEntry(name);
 }
 
 void cmMakefile::SetProjectName(const char* p)
@@ -2433,7 +2433,7 @@ bool cmMakefile::IsDefinitionSet(const std::string& name) const
   this->Internal->VarUsageStack.top().insert(name);
   if(!def)
     {
-    def = this->GetConfiguration()->GetInitializedCacheValue(name);
+    def = this->GetCacheManager()->GetInitializedCacheValue(name);
     }
 #ifdef CMAKE_BUILD_WITH_CMAKE
   if(cmVariableWatch* vv = this->GetVariableWatch())
@@ -2458,7 +2458,7 @@ const char* cmMakefile::GetDefinition(const std::string& name) const
   const char* def = this->Internal->VarStack.top().Get(name);
   if(!def)
     {
-    def = this->GetConfiguration()->GetInitializedCacheValue(name);
+    def = this->GetCacheManager()->GetInitializedCacheValue(name);
     }
 #ifdef CMAKE_BUILD_WITH_CMAKE
   cmVariableWatch* vv = this->GetVariableWatch();
@@ -2500,7 +2500,7 @@ std::vector<std::string> cmMakefile
     res.insert(res.end(), definitions.begin(), definitions.end());
     }
   std::vector<std::string> cacheKeys =
-      this->GetConfiguration()->GetCacheEntryKeys();
+      this->GetCacheManager()->GetCacheEntryKeys();
   res.insert(res.end(), cacheKeys.begin(), cacheKeys.end());
 
   std::sort(res.begin(), res.end());
@@ -2801,8 +2801,6 @@ cmake::MessageType cmMakefile::ExpandVariablesInStringNew(
   openstack.push(t_lookup());
   cmake::MessageType mtype = cmake::LOG;
 
-  cmConfiguration* config = this->GetCMakeInstance()->GetConfiguration();
-
   do
     {
     char inc = *in;
@@ -2836,7 +2834,8 @@ cmake::MessageType cmMakefile::ExpandVariablesInStringNew(
               value = cmSystemTools::GetEnv(lookup.c_str());
               break;
             case CACHE:
-              value = config->GetCacheEntryValue(lookup);
+              value = this->GetCacheManager()
+                          ->GetInitializedCacheValue(lookup);
               break;
             }
           // Get the string we're meant to append to.
@@ -3616,7 +3615,7 @@ int cmMakefile::TryCompile(const std::string& srcdir,
       // Add this before the user-provided CMake arguments in case
       // one of the arguments is -DCMAKE_BUILD_TYPE=...
       cm.AddCacheEntry("CMAKE_BUILD_TYPE", config,
-                       "Build configuration", cmConfiguration::STRING);
+                       "Build configuration", cmCacheManager::STRING);
       }
     }
   // if cmake args were provided then pass them in
@@ -3655,12 +3654,12 @@ int cmMakefile::TryCompile(const std::string& srcdir,
   if(this->IsOn("CMAKE_SUPPRESS_DEVELOPER_WARNINGS"))
     {
     cm.AddCacheEntry("CMAKE_SUPPRESS_DEVELOPER_WARNINGS",
-                     "TRUE", "", cmConfiguration::INTERNAL);
+                     "TRUE", "", cmCacheManager::INTERNAL);
     }
   else
     {
     cm.AddCacheEntry("CMAKE_SUPPRESS_DEVELOPER_WARNINGS",
-                     "FALSE", "", cmConfiguration::INTERNAL);
+                     "FALSE", "", cmCacheManager::INTERNAL);
     }
   if (cm.Configure() != 0)
     {
@@ -3734,9 +3733,9 @@ void cmMakefile::GetListOfMacros(std::string& macros) const
   macros = cmJoin(this->MacrosList, ";");
 }
 
-cmConfiguration *cmMakefile::GetConfiguration() const
+cmCacheManager *cmMakefile::GetCacheManager() const
 {
-  return this->GetCMakeInstance()->GetConfiguration();
+  return this->GetCMakeInstance()->GetCacheManager();
 }
 
 void cmMakefile::DisplayStatus(const char* message, float s) const
@@ -4903,7 +4902,7 @@ bool cmMakefile::SetPolicy(cmPolicies::PolicyID id,
   if(id == cmPolicies::CMP0001 &&
      (status == cmPolicies::WARN || status == cmPolicies::OLD))
     {
-    if(!(this->GetConfiguration()
+    if(!(this->GetCacheManager()
          ->GetInitializedCacheValue("CMAKE_BACKWARDS_COMPATIBILITY")))
       {
       // Set it to 2.4 because that is the last version where the
@@ -4913,7 +4912,7 @@ bool cmMakefile::SetPolicy(cmPolicies::PolicyID id,
          "For backwards compatibility, what version of CMake "
          "commands and "
          "syntax should this version of CMake try to support.",
-         cmConfiguration::STRING);
+         cmCacheManager::STRING);
       }
     }
 

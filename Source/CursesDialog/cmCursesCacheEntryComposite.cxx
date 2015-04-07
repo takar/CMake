@@ -19,7 +19,6 @@
 #include "cmCursesDummyWidget.h"
 #include "../cmSystemTools.h"
 #include "../cmake.h"
-#include "../cmConfiguration.h"
 
 #include <assert.h>
 
@@ -51,11 +50,11 @@ cmCursesCacheEntryComposite::cmCursesCacheEntryComposite(
     }
 
   this->Entry = 0;
-  const char* value = cm->GetConfiguration()->GetCacheEntryValue(key);
+  const char* value = cm->GetCacheManager()->GetCacheEntryValue(key);
   assert(value);
-  switch (cm->GetConfiguration()->GetCacheEntryType(key))
+  switch (cm->GetCacheManager()->GetCacheEntryType(key))
     {
-    case cmConfiguration::BOOL:
+    case cmCacheManager::BOOL:
       this->Entry = new cmCursesBoolWidget(this->EntryWidth, 1, 1, 1);
       if (cmSystemTools::IsOn(value))
         {
@@ -66,17 +65,17 @@ cmCursesCacheEntryComposite::cmCursesCacheEntryComposite(
         static_cast<cmCursesBoolWidget*>(this->Entry)->SetValueAsBool(false);
         }
       break;
-    case cmConfiguration::PATH:
+    case cmCacheManager::PATH:
       this->Entry = new cmCursesPathWidget(this->EntryWidth, 1, 1, 1);
       static_cast<cmCursesPathWidget*>(this->Entry)->SetString(value);
       break;
-    case cmConfiguration::FILEPATH:
+    case cmCacheManager::FILEPATH:
       this->Entry = new cmCursesFilePathWidget(this->EntryWidth, 1, 1, 1);
       static_cast<cmCursesFilePathWidget*>(this->Entry)->SetString(value);
       break;
-    case cmConfiguration::STRING:
+    case cmCacheManager::STRING:
       {
-      const char* stringsProp = cm->GetConfiguration()
+      const char* stringsProp = cm->GetCacheManager()
                                   ->GetCacheEntryProperty(key, "STRINGS");
       if(stringsProp)
         {
@@ -99,7 +98,7 @@ cmCursesCacheEntryComposite::cmCursesCacheEntryComposite(
         }
       break;
       }
-    case cmConfiguration::UNINITIALIZED:
+    case cmCacheManager::UNINITIALIZED:
       cmSystemTools::Error("Found an undefined variable: ",
                            key.c_str());
       break;

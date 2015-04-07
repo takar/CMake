@@ -11,6 +11,7 @@
 ============================================================================*/
 #include "cmCoreTryCompile.h"
 #include "cmake.h"
+#include "cmCacheManager.h"
 #include "cmLocalGenerator.h"
 #include "cmGlobalGenerator.h"
 #include "cmAlgorithms.h"
@@ -526,7 +527,7 @@ int cmCoreTryCompile::TryCompileCode(std::vector<std::string> const& argv)
   this->Makefile->AddCacheDefinition(argv[0],
                                      (res == 0 ? "TRUE" : "FALSE"),
                                      "Result of TRY_COMPILE",
-                                     cmConfiguration::INTERNAL);
+                                     cmCacheManager::INTERNAL);
 
   if (!outputVariable.empty())
     {

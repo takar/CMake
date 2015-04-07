@@ -16,6 +16,7 @@
 #include "cmMakefile.h"
 #include "cmSystemTools.h"
 #include "cmSourceFile.h"
+#include "cmCacheManager.h"
 #include "cmGeneratorTarget.h"
 #include "cmCustomCommandGenerator.h"
 #include "cmake.h"
@@ -2330,7 +2331,7 @@ void cmLocalVisualStudio7Generator::ReadAndStoreExternalGUID(
     AddCacheEntry(guidStoreName.c_str(),
                   parser.GUID.c_str(),
                   "Stored GUID",
-                  cmConfiguration::INTERNAL);
+                  cmCacheManager::INTERNAL);
 }
 
 

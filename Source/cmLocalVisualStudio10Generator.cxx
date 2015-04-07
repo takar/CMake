@@ -118,7 +118,7 @@ void cmLocalVisualStudio10Generator
     AddCacheEntry(guidStoreName.c_str(),
                   parser.GUID.c_str(),
                   "Stored GUID",
-                  cmConfiguration::INTERNAL);
+                  cmCacheManager::INTERNAL);
 }
 
 //----------------------------------------------------------------------------

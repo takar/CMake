@@ -10,6 +10,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmFindProgramCommand.h"
+#include "cmCacheManager.h"
 #include <stdlib.h>
 
 #if defined(__APPLE__)
@@ -36,7 +37,7 @@ bool cmFindProgramCommand
       {
       this->Makefile->AddCacheDefinition(this->VariableName, "",
                                          this->VariableDocumentation.c_str(),
-                                         cmConfiguration::FILEPATH);
+                                         cmCacheManager::FILEPATH);
       }
     return true;
     }
@@ -48,14 +49,14 @@ bool cmFindProgramCommand
     this->Makefile->AddCacheDefinition(this->VariableName,
                                        result.c_str(),
                                        this->VariableDocumentation.c_str(),
-                                       cmConfiguration::FILEPATH);
+                                       cmCacheManager::FILEPATH);
 
     return true;
     }
   this->Makefile->AddCacheDefinition(this->VariableName,
                                  (this->VariableName + "-NOTFOUND").c_str(),
                                  this->VariableDocumentation.c_str(),
-                                 cmConfiguration::FILEPATH);
+                                 cmCacheManager::FILEPATH);
   return true;
 }
 

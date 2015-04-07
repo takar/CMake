@@ -89,7 +89,7 @@ void cmGlobalVisualStudio7Generator
       "Semicolon separated list of supported configuration types, "
       "only supports Debug, Release, MinSizeRel, and RelWithDebInfo, "
       "anything else will be ignored.",
-      cmConfiguration::STRING);
+      cmCacheManager::STRING);
     }
 
   // Create list of configurations requested by user's cache, if any.
@@ -109,7 +109,7 @@ void cmGlobalVisualStudio7Generator
     mf->AddCacheDefinition
       ("CMAKE_MSVCIDE_RUN_PATH", extraPath,
        "Saved environment variable CMAKE_MSVCIDE_RUN_PATH",
-       cmConfiguration::STATIC);
+       cmCacheManager::STATIC);
     }
 
 }
@@ -335,7 +335,7 @@ void cmGlobalVisualStudio7Generator::GenerateConfigurations(cmMakefile* mf)
     "Semicolon separated list of supported configuration types, "
     "only supports Debug, Release, MinSizeRel, and RelWithDebInfo, "
     "anything else will be ignored.",
-    cmConfiguration::STRING);
+    cmCacheManager::STRING);
 }
 
 void cmGlobalVisualStudio7Generator::Generate()
@@ -970,7 +970,7 @@ void cmGlobalVisualStudio7Generator::CreateGUID(const std::string& name)
   ret = cmSystemTools::UpperCase(ret);
   this->CMakeInstance->AddCacheEntry(guidStoreName.c_str(),
                                      ret.c_str(), "Stored GUID",
-                                     cmConfiguration::INTERNAL);
+                                     cmCacheManager::INTERNAL);
 }
 
 std::vector<std::string> *cmGlobalVisualStudio7Generator::GetConfigurations()

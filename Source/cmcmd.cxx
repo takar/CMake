@@ -782,7 +782,13 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
         compress = cmSystemTools::TarCompressGZip;
         ++nCompress;
         }
-      if ( nCompress > 1 )
+      if ( (format == "7zip" || format == "zip") && nCompress > 0 )
+        {
+        cmSystemTools::Error("Can not use compression flags with format: ",
+          format.c_str());
+        return 1;
+        }
+      else if ( nCompress > 1 )
         {
         cmSystemTools::Error("Can only compress a tar file one way; "
                              "at most one flag of z, j, or J may be used");

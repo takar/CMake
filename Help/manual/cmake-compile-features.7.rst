@@ -299,10 +299,10 @@ the feature-appropriate include directory
 Supported Compilers
 ===================
 
-CMake is currently aware of the language standards and features
-available from the following
-:variable:`compiler ids <CMAKE_<LANG>_COMPILER_ID>`
-as of the versions specified for each:
+CMake is currently aware of the :prop_tgt:`language standards <CXX_STANDARD>`
+and :prop_gbl:`compile features <CMAKE_CXX_KNOWN_FEATURES>` available from
+the following :variable:`compiler ids <CMAKE_<LANG>_COMPILER_ID>` as of the
+versions specified for each:
 
 * ``AppleClang``: Apple Clang for Xcode versions 4.4 though 6.2.
 * ``Clang``: Clang compiler versions 2.9 through 3.4.

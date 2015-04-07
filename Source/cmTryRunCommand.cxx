@@ -148,8 +148,7 @@ bool cmTryRunCommand
       {
       // "run" it and capture the output
       std::string runOutputContents;
-      if (this->Makefile->IsOn("CMAKE_CROSSCOMPILING") &&
-          !this->Makefile->IsDefinitionSet("CMAKE_CROSSCOMPILING_EMULATOR"))
+      if (this->Makefile->IsOn("CMAKE_CROSSCOMPILING"))
         {
         this->DoNotRunExecutable(runArgs,
                                  argv[3],
@@ -195,28 +194,7 @@ void cmTryRunCommand::RunExecutable(const std::string& runArgs,
                                     std::string* out)
 {
   int retVal = -1;
-
-  std::string finalCommand;
-  const std::string emulator =
-  this->Makefile->GetSafeDefinition("CMAKE_CROSSCOMPILING_EMULATOR");
-  if (!emulator.empty())
-    {
-    std::vector<std::string> emulatorWithArgs;
-    cmSystemTools::ExpandListArgument(emulator, emulatorWithArgs);
-    finalCommand += cmSystemTools::ConvertToRunCommandPath(
-                                 emulatorWithArgs[0].c_str());
-    finalCommand += " ";
-    for (std::vector<std::string>::const_iterator ei =
-         emulatorWithArgs.begin()+1;
-         ei != emulatorWithArgs.end(); ++ei)
-      {
-      finalCommand += "\"";
-      finalCommand += *ei;
-      finalCommand += "\"";
-      finalCommand += " ";
-      }
-    }
-  finalCommand += cmSystemTools::ConvertToRunCommandPath(
+  std::string finalCommand = cmSystemTools::ConvertToRunCommandPath(
                                this->OutputFile.c_str());
   if (!runArgs.empty())
     {

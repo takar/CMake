@@ -1,1 +1,0 @@
-Tests[\/]RunCMake[\/]CMP0060[\/]lib[\/]libCMP0060.a

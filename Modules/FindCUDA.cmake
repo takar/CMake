@@ -1265,11 +1265,10 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
   # remove it from the host. This is because -Xcompile -std=c++ will choke nvcc (it uses
   # the C preprocessor).  In order to get this to work correctly, we need to use nvcc's
   # specific c++11 flag.
-  string(REGEX MATCH "-std=c\\+\\+11" _cuda_c11_host_flag_present "${_cuda_host_flags}")
-  if( _cuda_c11_host_flag_present )
+  if( "${_cuda_host_flags}" MATCHES "-std=c\\+\\+11")
     # Add the c++11 flag to nvcc if it isn't already present.  Note that we only look at
     # the main flag instead of the configuration specific flags.
-    string(REGEX MATCH "-std;c\\+\\+11" _cuda_c11_nvcc_flag_present "${CUDA_NVCC_FLAGS}")
+    if( NOT "${CUDA_NVCC_FLAGS}" MATCHES "-std;c\\+\\+11" )
     if( NOT _cuda_c11_nvcc_flag_present )
       list(APPEND nvcc_flags --std c++11)
     endif()

@@ -1192,7 +1192,6 @@ macro(CUDA_WRAP_SRCS cuda_target format generated_files)
     # Add the c++11 flag to nvcc if it isn't already present.  Note that we only look at
     # the main flag instead of the configuration specific flags.
     if( NOT "${CUDA_NVCC_FLAGS}" MATCHES "-std;c\\+\\+11" )
-    if( NOT _cuda_c11_nvcc_flag_present )
       list(APPEND nvcc_flags --std c++11)
     endif()
     string(REGEX REPLACE "[-]+std=c\\+\\+11" "" _cuda_host_flags "${_cuda_host_flags}")

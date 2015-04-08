@@ -4,10 +4,11 @@ CMP0060
 Link libraries by full path even in implicit directories.
 
 Policy :policy:`CMP0003` was introduced with the intention of always
-linking library files by full path when known.  However, on some
-platforms (e.g. HP-UX) the compiler front-end adds alternative library
-search paths for the current architecture (e.g. ``/usr/lib/<arch>`` has
-alternatives to libraries in ``/usr/lib`` for the current architecture).
+linking library files by full path when a full path is given to the
+:command:`target_link_libraries` command.  However, on some platforms
+(e.g. HP-UX) the compiler front-end adds alternative library search paths
+for the current architecture (e.g. ``/usr/lib/<arch>`` has alternatives
+to libraries in ``/usr/lib`` for the current architecture).
 On such platforms the :command:`find_library` may find a library such as
 ``/usr/lib/libfoo.so`` that does not belong to the current architecture.
 

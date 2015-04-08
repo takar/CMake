@@ -65,7 +65,7 @@ public:
     void AppendProperty(const std::string& property, const char* value,
                         bool asString=false);
     void SetProperty(const std::string& property, bool value);
-    std::string GetValue() const { return this->GetEntry().Value; }
+    const char* GetValue() const { return this->GetEntry().Value.c_str(); }
     bool GetValueAsBool() const;
     void SetValue(const char*);
     CacheEntryType GetType() const { return this->GetEntry().Type; }
@@ -146,9 +146,7 @@ public:
       {
       return 0;
       }
-    static std::string value;
-    value = it.GetValue();
-    return value.c_str();
+    return it.GetValue();
   }
 
   const char* GetCacheEntryProperty(std::string const& key,

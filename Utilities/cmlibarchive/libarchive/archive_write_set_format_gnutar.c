@@ -644,6 +644,7 @@ archive_format_gnutar_header(struct archive_write *a, char h[512],
 	format_octal(archive_entry_mode(entry) & 07777,
 	    h + GNUTAR_mode_offset, GNUTAR_mode_size);
 
+	/* GNU tar supports base-256 here, so should never overflow. */
 	if (format_number(archive_entry_uid(entry), h + GNUTAR_uid_offset,
 		GNUTAR_uid_size, GNUTAR_uid_max_size)) {
 		archive_set_error(&a->archive, ERANGE,
@@ -652,7 +653,8 @@ archive_format_gnutar_header(struct archive_write *a, char h[512],
 		ret = ARCHIVE_FAILED;
 	}
 
-	if (format_number(archive_entry_gid(entry), h + GNUTAR_gid_offset, 
+	/* GNU tar supports base-256 here, so should never overflow. */
+	if (format_number(archive_entry_gid(entry), h + GNUTAR_gid_offset,
 		GNUTAR_gid_size, GNUTAR_gid_max_size)) {
 		archive_set_error(&a->archive, ERANGE,
 		    "Numeric group ID %jd too large",

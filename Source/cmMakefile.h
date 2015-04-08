@@ -78,9 +78,6 @@ public:
   bool VariableInitialized(const std::string& ) const;
   /* return true if a variable has been used */
   bool VariableUsed(const std::string& ) const;
-  /** Return whether compatibility features needed for a version of
-      the cache or lower should be enabled.  */
-  bool NeedCacheCompatibility(int major, int minor) const;
 
   /**
    * Construct an empty makefile.
@@ -292,11 +289,10 @@ public:
   /**
    * Add a subdirectory to the build.
    */
-  void AddSubDirectory(const std::string&, bool excludeFromAll=false,
-                       bool preorder = false);
+  void AddSubDirectory(const std::string&, bool excludeFromAll=false);
   void AddSubDirectory(const std::string& fullSrcDir,
                        const std::string& fullBinDir,
-                       bool excludeFromAll, bool preorder,
+                       bool excludeFromAll,
                        bool immediate);
 
   /**
@@ -433,15 +429,6 @@ public:
   bool HasCMP0054AlreadyBeenReported(
     cmListFileContext context) const;
 
-  /**
-   * Add an auxiliary directory to the build.
-   */
-  void AddExtraDirectory(const char* dir);
-
-
-  /**
-   * Add an auxiliary directory to the build.
-   */
   void MakeStartDirectoriesCurrent()
     {
       this->AddDefinition("CMAKE_CURRENT_SOURCE_DIR",
@@ -620,12 +607,6 @@ public:
   cmSourceFile* GetOrCreateSource(const std::string& sourceName,
                                   bool generated = false);
 
-  /**
-   * Obtain a list of auxiliary source directories.
-   */
-  const std::vector<std::string>& GetAuxSourceDirectories() const
-    {return this->AuxSourceDirectories;}
-
   //@{
   /**
    * Return a list of extensions associated with source and header
@@ -792,10 +773,6 @@ public:
   ///enabled.
   void EnableLanguage(std::vector<std::string>const& languages, bool optional);
 
-  /**
-   * Set/Get the name of the parent directories CMakeLists file
-   * given a current CMakeLists file name
-   */
   cmCacheManager *GetCacheManager() const;
 
   /**
@@ -878,10 +855,6 @@ public:
 
   ///! Initialize a makefile from its parent
   void InitializeFromParent();
-
-  ///! Set/Get the preorder flag
-  void SetPreOrder(bool p) { this->PreOrder = p; }
-  bool GetPreOrder() const { return this->PreOrder; }
 
   void AddInstallGenerator(cmInstallGenerator* g)
     { if(g) this->InstallGenerators.push_back(g); }
@@ -976,9 +949,6 @@ protected:
   // Check for a an unused variable
   void CheckForUnused(const char* reason, const std::string& name) const;
 
-  std::string Prefix;
-  std::vector<std::string> AuxSourceDirectories; //
-
   std::string cmStartDirectory;
   std::string StartOutputDirectory;
   std::string cmHomeDirectory;
@@ -1008,9 +978,8 @@ protected:
   // directories.
   std::set<std::string> SystemIncludeDirectories;
 
-  std::vector<std::string> ListFiles; // list of command files loaded
-  std::vector<std::string> OutputFiles; // list of command files loaded
-
+  std::vector<std::string> ListFiles;
+  std::vector<std::string> OutputFiles;
 
   cmTarget::LinkLibraryVectorType LinkLibraries;
 
@@ -1067,17 +1036,12 @@ private:
 
   std::vector<std::string> MacrosList;
 
-  std::map<std::string, bool> SubDirectoryOrder;
-
   mutable cmsys::RegularExpression cmDefineRegex;
   mutable cmsys::RegularExpression cmDefine01Regex;
   mutable cmsys::RegularExpression cmAtVarRegex;
   mutable cmsys::RegularExpression cmNamedCurly;
 
   cmPropertyMap Properties;
-
-  // should this makefile be processed before or after processing the parent
-  bool PreOrder;
 
   // Unused variable flags
   bool WarnUnused;

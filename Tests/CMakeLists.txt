@@ -862,6 +862,7 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
   set(CTEST_RUN_CPackComponents ${CTEST_TEST_CPACK})
   set(CTEST_package_X11_TEST ${CTEST_TEST_CPACK})
   set(CTEST_RUN_CPackComponentsForAll ${CTEST_TEST_CPACK})
+  set(CTEST_RUN_CPackComponentsPrefix ${CTEST_TEST_CPACK})
 
   # Do not try to build RPM
   if (NOT RPMBUILD_EXECUTABLE)
@@ -990,6 +991,7 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
           ${build_generator_args}
           --build-project CPackComponentsForAll
           --build-options ${build_options}
+             -DCPACK_GENERATOR:STRING=${CPackGen}
              -DCPACK_BINARY_${CPackGen}:BOOL=ON
              ${CPackRun_CPackComponentWay}
              ${CPackComponentsForAll_BUILD_OPTIONS}
@@ -1033,6 +1035,33 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
         -P ${CMake_SOURCE_DIR}/Tests/CPackTestAllGenerators/RunCPack.cmake
       )
     list(APPEND TEST_BUILD_DIRS "${CMake_BINARY_DIR}/Tests/CPackTestAllGenerators")
+  endif()
+
+  if(CTEST_RUN_CPackComponentsPrefix)
+    set(CPackComponents_BUILD_OPTIONS)
+    if(APPLE)
+      set(CPackComponents_BUILD_OPTIONS -DCPACK_BINARY_DRAGNDROP:BOOL=ON)
+    endif()
+    if(NOT NSIS_MAKENSIS_EXECUTABLE)
+      set(CPackComponents_BUILD_OPTIONS ${CPackComponents_BUILD_OPTIONS}
+        -DCPACK_BINARY_NSIS:BOOL=OFF)
+    endif()
+
+    add_test(CPackComponentsPrefix ${CMAKE_CTEST_COMMAND}
+      --build-and-test
+      "${CMake_SOURCE_DIR}/Tests/CPackComponentsPrefix"
+      "${CMake_BINARY_DIR}/Tests/CPackComponentsPrefix"
+      ${build_generator_args}
+      --build-project CPackComponentsPrefix
+      --build-two-config
+      --build-target package
+      --build-options ${build_options}
+        -DCPACK_BINARY_DEB:BOOL=${CPACK_BINARY_DEB}
+        -DCPACK_BINARY_RPM:BOOL=${CPACK_BINARY_RPM}
+        -DCPACK_BINARY_ZIP:BOOL=ON
+        ${CPackComponents_BUILD_OPTIONS}
+        )
+    list(APPEND TEST_BUILD_DIRS "${CMake_BINARY_DIR}/Tests/CPackComponentsPrefix")
   endif()
 
   if(CTEST_package_X11_TEST)
@@ -1898,6 +1927,17 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
       add_test_VSWinStorePhone(vs12-store81-X86 "Visual Studio 12 2013" WindowsStore 8.1)
       add_test_VSWinStorePhone(vs12-store81-ARM "Visual Studio 12 2013 ARM" WindowsStore 8.1)
       add_test_VSWinStorePhone(vs12-store81-X64 "Visual Studio 12 2013 Win64" WindowsStore 8.1)
+
+      add_test(NAME VSXaml COMMAND ${CMAKE_CTEST_COMMAND}
+        --build-and-test
+          "${CMake_SOURCE_DIR}/Tests/VSXaml"
+          "${CMake_BINARY_DIR}/Tests/VSXaml"
+          --build-generator "Visual Studio 12 2013"
+          --build-project VSXaml
+          --build-config $<CONFIGURATION>
+          --build-options -DCMAKE_SYSTEM_NAME=WindowsStore
+                          -DCMAKE_SYSTEM_VERSION=8.1
+        )
     endif()
     if(vs11 AND wp80)
       add_test_VSWinStorePhone(vs11-phone80-X86 "Visual Studio 11 2012" WindowsPhone 8.0)
@@ -2316,12 +2356,13 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
     "${CMake_BINARY_DIR}/Tests/CTestCoverageCollectGCOV/test.cmake"
     @ONLY ESCAPE_QUOTES)
   add_test(CTestCoverageCollectGCOV ${CMAKE_CTEST_COMMAND}
+    -C \${CTEST_CONFIGURATION_TYPE}
     -S "${CMake_BINARY_DIR}/Tests/CTestCoverageCollectGCOV/test.cmake" -VV
     --output-log "${CMake_BINARY_DIR}/Tests/CTestCoverageCollectGCOV/testOut.log"
     )
   set_tests_properties(CTestCoverageCollectGCOV PROPERTIES
     PASS_REGULAR_EXPRESSION
-    "PASSED with correct output.*Testing/CoverageInfo/echoargs.gcov")
+    "PASSED with correct output.*Testing/CoverageInfo/main.cpp.gcov")
 
   configure_file(
     "${CMake_SOURCE_DIR}/Tests/CTestTestEmptyBinaryDirectory/test.cmake.in"

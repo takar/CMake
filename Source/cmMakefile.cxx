@@ -101,7 +101,6 @@ cmMakefile::cmMakefile(): Internal(new Internals)
 
   this->AddDefaultDefinitions();
   this->Initialize();
-  this->PreOrder = false;
   this->GeneratingBuildSystem = false;
 
   this->SuppressWatches = false;
@@ -113,8 +112,6 @@ cmMakefile::cmMakefile(const cmMakefile& mf): Internal(new Internals)
   this->Internal->VarInitStack.push(mf.Internal->VarInitStack.top());
   this->Internal->VarUsageStack.push(mf.Internal->VarUsageStack.top());
 
-  this->Prefix = mf.Prefix;
-  this->AuxSourceDirectories = mf.AuxSourceDirectories;
   this->cmStartDirectory = mf.cmStartDirectory;
   this->StartOutputDirectory = mf.StartOutputDirectory;
   this->cmHomeDirectory = mf.cmHomeDirectory;
@@ -145,9 +142,7 @@ cmMakefile::cmMakefile(const cmMakefile& mf): Internal(new Internals)
   this->LocalGenerator = mf.LocalGenerator;
   this->FunctionBlockers = mf.FunctionBlockers;
   this->MacrosList = mf.MacrosList;
-  this->SubDirectoryOrder = mf.SubDirectoryOrder;
   this->Properties = mf.Properties;
-  this->PreOrder = mf.PreOrder;
   this->WarnUnused = mf.WarnUnused;
   this->Initialize();
   this->CheckSystemVars = mf.CheckSystemVars;
@@ -187,11 +182,6 @@ unsigned int cmMakefile::GetCacheMajorVersion() const
 unsigned int cmMakefile::GetCacheMinorVersion() const
 {
   return this->GetCacheManager()->GetCacheMinorVersion();
-}
-
-bool cmMakefile::NeedCacheCompatibility(int major, int minor) const
-{
-  return this->GetCacheManager()->NeedCacheCompatibility(major, minor);
 }
 
 cmMakefile::~cmMakefile()
@@ -1697,7 +1687,7 @@ void cmMakefile::ConfigureSubDirectory(cmLocalGenerator *lg2)
 }
 
 void cmMakefile::AddSubDirectory(const std::string& sub,
-                                 bool excludeFromAll, bool preorder)
+                                 bool excludeFromAll)
 {
   // the source path must be made full if it isn't already
   std::string srcPath = sub;
@@ -1719,13 +1709,13 @@ void cmMakefile::AddSubDirectory(const std::string& sub,
 
 
   this->AddSubDirectory(srcPath, binPath,
-                        excludeFromAll, preorder, false);
+                        excludeFromAll, false);
 }
 
 
 void cmMakefile::AddSubDirectory(const std::string& srcPath,
                                  const std::string& binPath,
-                                 bool excludeFromAll, bool preorder,
+                                 bool excludeFromAll,
                                  bool immediate)
 {
   // Make sure the binary directory is unique.
@@ -1747,7 +1737,6 @@ void cmMakefile::AddSubDirectory(const std::string& srcPath,
     {
     lg2->GetMakefile()->SetProperty("EXCLUDE_FROM_ALL", "TRUE");
     }
-  lg2->GetMakefile()->SetPreOrder(preorder);
 
   if (immediate)
     {
@@ -2208,7 +2197,7 @@ void cmMakefile::AddSourceGroup(const std::vector<std::string>& name,
   if(i==lastElement)
     {
     // group already exists, replace its regular expression
-    if ( regex )
+    if ( regex && sg)
       {
       // We only want to set the regular expression.  If there are already
       // source files in the group, we don't want to remove them.
@@ -2224,7 +2213,11 @@ void cmMakefile::AddSourceGroup(const std::vector<std::string>& name,
     sg = this->GetSourceGroup(currentName);
     i = 0; // last component found
     }
-
+  if(!sg)
+    {
+    cmSystemTools::Error("Could not create source group ");
+    return;
+    }
   // build the whole source group path
   const char* fullname = sg->GetFullName();
   cmGlobalGenerator* gg = this->LocalGenerator->GetGlobalGenerator();
@@ -2251,11 +2244,6 @@ void cmMakefile::AddSourceGroup(const std::vector<std::string>& name,
 }
 
 #endif
-
-void cmMakefile::AddExtraDirectory(const char* dir)
-{
-  this->AuxSourceDirectories.push_back(dir);
-}
 
 static bool mightExpandVariablesCMP0019(const char* s)
 {
@@ -4216,8 +4204,19 @@ const char *cmMakefile::GetProperty(const std::string& prop,
     }
   else if (prop == "DEFINITIONS")
     {
-    output += this->DefineFlagsOrig;
-    return output.c_str();
+    switch(this->GetPolicyStatus(cmPolicies::CMP0059))
+      {
+      case cmPolicies::WARN:
+          this->IssueMessage(cmake::AUTHOR_WARNING, this->GetPolicies()->
+                             GetPolicyWarning(cmPolicies::CMP0059));
+      case cmPolicies::OLD:
+        output += this->DefineFlagsOrig;
+        return output.c_str();
+      case cmPolicies::NEW:
+      case cmPolicies::REQUIRED_ALWAYS:
+      case cmPolicies::REQUIRED_IF_USED:
+        break;
+      }
     }
   else if (prop == "LINK_DIRECTORIES")
     {

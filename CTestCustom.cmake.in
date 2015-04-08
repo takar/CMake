@@ -53,6 +53,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "CMakeSetupManifest.xml.*manifest authoring warning.*Unrecognized Element"
   "cc-3968 CC: WARNING File.*" # "implicit" truncation by static_cast
   "ld: warning: directory not found for option .-(F|L)"
+  "ld: warning: in .*/libgcc.a, file is not of required architecture"
   "warning.*This version of Mac OS X is unsupported"
   "clang.*: warning: argument unused during compilation: .-g"
   "note: in expansion of macro" # diagnostic context note
@@ -62,6 +63,18 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Ignore clang's summary warning, assuming prior text has matched some
   # other warning expression:
   "[0-9,]+ warnings? generated."
+
+# scanbuild exceptions
+  "char_traits.h:.*: warning: Null pointer argument in call to string length function"
+  "stl_construct.h:.*: warning: Forming reference to null pointer"
+  ".*stl_uninitialized.h:75:19: warning: Forming reference to null pointer.*"
+  ".*stl_vector.h:.*: warning: Returning null reference.*"
+  "warning: Value stored to 'yymsg' is never read"
+  "warning: Value stored to 'yytoken' is never read"
+  "index_encoder.c.241.2. warning: Value stored to .out_start. is never read"
+  "index.c.*warning: Access to field.*results in a dereference of a null pointer.*loaded from variable.*"
+  "cm_sha2.*warning: Value stored to.*is never read"
+  "testProcess.*warning: Dereference of null pointer .loaded from variable .invalidAddress.."
   )
 
 if(NOT "@CMAKE_GENERATOR@" MATCHES "Xcode")

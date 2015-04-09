@@ -19,6 +19,7 @@
 #include "cmPropertyMap.h"
 #include "cmInstalledFile.h"
 #include "cmCacheManager.h"
+#include "cmState.h"
 
 class cmGlobalGeneratorFactory;
 class cmGlobalGenerator;
@@ -32,6 +33,7 @@ class cmDocumentationSection;
 class cmPolicies;
 class cmTarget;
 class cmGeneratedFileStream;
+class cmState;
 
 /** \brief Represents a cmake invocation.
  *
@@ -177,7 +179,7 @@ class cmake
   static bool ParseCacheEntry(const std::string& entry,
                          std::string& var,
                          std::string& value,
-                         cmCacheManager::CacheEntryType& type);
+                         cmState::CacheEntryType& type);
 
   int LoadCache();
   bool LoadCache(const std::string& path);
@@ -387,6 +389,9 @@ class cmake
 
   void UnwatchUnusedCli(const std::string& var);
   void WatchUnusedCli(const std::string& var);
+
+  cmState* GetState() const { return this->State; }
+
 protected:
   void RunCheckForUnusedVariables();
   void InitializeProperties();
@@ -474,6 +479,8 @@ private:
   std::string GraphVizFile;
   std::vector<std::string> DebugConfigs;
   InstalledFilesMap InstalledFiles;
+
+  cmState* State;
 
   void UpdateConversionPathTable();
 };

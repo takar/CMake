@@ -20,6 +20,7 @@
 #include "cmLocalGenerator.h"
 #include "cmExternalMakefileProjectGenerator.h"
 #include "cmake.h"
+#include "cmState.h"
 #include "cmMakefile.h"
 #include "cmQtAutoGenerators.h"
 #include "cmSourceFile.h"
@@ -179,7 +180,7 @@ void cmGlobalGenerator::ResolveLanguageCompiler(const std::string &lang,
     return;
     }
   const char* cname = this->GetCMakeInstance()->
-    GetCacheManager()->GetInitializedCacheValue(langComp);
+    GetState()->GetInitializedCacheValue(langComp);
   std::string changeVars;
   if(cname && !optional)
     {
@@ -310,7 +311,7 @@ void cmGlobalGenerator::FindMakeProgram(cmMakefile* mf)
     makeProgram += saveFile;
     mf->AddCacheDefinition("CMAKE_MAKE_PROGRAM", makeProgram.c_str(),
                            "make program",
-                           cmCacheManager::FILEPATH);
+                           cmState::FILEPATH);
     }
 }
 
@@ -1115,7 +1116,7 @@ void cmGlobalGenerator::Configure()
   sprintf(num,"%d",static_cast<int>(this->LocalGenerators.size()));
   this->GetCMakeInstance()->AddCacheEntry
     ("CMAKE_NUMBER_OF_LOCAL_GENERATORS", num,
-     "number of local generators", cmCacheManager::INTERNAL);
+     "number of local generators", cmState::INTERNAL);
 
   // check for link libraries and include directories containing "NOTFOUND"
   // and for infinite loops
@@ -1537,7 +1538,7 @@ void cmGlobalGenerator::CheckLocalGenerators()
   std::map<std::string, std::string> notFoundMap;
 //  std::set<std::string> notFoundMap;
   // after it is all done do a ConfigureFinalPass
-  cmCacheManager* manager = this->GetCMakeInstance()->GetCacheManager();
+  cmState* state = this->GetCMakeInstance()->GetState();
   for (unsigned int i = 0; i < this->LocalGenerators.size(); ++i)
     {
     this->LocalGenerators[i]->ConfigureFinalPass();
@@ -1559,7 +1560,7 @@ void cmGlobalGenerator::CheckLocalGenerators()
            cmSystemTools::IsNOTFOUND(lib->first.c_str()))
           {
           std::string varName = lib->first.substr(0, lib->first.size()-9);
-          if(manager->GetCacheEntryPropertyAsBool(varName, "ADVANCED"))
+          if(state->GetCacheEntryPropertyAsBool(varName, "ADVANCED"))
             {
             varName += " (ADVANCED)";
             }
@@ -1590,7 +1591,7 @@ void cmGlobalGenerator::CheckLocalGenerators()
             cmSystemTools::IsNOTFOUND(incDir->c_str()))
           {
           std::string varName = incDir->substr(0, incDir->size()-9);
-          if(manager->GetCacheEntryPropertyAsBool(varName, "ADVANCED"))
+          if(state->GetCacheEntryPropertyAsBool(varName, "ADVANCED"))
             {
             varName += " (ADVANCED)";
             }
@@ -1637,7 +1638,7 @@ int cmGlobalGenerator::TryCompile(const std::string& srcdir,
   // and there is a good chance that the try compile stuff will
   // take the bulk of the time, so try and guess some progress
   // by getting closer and closer to 100 without actually getting there.
-  if (!this->CMakeInstance->GetCacheManager()->GetInitializedCacheValue
+  if (!this->CMakeInstance->GetState()->GetInitializedCacheValue
       ("CMAKE_NUMBER_OF_LOCAL_GENERATORS"))
     {
     // If CMAKE_NUMBER_OF_LOCAL_GENERATORS is not set
@@ -1835,7 +1836,7 @@ void cmGlobalGenerator::AddLocalGenerator(cmLocalGenerator *lg)
   // update progress
   // estimate how many lg there will be
   const char *numGenC =
-    this->CMakeInstance->GetCacheManager()->GetInitializedCacheValue
+    this->CMakeInstance->GetState()->GetInitializedCacheValue
     ("CMAKE_NUMBER_OF_LOCAL_GENERATORS");
 
   if (!numGenC)
@@ -1893,7 +1894,7 @@ void cmGlobalGenerator::EnableLanguagesFromGenerator(cmGlobalGenerator *gen,
     gen->GetCMakeInstance()->GetCacheDefinition("CMAKE_MAKE_PROGRAM");
   this->GetCMakeInstance()->AddCacheEntry("CMAKE_MAKE_PROGRAM", make,
                                           "make program",
-                                          cmCacheManager::FILEPATH);
+                                          cmState::FILEPATH);
   // copy the enabled languages
   this->LanguageEnabled = gen->LanguageEnabled;
   this->LanguagesReady = gen->LanguagesReady;

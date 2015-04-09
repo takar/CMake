@@ -255,7 +255,7 @@ void cmVisualStudioGeneratorOptions::StoreUnknownFlag(const char* flag)
 //----------------------------------------------------------------------------
 void cmVisualStudioGeneratorOptions::SetConfiguration(const char* config)
 {
-  this->State = config;
+  this->Configuration = config;
 }
 
 //----------------------------------------------------------------------------
@@ -274,12 +274,12 @@ cmVisualStudioGeneratorOptions
     {
     // if there are configuration specific flags, then
     // use the configuration specific tag for PreprocessorDefinitions
-    if(this->State.size())
+    if(this->Configuration.size())
       {
       fout << prefix;
       this->TargetGenerator->WritePlatformConfigTag(
         "PreprocessorDefinitions",
-        this->State.c_str(),
+        this->Configuration.c_str(),
         0,
         0, 0, &fout);
       }
@@ -346,11 +346,11 @@ cmVisualStudioGeneratorOptions
         m != this->FlagMap.end(); ++m)
       {
       fout << indent;
-      if(this->State.size())
+      if(this->Configuration.size())
         {
         this->TargetGenerator->WritePlatformConfigTag(
           m->first.c_str(),
-          this->State.c_str(),
+          this->Configuration.c_str(),
           0,
           0, 0, &fout);
         }
@@ -398,11 +398,11 @@ cmVisualStudioGeneratorOptions
     if(this->Version >= cmLocalVisualStudioGenerator::VS10)
       {
       fout << prefix;
-      if(this->State.size())
+      if(this->Configuration.size())
         {
         this->TargetGenerator->WritePlatformConfigTag(
           "AdditionalOptions",
-          this->State.c_str(),
+          this->Configuration.c_str(),
           0,
           0, 0, &fout);
         }

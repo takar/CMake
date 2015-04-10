@@ -66,6 +66,7 @@ set(link_depends_no_shared_check_txt ${BuildDepends_BINARY_DIR}/Project/link_dep
 
 file(WRITE ${BuildDepends_BINARY_DIR}/Project/external.in "external original\n")
 file(WRITE ${BuildDepends_BINARY_DIR}/Project/multi1-in.txt "multi1-in original\n")
+file(WRITE ${BuildDepends_BINARY_DIR}/Project/multi2-stamp.txt "multi2-stamp original\n")
 
 help_xcode_depends()
 
@@ -191,6 +192,19 @@ else()
     "multi1-out2-copy.txt is missing")
 endif()
 
+if(EXISTS ${BuildDepends_BINARY_DIR}/Project/multi2-out1.txt)
+  if(${BuildDepends_BINARY_DIR}/Project/multi2-out1.txt
+      IS_NEWER_THAN ${BuildDepends_BINARY_DIR}/Project/multi2-stamp.txt)
+    message(STATUS "multi2-out1.txt is newer than multi2-stamp.txt")
+  else()
+    message(SEND_ERROR "Project did not initially build properly: "
+      "multi2-out1.txt is not newer than multi2-stamp.txt")
+  endif()
+else()
+  message(SEND_ERROR "Project did not initially build properly: "
+    "multi2-out1.txt is missing")
+endif()
+
 message("Waiting 3 seconds...")
 execute_process(COMMAND ${CMAKE_COMMAND} -E sleep 3)
 
@@ -217,6 +231,7 @@ endif()
 
 file(WRITE ${BuildDepends_BINARY_DIR}/Project/external.in "external changed\n")
 file(WRITE ${BuildDepends_BINARY_DIR}/Project/multi1-in.txt "multi1-in changed\n")
+file(WRITE ${BuildDepends_BINARY_DIR}/Project/multi2-stamp.txt "multi2-stamp changed\n")
 
 help_xcode_depends()
 
@@ -346,4 +361,17 @@ if(EXISTS ${BuildDepends_BINARY_DIR}/Project/multi1-out2-copy.txt)
 else()
   message(SEND_ERROR "Project did not rebuild properly: "
     "multi1-out2-copy.txt is missing")
+endif()
+
+if(EXISTS ${BuildDepends_BINARY_DIR}/Project/multi2-out1.txt)
+  if(${BuildDepends_BINARY_DIR}/Project/multi2-out1.txt
+      IS_NEWER_THAN ${BuildDepends_BINARY_DIR}/Project/multi2-stamp.txt)
+    message(STATUS "multi2-out1.txt is newer than multi2-stamp.txt")
+  else()
+    message(SEND_ERROR "Project did not rebuild properly: "
+      "multi2-out1.txt is not newer than multi2-stamp.txt")
+  endif()
+else()
+  message(SEND_ERROR "Project did not rebuild properly: "
+    "multi2-out1.txt is missing")
 endif()

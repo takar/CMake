@@ -300,7 +300,7 @@ std::string cmGhsMultiTargetGenerator::GetDefines(const std::string &language,
   return i->second;
 }
 
-void cmGhsMultiTargetGenerator::WriteCompilerFlags(std::string const &config,
+void cmGhsMultiTargetGenerator::WriteCompilerFlags(std::string const &,
                                                    const std::string &language)
 {
   //this->Target->GetCompileOptions(options, config, language);

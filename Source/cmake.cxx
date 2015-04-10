@@ -1965,12 +1965,14 @@ void cmake::GetGeneratorDocumentation(std::vector<cmDocumentationEntry>& v)
 
 void cmake::PrintGeneratorList()
 {
+#ifdef CMAKE_BUILD_WITH_CMAKE
   cmDocumentation doc;
   std::vector<cmDocumentationEntry> generators;
   this->GetGeneratorDocumentation(generators);
   doc.AppendSection("Generators",generators);
   std::cerr << "\n";
   doc.PrintDocumentation(cmDocumentation::ListGenerators, std::cerr);
+#endif
 }
 
 void cmake::UpdateConversionPathTable()

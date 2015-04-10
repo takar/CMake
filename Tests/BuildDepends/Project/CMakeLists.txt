@@ -164,3 +164,10 @@ add_custom_command(
   DEPENDS multi1-out2.txt
   )
 add_custom_target(multi1 ALL DEPENDS multi1-out2-copy.txt)
+
+add_custom_command(
+  OUTPUT multi2-out1.txt multi2-out2.txt
+  COMMAND ${CMAKE_COMMAND} -E touch multi2-out1.txt
+  )
+set_property(SOURCE multi2-out1.txt multi2-out2.txt PROPERTY SYMBOLIC 1)
+add_custom_target(multi2 ALL DEPENDS multi2-out1.txt)

@@ -13,6 +13,7 @@ run_cmake_command(E_rename-no-arg ${CMAKE_COMMAND} -E rename)
 run_cmake_command(E_touch_nocreate-no-arg ${CMAKE_COMMAND} -E touch_nocreate)
 
 run_cmake_command(G_no-arg ${CMAKE_COMMAND} -G)
+run_cmake_command(G_bad-arg ${CMAKE_COMMAND} -G NoSuchGenerator)
 run_cmake_command(P_no-arg ${CMAKE_COMMAND} -P)
 run_cmake_command(P_no-file ${CMAKE_COMMAND} -P nosuchscriptfile.cmake)
 

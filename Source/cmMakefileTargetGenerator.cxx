@@ -1315,8 +1315,6 @@ void cmMakefileTargetGenerator
 
   // Write the rule.
   const std::vector<std::string>& outputs = ccg.GetOutputs();
-  std::vector<std::string>::const_iterator o = outputs.begin();
-  {
   bool symbolic = this->WriteMakeRule(*this->BuildFileStream, 0,
                                       outputs, depends, commands);
 
@@ -1325,7 +1323,6 @@ void cmMakefileTargetGenerator
     {
     this->GlobalGenerator->AddRuleHash(ccg.GetOutputs(), content.str());
     }
-  }
 
   // Setup implicit dependency scanning.
   for(cmCustomCommand::ImplicitDependsList::const_iterator

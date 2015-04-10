@@ -13,8 +13,7 @@
 #ifndef cmCLocaleEnvironmentScope_h
 #define cmCLocaleEnvironmentScope_h
 
-#include <map>
-#include <string>
+#include "cmStandardIncludes.h"
 
 class cmCLocaleEnvironmentScope
 {

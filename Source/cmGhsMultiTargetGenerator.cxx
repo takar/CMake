@@ -260,8 +260,11 @@ void cmGhsMultiTargetGenerator::SetCompilerFlags(std::string const &config,
     this->LocalGenerator->AddVisibilityPresetFlags(flags, this->Target, lang);
 
     // Append old-style preprocessor definition flags.
-    this->LocalGenerator->AppendFlags(flags,
+    if (std::string(" ") != std::string(this->Makefile->GetDefineFlags()))
+      {
+      this->LocalGenerator->AppendFlags(flags,
                                       this->Makefile->GetDefineFlags());
+      }
 
     // Add target-specific flags.
     this->LocalGenerator->AddCompileOptions(flags, this->Target, lang, config);
@@ -303,42 +306,15 @@ std::string cmGhsMultiTargetGenerator::GetDefines(const std::string &language,
 void cmGhsMultiTargetGenerator::WriteCompilerFlags(std::string const &,
                                                    const std::string &language)
 {
-  //this->Target->GetCompileOptions(options, config, language);
-  static std::string const startFilePropName("-startfile_dir=");
-  bool hasStartfileDirProp = false;
   std::map<std::string, std::string>::iterator flagsByLangI =
       this->FlagsByLanguage.find(language);
   if (flagsByLangI != this->FlagsByLanguage.end())
     {
-    std::vector<cmsys::String> flags =
-        cmSystemTools::SplitString(flagsByLangI->second, ' ');
-    for (std::vector<cmsys::String>::const_iterator flagsI = flags.begin();
-      flagsI != flags.end(); ++flagsI)
+    if (!flagsByLangI->second.empty())
       {
-      std::string flag = *flagsI;
-      if (" " != flag)
-        {
-        if (this->DDOption != flag)
-          {
-          if (flag.length() >= startFilePropName.length() &&
-            startFilePropName == flag.substr(0, startFilePropName.length()))
-            {
-            hasStartfileDirProp = true;
-            }
-          cmSystemTools::ConvertToUnixSlashes(flag);
-          *this->GetFolderBuildStreams() << "    " << flag << std::endl;
-          }
-        }
+      *this->GetFolderBuildStreams() << "    " << flagsByLangI->second
+        << std::endl;
       }
-    }
-
-  // If this property is relative, make it relative to the root lists file
-  if (!hasStartfileDirProp && this->GetGlobalGenerator()->IsOSDirRelative())
-    {
-    *this->GetFolderBuildStreams() << "    " << startFilePropName << "\""
-                                   << this->Makefile->GetHomeOutputDirectory()
-                                   << "/$(__LIBS_DIR_BASE)/$(__BSP_NAME)\""
-                                   << std::endl;
     }
 }
 
@@ -434,12 +410,16 @@ void cmGhsMultiTargetGenerator::WriteCustomCommandsHelper(
       for (cmCustomCommandLine::const_iterator commandLineI = command.begin();
            commandLineI != command.end(); ++commandLineI)
         {
+        std::string subCommandE =
+            this->LocalGenerator->EscapeForShell(*commandLineI, true);
         if (!command.empty())
           {
           *this->GetFolderBuildStreams()
             << (command.begin() == commandLineI ? "'" : " ");
+          //Need to double escape backslashes
+          cmSystemTools::ReplaceString(subCommandE, "\\", "\\\\");
           }
-        *this->GetFolderBuildStreams() << *commandLineI;
+        *this->GetFolderBuildStreams() << subCommandE;
         }
       if (!command.empty())
         {

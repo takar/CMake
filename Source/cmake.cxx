@@ -192,7 +192,6 @@ cmake::~cmake()
 void cmake::InitializeProperties()
 {
   this->Properties.clear();
-  this->Properties.SetCMakeInstance(this);
   this->PropertyDefinitions.clear();
 
   // initialize properties
@@ -203,45 +202,33 @@ void cmake::InitializeProperties()
 void cmake::CleanupCommandsAndMacros()
 {
   this->InitializeProperties();
-  std::vector<cmCommand*> commands;
   for(RegisteredCommandsMap::iterator j = this->Commands.begin();
       j != this->Commands.end(); ++j)
     {
-    if ( !j->second->IsA("cmMacroHelperCommand") &&
-         !j->second->IsA("cmFunctionHelperCommand"))
-      {
-      commands.push_back(j->second);
-      }
-    else
+    if (j->second->IsA("cmMacroHelperCommand") ||
+        j->second->IsA("cmFunctionHelperCommand"))
       {
       delete j->second;
+      this->Commands.erase(j);
       }
-    }
-  this->Commands.clear();
-  std::vector<cmCommand*>::iterator it;
-  for ( it = commands.begin(); it != commands.end();
-    ++ it )
-    {
-    this->Commands[cmSystemTools::LowerCase((*it)->GetName())] = *it;
     }
 }
 
 bool cmake::CommandExists(const std::string& name) const
 {
-  std::string sName = cmSystemTools::LowerCase(name);
-  return (this->Commands.find(sName) != this->Commands.end());
+  return this->GetCommand(name) ? true : false;
 }
 
-cmCommand *cmake::GetCommand(const std::string& name)
+cmCommand *cmake::GetCommand(const std::string& name) const
 {
-  cmCommand* rm = 0;
+  cmCommand* command = 0;
   std::string sName = cmSystemTools::LowerCase(name);
-  RegisteredCommandsMap::iterator pos = this->Commands.find(sName);
+  RegisteredCommandsMap::const_iterator pos = this->Commands.find(sName);
   if (pos != this->Commands.end())
     {
-    rm = (*pos).second;
+    command = (*pos).second;
     }
-  return rm;
+  return command;
 }
 
 void cmake::RenameCommand(const std::string& oldName,
@@ -249,12 +236,12 @@ void cmake::RenameCommand(const std::string& oldName,
 {
   // if the command already exists, free the old one
   std::string sOldName = cmSystemTools::LowerCase(oldName);
-  std::string sNewName = cmSystemTools::LowerCase(newName);
   RegisteredCommandsMap::iterator pos = this->Commands.find(sOldName);
   if ( pos == this->Commands.end() )
     {
     return;
     }
+  std::string sNewName = cmSystemTools::LowerCase(newName);
   cmCommand* cmd = pos->second;
 
   pos = this->Commands.find(sNewName);
@@ -263,7 +250,7 @@ void cmake::RenameCommand(const std::string& oldName,
     delete pos->second;
     this->Commands.erase(pos);
     }
-  this->Commands.insert(RegisteredCommandsMap::value_type(sNewName, cmd));
+  this->Commands.insert(std::make_pair(sNewName, cmd));
   pos = this->Commands.find(sOldName);
   this->Commands.erase(pos);
 }
@@ -279,9 +266,9 @@ void cmake::RemoveCommand(const std::string& name)
     }
 }
 
-void cmake::AddCommand(cmCommand* wg)
+void cmake::AddCommand(cmCommand* command)
 {
-  std::string name = cmSystemTools::LowerCase(wg->GetName());
+  std::string name = cmSystemTools::LowerCase(command->GetName());
   // if the command already exists, free the old one
   RegisteredCommandsMap::iterator pos = this->Commands.find(name);
   if (pos != this->Commands.end())
@@ -289,16 +276,16 @@ void cmake::AddCommand(cmCommand* wg)
     delete pos->second;
     this->Commands.erase(pos);
     }
-  this->Commands.insert( RegisteredCommandsMap::value_type(name, wg));
+  this->Commands.insert(std::make_pair(name, command));
 }
 
 
 void cmake::RemoveUnscriptableCommands()
 {
   std::vector<std::string> unscriptableCommands;
-  cmake::RegisteredCommandsMap* commands = this->GetCommands();
-  for (cmake::RegisteredCommandsMap::const_iterator pos = commands->begin();
-       pos != commands->end();
+  for (cmake::RegisteredCommandsMap::const_iterator
+       pos = this->Commands.begin();
+       pos != this->Commands.end();
        ++pos)
     {
     if (!pos->second->IsScriptable())
@@ -848,11 +835,7 @@ void cmake::SetArgs(const std::vector<std::string>& args,
     {
     this->SetHomeOutputDirectory
       (cmSystemTools::GetCurrentWorkingDirectory());
-    this->SetStartOutputDirectory
-      (cmSystemTools::GetCurrentWorkingDirectory());
     this->SetHomeDirectory
-      (cmSystemTools::GetCurrentWorkingDirectory());
-    this->SetStartDirectory
       (cmSystemTools::GetCurrentWorkingDirectory());
     }
 
@@ -1117,10 +1100,42 @@ void cmake::SetHomeDirectory(const std::string& dir)
   cmSystemTools::ConvertToUnixSlashes(this->cmHomeDirectory);
 }
 
-void cmake::SetHomeOutputDirectory(const std::string& lib)
+const char* cmake::GetHomeDirectory() const
 {
-  this->HomeOutputDirectory = lib;
+  return this->cmHomeDirectory.c_str();
+}
+
+void cmake::SetHomeOutputDirectory(const std::string& dir)
+{
+  this->HomeOutputDirectory = dir;
   cmSystemTools::ConvertToUnixSlashes(this->HomeOutputDirectory);
+}
+
+const char* cmake::GetHomeOutputDirectory() const
+{
+  return this->HomeOutputDirectory.c_str();
+}
+
+const char* cmake::GetStartDirectory() const
+{
+  return this->cmStartDirectory.c_str();
+}
+
+void cmake::SetStartDirectory(const std::string& dir)
+{
+  this->cmStartDirectory = dir;
+  cmSystemTools::ConvertToUnixSlashes(this->cmStartDirectory);
+}
+
+const char* cmake::GetStartOutputDirectory() const
+{
+  return this->StartOutputDirectory.c_str();
+}
+
+void cmake::SetStartOutputDirectory(const std::string& dir)
+{
+  this->StartOutputDirectory = dir;
+  cmSystemTools::ConvertToUnixSlashes(this->StartOutputDirectory);
 }
 
 void cmake::SetGlobalGenerator(cmGlobalGenerator *gg)
@@ -1536,11 +1551,7 @@ int cmake::ActualConfigure()
   if (!this->InTryCompile)
     {
     this->GlobalGenerator->ClearEnabledLanguages();
-    }
 
-  // Truncate log files
-  if (!this->InTryCompile)
-    {
     this->TruncateOutputLog("CMakeOutput.log");
     this->TruncateOutputLog("CMakeError.log");
     }
@@ -1817,11 +1828,11 @@ const char* cmake::GetCacheDefinition(const std::string& name) const
 
 void cmake::AddDefaultCommands()
 {
-  std::list<cmCommand*> commands;
+  std::vector<cmCommand*> commands;
   GetBootstrapCommands1(commands);
   GetBootstrapCommands2(commands);
   GetPredefinedCommands(commands);
-  for(std::list<cmCommand*>::iterator i = commands.begin();
+  for(std::vector<cmCommand*>::iterator i = commands.begin();
       i != commands.end(); ++i)
     {
     this->AddCommand(*i);
@@ -1947,6 +1958,16 @@ void cmake::UpdateProgress(const char *msg, float prog)
     (*this->ProgressCallback)(msg, prog, this->ProgressCallbackClientData);
     return;
     }
+}
+
+bool cmake::GetIsInTryCompile() const
+{
+  return this->InTryCompile;
+}
+
+void cmake::SetIsInTryCompile(bool b)
+{
+  this->InTryCompile = b;
 }
 
 void cmake::GetGeneratorDocumentation(std::vector<cmDocumentationEntry>& v)
@@ -2305,24 +2326,12 @@ bool cmake::IsPropertyChained(const std::string& name,
 
 void cmake::SetProperty(const std::string& prop, const char* value)
 {
-  // Special hook to invalidate cached value.
-  if(prop == "DEBUG_CONFIGURATIONS")
-    {
-    this->DebugConfigs.clear();
-    }
-
   this->Properties.SetProperty(prop, value, cmProperty::GLOBAL);
 }
 
 void cmake::AppendProperty(const std::string& prop,
                            const char* value, bool asString)
 {
-  // Special hook to invalidate cached value.
-  if(prop == "DEBUG_CONFIGURATIONS")
-    {
-    this->DebugConfigs.clear();
-    }
-
   this->Properties.AppendProperty(prop, value, cmProperty::GLOBAL, asString);
 }
 
@@ -2344,8 +2353,8 @@ const char *cmake::GetProperty(const std::string& prop,
   else if ( prop == "COMMANDS" )
     {
     cmake::RegisteredCommandsMap::iterator cmds
-        = this->GetCommands()->begin();
-    for (unsigned int cc=0 ; cmds != this->GetCommands()->end(); ++ cmds )
+        = this->Commands.begin();
+    for (unsigned int cc=0 ; cmds != this->Commands.end(); ++ cmds )
       {
       if ( cc > 0 )
         {
@@ -2781,27 +2790,24 @@ void cmake::IssueMessage(cmake::MessageType t, std::string const& text,
 }
 
 //----------------------------------------------------------------------------
-std::vector<std::string> const& cmake::GetDebugConfigs()
+std::vector<std::string> cmake::GetDebugConfigs()
 {
-  // Compute on-demand.
-  if(this->DebugConfigs.empty())
+  std::vector<std::string> configs;
+  if(const char* config_list = this->GetProperty("DEBUG_CONFIGURATIONS"))
     {
-    if(const char* config_list = this->GetProperty("DEBUG_CONFIGURATIONS"))
-      {
-      // Expand the specified list and convert to upper-case.
-      cmSystemTools::ExpandListArgument(config_list, this->DebugConfigs);
-      std::transform(this->DebugConfigs.begin(),
-                     this->DebugConfigs.end(),
-                     this->DebugConfigs.begin(),
-                     cmSystemTools::UpperCase);
-      }
-    // If no configurations were specified, use a default list.
-    if(this->DebugConfigs.empty())
-      {
-      this->DebugConfigs.push_back("DEBUG");
-      }
+    // Expand the specified list and convert to upper-case.
+    cmSystemTools::ExpandListArgument(config_list, configs);
+    std::transform(configs.begin(),
+                   configs.end(),
+                   configs.begin(),
+                   cmSystemTools::UpperCase);
     }
-  return this->DebugConfigs;
+  // If no configurations were specified, use a default list.
+  if(configs.empty())
+    {
+    configs.push_back("DEBUG");
+    }
+  return configs;
 }
 
 

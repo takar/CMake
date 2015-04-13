@@ -359,7 +359,6 @@ void cmGlobalGhsMultiGenerator::WriteCompilerOptions(std::string const &fOSDir)
 {
   *this->GetBuildFileStream() << "    -os_dir=\"" << fOSDir << "\""
                               << std::endl;
-  *this->GetBuildFileStream() << "    --link_once_templates" << std::endl;
 }
 
 void cmGlobalGhsMultiGenerator::WriteDisclaimer(std::ostream *os)

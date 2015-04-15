@@ -438,7 +438,7 @@ public:
    */
   void SetHomeDirectory(const std::string& dir);
   const char* GetHomeDirectory() const;
-  void SetHomeOutputDirectory(const std::string& lib);
+  void SetHomeOutputDirectory(const std::string& dir);
   const char* GetHomeOutputDirectory() const;
   //@}
 
@@ -473,9 +473,9 @@ public:
     {
       return this->cmStartDirectory.c_str();
     }
-  void SetStartOutputDirectory(const std::string& lib)
+  void SetStartOutputDirectory(const std::string& dir)
     {
-      this->StartOutputDirectory = lib;
+      this->StartOutputDirectory = dir;
       cmSystemTools::ConvertToUnixSlashes(this->StartOutputDirectory);
       this->StartOutputDirectory =
         cmSystemTools::CollapseFullPath(this->StartOutputDirectory);

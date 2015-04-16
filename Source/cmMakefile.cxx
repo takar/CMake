@@ -1273,7 +1273,7 @@ cmMakefile::AddUtilityCommand(const std::string& utilityName,
   // Store the custom command in the target.
   if (!commandLines.empty() || !depends.empty())
     {
-    std::string force = this->GetStartOutputDirectory();
+    std::string force = this->GetCurrentBinaryDirectory();
     force += cmake::GetCMakeFilesDirectory();
     force += "/";
     force += utilityName;
@@ -1899,7 +1899,7 @@ void cmMakefile::CheckForUnused(const char* reason,
       }
     else
       {
-      path = this->GetStartDirectory();
+      path = this->GetCurrentSourceDirectory();
       path += "/CMakeLists.txt";
       cmListFileContext lfc;
       lfc.FilePath = path;
@@ -4077,7 +4077,7 @@ void cmMakefile::SetProperty(const std::string& prop, const char* value)
     {
     // This property is not inherrited
     if ( strcmp(this->GetCurrentSourceDirectory(),
-                this->GetStartDirectory()) != 0 )
+                this->GetCurrentSourceDirectory()) != 0 )
       {
       return;
       }
@@ -4141,7 +4141,7 @@ const char *cmMakefile::GetProperty(const std::string& prop,
     {
     if(cmLocalGenerator* plg = this->LocalGenerator->GetParent())
       {
-      output = plg->GetMakefile()->GetStartDirectory();
+      output = plg->GetMakefile()->GetCurrentSourceDirectory();
       }
     return output.c_str();
     }

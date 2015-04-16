@@ -225,11 +225,11 @@ void cmMakefile::Print() const
     }
 
   std::cout << " this->StartOutputDirectory; " <<
-    this->StartOutputDirectory << std::endl;
+    this->GetCurrentBinaryDirectory() << std::endl;
   std::cout << " this->HomeOutputDirectory; " <<
     this->HomeOutputDirectory << std::endl;
   std::cout << " this->cmStartDirectory; " <<
-    this->cmStartDirectory << std::endl;
+    this->GetCurrentSourceDirectory() << std::endl;
   std::cout << " this->cmHomeDirectory; " <<
     this->cmHomeDirectory << std::endl;
   std::cout << " this->ProjectName; "
@@ -1547,9 +1547,9 @@ void cmMakefile::InitializeFromParent()
   this->Internal->VarStack.top() = parent->Internal->VarStack.top().Closure();
 
   this->AddDefinition("CMAKE_CURRENT_SOURCE_DIR",
-                      this->cmStartDirectory.c_str());
+                      this->GetCurrentSourceDirectory());
   this->AddDefinition("CMAKE_CURRENT_BINARY_DIR",
-                      this->StartOutputDirectory.c_str());
+                      this->GetCurrentBinaryDirectory());
 
   const std::vector<cmValueWithOrigin>& parentIncludes =
                                         parent->GetIncludeDirectoriesEntries();

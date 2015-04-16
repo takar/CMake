@@ -144,7 +144,10 @@ void cmGhsMultiTargetGenerator::Generate()
     this->WriteCompilerFlags(config, language);
     this->WriteCompilerDefinitions(config, language);
     this->WriteIncludes(config, language);
-    this->WriteTargetLinkLibraries();
+    if (this->Target->GetType() == cmTarget::EXECUTABLE)
+      {
+      this->WriteTargetLinkLibraries();
+      }
     this->WriteCustomCommands();
     if (this->DynamicDownload)
       {
@@ -187,6 +190,10 @@ GhsMultiGpj::Types cmGhsMultiTargetGenerator::GetGpjTag(const cmTarget *target)
     {
     output = GhsMultiGpj::INTERGRITY_APPLICATION;
     }
+  else if (target->GetType() == cmTarget::STATIC_LIBRARY)
+    {
+    output = GhsMultiGpj::LIBRARY;
+    }
   else
     {
     output = GhsMultiGpj::PROGRAM;
@@ -209,7 +216,6 @@ void cmGhsMultiTargetGenerator::WriteTypeSpecifics(const std::string &config,
 
   if (this->Target->GetType() == cmTarget::STATIC_LIBRARY)
     {
-    *this->GetFolderBuildStreams() << "    -relobj" << std::endl;
     *this->GetFolderBuildStreams() << "    {optgroup=GhsCommonOptions} -o \""
                                    << outputDir << outputFilename << ".a\""
                                    << std::endl;

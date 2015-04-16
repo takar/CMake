@@ -481,7 +481,7 @@ public:
     }
   //@}
 
-  const char* GetCurrentDirectory() const
+  const char* GetCurrentSourceDirectory() const
     {
       return this->cmStartDirectory.c_str();
     }

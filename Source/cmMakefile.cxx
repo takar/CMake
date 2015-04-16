@@ -269,7 +269,7 @@ void cmMakefile::IssueMessage(cmake::MessageType t,
     if(this->ListFileStack.empty())
       {
       // We are not processing the project.  Add the directory-level context.
-      lfc.FilePath = this->GetCurrentDirectory();
+      lfc.FilePath = this->GetCurrentSourceDirectory();
       lfc.FilePath += "/CMakeLists.txt";
       }
     else
@@ -1659,7 +1659,7 @@ void cmMakefile::ConfigureSubDirectory(cmLocalGenerator *lg2)
   if (this->GetCMakeInstance()->GetDebugOutput())
     {
     std::string msg="   Entering             ";
-    msg += lg2->GetMakefile()->GetCurrentDirectory();
+    msg += lg2->GetMakefile()->GetCurrentSourceDirectory();
     cmSystemTools::Message(msg.c_str());
     }
   // finally configure the subdir
@@ -1667,7 +1667,7 @@ void cmMakefile::ConfigureSubDirectory(cmLocalGenerator *lg2)
   if (this->GetCMakeInstance()->GetDebugOutput())
     {
     std::string msg="   Returning to         ";
-    msg += this->GetCurrentDirectory();
+    msg += this->GetCurrentSourceDirectory();
     cmSystemTools::Message(msg.c_str());
     }
 }
@@ -4076,7 +4076,7 @@ void cmMakefile::SetProperty(const std::string& prop, const char* value)
   if ( prop == "ADDITIONAL_MAKE_CLEAN_FILES" )
     {
     // This property is not inherrited
-    if ( strcmp(this->GetCurrentDirectory(),
+    if ( strcmp(this->GetCurrentSourceDirectory(),
                 this->GetStartDirectory()) != 0 )
       {
       return;
@@ -4344,7 +4344,7 @@ void cmMakefile::AddCMakeDependFilesFromUser()
       }
     else
       {
-      std::string f = this->GetCurrentDirectory();
+      std::string f = this->GetCurrentSourceDirectory();
       f += "/";
       f += *i;
       this->AddCMakeDependFile(f);
@@ -4625,7 +4625,7 @@ bool cmMakefile::EnforceUniqueName(std::string const& name, std::string& msg,
         default: break;
         }
       e << "created in source directory \""
-        << existing->GetMakefile()->GetCurrentDirectory() << "\".  "
+        << existing->GetMakefile()->GetCurrentSourceDirectory() << "\".  "
         << "See documentation for policy CMP0002 for more details.";
       msg = e.str();
       return false;

@@ -20,6 +20,7 @@ public:
   enum Types
   {
     INTERGRITY_APPLICATION,
+    LIBRARY,
     PROJECT,
     PROGRAM,
     REFERENCE,

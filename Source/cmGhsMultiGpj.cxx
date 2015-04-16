@@ -22,6 +22,9 @@ void GhsMultiGpj::WriteGpjTag(Types const gpjType,
     case INTERGRITY_APPLICATION:
       tag = "INTEGRITY Application";
       break;
+    case LIBRARY:
+      tag = "Library";
+      break;
     case PROJECT:
       tag = "Project";
       break;

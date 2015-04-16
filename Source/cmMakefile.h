@@ -485,7 +485,7 @@ public:
     {
       return this->cmStartDirectory.c_str();
     }
-  const char* GetCurrentOutputDirectory() const
+  const char* GetCurrentBinaryDirectory() const
     {
       return this->StartOutputDirectory.c_str();
     }

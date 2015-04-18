@@ -225,11 +225,11 @@ void cmMakefile::Print() const
     }
 
   std::cout << " this->StartOutputDirectory; " <<
-    this->StartOutputDirectory << std::endl;
+    this->GetCurrentBinaryDirectory() << std::endl;
   std::cout << " this->HomeOutputDirectory; " <<
     this->HomeOutputDirectory << std::endl;
   std::cout << " this->cmStartDirectory; " <<
-    this->cmStartDirectory << std::endl;
+    this->GetCurrentSourceDirectory() << std::endl;
   std::cout << " this->cmHomeDirectory; " <<
     this->cmHomeDirectory << std::endl;
   std::cout << " this->ProjectName; "
@@ -269,7 +269,7 @@ void cmMakefile::IssueMessage(cmake::MessageType t,
     if(this->ListFileStack.empty())
       {
       // We are not processing the project.  Add the directory-level context.
-      lfc.FilePath = this->GetCurrentDirectory();
+      lfc.FilePath = this->GetCurrentSourceDirectory();
       lfc.FilePath += "/CMakeLists.txt";
       }
     else
@@ -696,6 +696,9 @@ void cmMakefile::SetLocalGenerator(cmLocalGenerator* lg)
   this->Properties.SetCMakeInstance(this->GetCMakeInstance());
   this->WarnUnused = this->GetCMakeInstance()->GetWarnUnused();
   this->CheckSystemVars = this->GetCMakeInstance()->GetCheckSystemVars();
+  this->SetHomeDirectory(this->GetCMakeInstance()->GetHomeDirectory());
+  this->SetHomeOutputDirectory(
+    this->GetCMakeInstance()->GetHomeOutputDirectory());
 }
 
 namespace
@@ -1233,7 +1236,7 @@ cmMakefile::AddUtilityCommand(const std::string& utilityName,
   // Store the custom command in the target.
   if (!commandLines.empty() || !depends.empty())
     {
-    std::string force = this->GetStartOutputDirectory();
+    std::string force = this->GetCurrentBinaryDirectory();
     force += cmake::GetCMakeFilesDirectory();
     force += "/";
     force += utilityName;
@@ -1543,6 +1546,11 @@ void cmMakefile::InitializeFromParent()
   // Initialize definitions with the closure of the parent scope.
   this->Internal->VarStack.top() = parent->Internal->VarStack.top().Closure();
 
+  this->AddDefinition("CMAKE_CURRENT_SOURCE_DIR",
+                      this->GetCurrentSourceDirectory());
+  this->AddDefinition("CMAKE_CURRENT_BINARY_DIR",
+                      this->GetCurrentBinaryDirectory());
+
   const std::vector<cmValueWithOrigin>& parentIncludes =
                                         parent->GetIncludeDirectoriesEntries();
   this->IncludeDirectoriesEntries.insert(this->IncludeDirectoriesEntries.end(),
@@ -1611,11 +1619,10 @@ void cmMakefile::InitializeFromParent()
 void cmMakefile::ConfigureSubDirectory(cmLocalGenerator *lg2)
 {
   lg2->GetMakefile()->InitializeFromParent();
-  lg2->GetMakefile()->MakeStartDirectoriesCurrent();
   if (this->GetCMakeInstance()->GetDebugOutput())
     {
     std::string msg="   Entering             ";
-    msg += lg2->GetMakefile()->GetCurrentDirectory();
+    msg += lg2->GetMakefile()->GetCurrentSourceDirectory();
     cmSystemTools::Message(msg.c_str());
     }
   // finally configure the subdir
@@ -1623,7 +1630,7 @@ void cmMakefile::ConfigureSubDirectory(cmLocalGenerator *lg2)
   if (this->GetCMakeInstance()->GetDebugOutput())
     {
     std::string msg="   Returning to         ";
-    msg += this->GetCurrentDirectory();
+    msg += this->GetCurrentSourceDirectory();
     cmSystemTools::Message(msg.c_str());
     }
 }
@@ -1646,8 +1653,8 @@ void cmMakefile::AddSubDirectory(const std::string& srcPath,
   this->LocalGenerator->GetGlobalGenerator()->AddLocalGenerator(lg2);
 
   // set the subdirs start dirs
-  lg2->GetMakefile()->SetStartDirectory(srcPath);
-  lg2->GetMakefile()->SetStartOutputDirectory(binPath);
+  lg2->GetMakefile()->SetCurrentSourceDirectory(srcPath);
+  lg2->GetMakefile()->SetCurrentBinaryDirectory(binPath);
   if(excludeFromAll)
     {
     lg2->GetMakefile()->SetProperty("EXCLUDE_FROM_ALL", "TRUE");
@@ -1657,6 +1664,37 @@ void cmMakefile::AddSubDirectory(const std::string& srcPath,
     {
     this->ConfigureSubDirectory(lg2);
     }
+}
+
+void cmMakefile::SetCurrentSourceDirectory(const std::string& dir)
+{
+  this->cmStartDirectory = dir;
+  cmSystemTools::ConvertToUnixSlashes(this->cmStartDirectory);
+  this->cmStartDirectory =
+    cmSystemTools::CollapseFullPath(this->cmStartDirectory);
+  this->AddDefinition("CMAKE_CURRENT_SOURCE_DIR",
+                      this->cmStartDirectory.c_str());
+}
+
+const char* cmMakefile::GetCurrentSourceDirectory() const
+{
+  return this->cmStartDirectory.c_str();
+}
+
+void cmMakefile::SetCurrentBinaryDirectory(const std::string& dir)
+{
+  this->StartOutputDirectory = dir;
+  cmSystemTools::ConvertToUnixSlashes(this->StartOutputDirectory);
+  this->StartOutputDirectory =
+    cmSystemTools::CollapseFullPath(this->StartOutputDirectory);
+  cmSystemTools::MakeDirectory(this->StartOutputDirectory.c_str());
+  this->AddDefinition("CMAKE_CURRENT_BINARY_DIR",
+                      this->StartOutputDirectory.c_str());
+}
+
+const char* cmMakefile::GetCurrentBinaryDirectory() const
+{
+  return this->StartOutputDirectory.c_str();
 }
 
 //----------------------------------------------------------------------------
@@ -1855,7 +1893,7 @@ void cmMakefile::CheckForUnused(const char* reason,
       }
     else
       {
-      path = this->GetStartDirectory();
+      path = this->GetCurrentSourceDirectory();
       path += "/CMakeLists.txt";
       cmListFileContext lfc;
       lfc.FilePath = path;
@@ -3408,9 +3446,9 @@ const char* cmMakefile::GetHomeOutputDirectory() const
   return this->HomeOutputDirectory.c_str();
 }
 
-void cmMakefile::SetHomeOutputDirectory(const std::string& lib)
+void cmMakefile::SetHomeOutputDirectory(const std::string& dir)
 {
-  this->HomeOutputDirectory = lib;
+  this->HomeOutputDirectory = dir;
   cmSystemTools::ConvertToUnixSlashes(this->HomeOutputDirectory);
   this->AddDefinition("CMAKE_BINARY_DIR", this->GetHomeOutputDirectory());
   if ( !this->GetDefinition("CMAKE_CURRENT_BINARY_DIR") )
@@ -3537,8 +3575,6 @@ int cmMakefile::TryCompile(const std::string& srcdir,
   // do a configure
   cm.SetHomeDirectory(srcdir);
   cm.SetHomeOutputDirectory(bindir);
-  cm.SetStartDirectory(srcdir);
-  cm.SetStartOutputDirectory(bindir);
   cm.SetGeneratorPlatform(this->GetCMakeInstance()->GetGeneratorPlatform());
   cm.SetGeneratorToolset(this->GetCMakeInstance()->GetGeneratorToolset());
   cm.LoadCache();
@@ -4034,8 +4070,8 @@ void cmMakefile::SetProperty(const std::string& prop, const char* value)
   if ( prop == "ADDITIONAL_MAKE_CLEAN_FILES" )
     {
     // This property is not inherrited
-    if ( strcmp(this->GetCurrentDirectory(),
-                this->GetStartDirectory()) != 0 )
+    if ( strcmp(this->GetCurrentSourceDirectory(),
+                this->GetCurrentSourceDirectory()) != 0 )
       {
       return;
       }
@@ -4099,7 +4135,7 @@ const char *cmMakefile::GetProperty(const std::string& prop,
     {
     if(cmLocalGenerator* plg = this->LocalGenerator->GetParent())
       {
-      output = plg->GetMakefile()->GetStartDirectory();
+      output = plg->GetMakefile()->GetCurrentSourceDirectory();
       }
     return output.c_str();
     }
@@ -4302,7 +4338,7 @@ void cmMakefile::AddCMakeDependFilesFromUser()
       }
     else
       {
-      std::string f = this->GetCurrentDirectory();
+      std::string f = this->GetCurrentSourceDirectory();
       f += "/";
       f += *i;
       this->AddCMakeDependFile(f);
@@ -4583,7 +4619,7 @@ bool cmMakefile::EnforceUniqueName(std::string const& name, std::string& msg,
         default: break;
         }
       e << "created in source directory \""
-        << existing->GetMakefile()->GetCurrentDirectory() << "\".  "
+        << existing->GetMakefile()->GetCurrentSourceDirectory() << "\".  "
         << "See documentation for policy CMP0002 for more details.";
       msg = e.str();
       return false;

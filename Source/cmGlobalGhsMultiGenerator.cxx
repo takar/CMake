@@ -43,7 +43,8 @@ cmLocalGenerator *cmGlobalGhsMultiGenerator::CreateLocalGenerator()
 void cmGlobalGhsMultiGenerator::GetDocumentation(cmDocumentationEntry &entry)
 {
   entry.Name = GetActualName();
-  entry.Brief = "Generates Green Hills MULTI files (experimental).";
+  entry.Brief =
+    "Generates Green Hills MULTI files (experimental, work-in-progress).";
 }
 
 void cmGlobalGhsMultiGenerator::EnableLanguage(

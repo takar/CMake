@@ -188,7 +188,7 @@ std::string cmQtAutoGenerators::ListQt5RccInputs(cmSourceFile* sf,
 
   std::string output;
   int retVal = 0;
-  bool result = cmSystemTools::RunSingleCommand(command, &output, &output,
+  bool result = cmSystemTools::RunSingleCommand(command, &output, 0,
                                             &retVal, 0,
                                             cmSystemTools::OUTPUT_NONE);
   if (!result || retVal)
@@ -2196,7 +2196,7 @@ bool cmQtAutoGenerators::GenerateMoc(const std::string& sourceFile,
 
     std::string output;
     int retVal = 0;
-    bool result = cmSystemTools::RunSingleCommand(command, &output, &output,
+    bool result = cmSystemTools::RunSingleCommand(command, &output, 0,
                                                   &retVal);
     if (!result || retVal)
       {
@@ -2266,7 +2266,7 @@ bool cmQtAutoGenerators::GenerateUi(const std::string& realName,
       }
     std::string output;
     int retVal = 0;
-    bool result = cmSystemTools::RunSingleCommand(command, &output, &output,
+    bool result = cmSystemTools::RunSingleCommand(command, &output, 0,
                                                   &retVal);
     if (!result || retVal)
       {
@@ -2357,7 +2357,7 @@ bool cmQtAutoGenerators::GenerateQrc()
         }
       std::string output;
       int retVal = 0;
-      bool result = cmSystemTools::RunSingleCommand(command, &output, &output,
+      bool result = cmSystemTools::RunSingleCommand(command, &output, 0,
                                                     &retVal);
       if (!result || retVal)
         {

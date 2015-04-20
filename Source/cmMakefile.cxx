@@ -526,8 +526,9 @@ bool cmMakefile::ProcessBuildsystemFile(const char* listfile)
 {
   this->AddDefinition("CMAKE_PARENT_LIST_FILE", listfile);
   this->cmCurrentListFile = listfile;
+  std::string curSrc = this->GetCurrentSourceDirectory();
   return this->ReadListFile(listfile, true,
-                            this->cmStartDirectory == this->cmHomeDirectory);
+                            curSrc == this->GetHomeDirectory());
 }
 
 bool cmMakefile::ReadDependentFile(const char* listfile, bool noPolicyScope)
@@ -535,7 +536,7 @@ bool cmMakefile::ReadDependentFile(const char* listfile, bool noPolicyScope)
   this->AddDefinition("CMAKE_PARENT_LIST_FILE", this->GetCurrentListFile());
   this->cmCurrentListFile =
     cmSystemTools::CollapseFullPath(listfile,
-                                    this->cmStartDirectory.c_str());
+                                    this->GetCurrentSourceDirectory());
   return this->ReadListFile(this->cmCurrentListFile.c_str(),
                             noPolicyScope);
 }
@@ -549,7 +550,7 @@ bool cmMakefile::ReadListFile(const char* listfile,
 {
   std::string filenametoread =
     cmSystemTools::CollapseFullPath(listfile,
-                                    this->cmStartDirectory.c_str());
+                                    this->GetCurrentSourceDirectory());
 
   std::string currentParentFile
       = this->GetSafeDefinition("CMAKE_PARENT_LIST_FILE");

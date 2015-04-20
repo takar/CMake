@@ -451,10 +451,6 @@ public:
   const char* GetCurrentSourceDirectory() const;
   void SetCurrentBinaryDirectory(const std::string& dir);
   const char* GetCurrentBinaryDirectory() const;
-  const char* GetStartOutputDirectory() const
-  {
-    return this->GetCurrentBinaryDirectory();
-  }
 
   /* Get the current CMakeLists.txt file that is being processed.  This
    * is just used in order to be able to 'branch' from one file to a second

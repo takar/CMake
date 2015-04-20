@@ -467,7 +467,7 @@ int cmCPackDebGenerator::createDeb()
 
   std::string output;
     int retval = -1;
-  int res = cmSystemTools::RunSingleCommand(cmd.c_str(), &output,
+  int res = cmSystemTools::RunSingleCommand(cmd.c_str(), &output, &output,
       &retval, this->GetOption("GEN_WDIR"), this->GeneratorVerbose, 0);
 
     if ( !res || retval )
@@ -506,7 +506,7 @@ int cmCPackDebGenerator::createDeb()
       cmd += "\"";
       //std::string output;
       //int retVal = -1;
-      res = cmSystemTools::RunSingleCommand(cmd.c_str(), &output,
+      res = cmSystemTools::RunSingleCommand(cmd.c_str(), &output, &output,
           &retval, toplevel.c_str(), this->GeneratorVerbose, 0);
       if ( !res || retval )
         {
@@ -550,7 +550,7 @@ int cmCPackDebGenerator::createDeb()
         }
       }
     }
-  res = cmSystemTools::RunSingleCommand(cmd.c_str(), &output,
+  res = cmSystemTools::RunSingleCommand(cmd.c_str(), &output, &output,
       &retval, this->GetOption("GEN_WDIR"), this->GeneratorVerbose, 0);
 
     if ( !res || retval )

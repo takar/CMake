@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 3.2)
 project(ExternalProjectSubdir NONE)
 include(ExternalProject)
 
+file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/PreSubdir1.txt)
+add_custom_target(PreSubdir1
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/PreSubdir1.txt
+  )
+add_library(PreSubdir1Interface INTERFACE)
+add_dependencies(PreSubdir1Interface PreSubdir1)
+
 ExternalProject_Add(Subdir1
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Subdir1
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Subdir1
@@ -11,4 +18,6 @@ ExternalProject_Add(Subdir1
 
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
+
+  DEPENDS PreSubdir1Interface
   )

@@ -75,7 +75,6 @@ function(run_lintian lintian_output)
 
   find_program(LINTIAN_EXECUTABLE lintian)
   if(LINTIAN_EXECUTABLE)
-
     set(options "")
     set(oneValueArgs "FILENAME")
     set(multiValueArgs "")
@@ -95,6 +94,8 @@ function(run_lintian lintian_output)
       OUTPUT_STRIP_TRAILING_WHITESPACE )
 
     set(${lintian_output} "${LINTIAN_OUTPUT}" PARENT_SCOPE)
+  else()
+    message(FATAL_ERROR "run_lintian called without lintian executable being present")
   endif()
 endfunction()
 
@@ -112,7 +113,7 @@ function(lintian_check_specific_errors output_errors)
   set(lintian_output)
   run_lintian(lintian_output FILENAME ${lintian_check_specific_errors_deb_FILENAME})
 
-  message(STATUS "Lintian output is ${lintian_output}")
+  message(STATUS "Lintian output is ''${lintian_output}'")
 
   # regex to avoid
   foreach(_s IN LISTS lintian_check_specific_errors_deb_ERROR_REGEX_STRINGS)
@@ -160,6 +161,8 @@ function(run_dpkgdeb dpkg_deb_output)
       OUTPUT_STRIP_TRAILING_WHITESPACE )
 
     set(${dpkg_deb_output} "${DPKGDEB_OUTPUT}" PARENT_SCOPE)
+  else()
+    message(FATAL_ERROR "run_dpkgdeb called without dpkg-deb executable being present")
   endif()
 endfunction()
 

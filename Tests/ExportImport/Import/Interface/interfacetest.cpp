@@ -13,8 +13,12 @@
 #error Expected DEFINE_IFACE_DEFINE
 #endif
 
+extern int item();
+
 int main(int,char**)
 {
   SharedLibObject slo;
-  return slo.foo();
+  return slo.foo()
+    + item()
+    ;
 }

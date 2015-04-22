@@ -1,0 +1,11 @@
+^CMake Error at INTERFACE_LINK_ITEMS-non-iface.cmake:[0-9]+ \(set_property\):
+  INTERFACE_LINK_ITEMS property may be set only on INTERFACE library targets.
+
+Call Stack \(most recent call first\):
+  CMakeLists.txt:3 \(include\)
++
+CMake Error at INTERFACE_LINK_ITEMS-non-iface.cmake:[0-9]+ \(set_property\):
+  INTERFACE_LINK_ITEMS property may be set only on INTERFACE library targets.
+
+Call Stack \(most recent call first\):
+  CMakeLists.txt:3 \(include\)$

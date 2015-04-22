@@ -653,6 +653,23 @@ void cmComputeLinkInformation::AddItem(std::string const& item,
       this->Items.push_back(Item(linkItem, true, tgt));
       this->Depends.push_back(exe);
       }
+    else if(tgt->GetType() == cmTarget::INTERFACE_LIBRARY)
+      {
+      // Add the interface library as an item so it can be considered as part
+      // of COMPATIBLE_INTERFACE_ enforcement.  The generators will ignore
+      // this for the actual link line.
+      this->Items.push_back(Item(std::string(), true, tgt));
+
+      // Also add items the interface specifies to be used in its place.
+      std::vector<std::string> ifaceLinkItems;
+      tgt->GetInterfaceLinkItems(ifaceLinkItems, config);
+      for (std::vector<std::string>::iterator i = ifaceLinkItems.begin(),
+             e = ifaceLinkItems.end(); i != e; ++i)
+        {
+        this->AddItem(*i, 0);
+        this->CheckInterfaceLinkItem(tgt, *i);
+        }
+      }
     else
       {
       // Decide whether to use an import library.
@@ -660,11 +677,6 @@ void cmComputeLinkInformation::AddItem(std::string const& item,
         (this->UseImportLibrary &&
          (impexe || tgt->GetType() == cmTarget::SHARED_LIBRARY));
 
-      if(tgt->GetType() == cmTarget::INTERFACE_LIBRARY)
-        {
-        this->Items.push_back(Item(std::string(), true, tgt));
-        return;
-        }
       // Pass the full path to the target file.
       std::string lib = tgt->GetFullPath(config, implib, true);
       if(!this->LinkDependsNoShared ||
@@ -1561,6 +1573,24 @@ void cmComputeLinkInformation::HandleBadFullItem(std::string const& item,
       }
       break;
     }
+}
+
+//----------------------------------------------------------------------------
+void cmComputeLinkInformation::CheckInterfaceLinkItem(cmTarget const* target,
+                                                      std::string const& item)
+{
+  if (item.find("::") == item.npos)
+    {
+    return;
+    }
+  std::ostringstream e;
+  e <<
+    "INTERFACE library \"" << target->GetName() << "\" has an invalid "
+    "INTERFACE_LINK_ITEMS entry \"" << item << "\".  "
+    "Entries may not contain \"::\"."
+    ;
+  this->CMakeInstance->IssueMessage(cmake::FATAL_ERROR, e.str(),
+                                    target->GetBacktrace());
 }
 
 //----------------------------------------------------------------------------

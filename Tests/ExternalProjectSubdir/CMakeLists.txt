@@ -2,7 +2,13 @@ cmake_minimum_required(VERSION 3.2)
 project(ExternalProjectSubdir NONE)
 include(ExternalProject)
 
-file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/PreSubdir1.txt)
+# Remove the custom target output to be sure it runs in an
+# incremental test.  Skip this on VS 6 because it sometimes
+# re-runs CMake after the custom command runs.
+if(NOT CMAKE_GENERATOR STREQUAL "Visual Studio 6")
+  file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/PreSubdir1.txt)
+endif()
+
 add_custom_target(PreSubdir1
   COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/PreSubdir1.txt
   )

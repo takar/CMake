@@ -147,6 +147,7 @@ private:
   bool CheckSharedLibNoSOName(std::string const& item);
   void AddSharedLibNoSOName(std::string const& item);
   void HandleBadFullItem(std::string const& item, std::string const& file);
+  void CheckInterfaceLinkItem(cmTarget const* target, std::string const& item);
 
   // Framework info.
   void ComputeFrameworkInfo();

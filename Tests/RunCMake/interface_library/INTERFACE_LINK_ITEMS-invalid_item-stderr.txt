@@ -1,0 +1,6 @@
+^(CMake Error at INTERFACE_LINK_ITEMS-invalid_item.cmake:[0-9]+ \(add_library\):
+  INTERFACE library "SomeIFace" has an invalid INTERFACE_LINK_ITEMS entry
+  "bad::item".  Entries may not contain "::".
+Call Stack \(most recent call first\):
+  CMakeLists.txt:3 \(include\)
+*)+$

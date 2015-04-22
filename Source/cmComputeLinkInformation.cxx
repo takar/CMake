@@ -659,6 +659,16 @@ void cmComputeLinkInformation::AddItem(std::string const& item,
       // of COMPATIBLE_INTERFACE_ enforcement.  The generators will ignore
       // this for the actual link line.
       this->Items.push_back(Item(std::string(), true, tgt));
+
+      // Also add items the interface specifies to be used in its place.
+      std::vector<std::string> ifaceLinkItems;
+      tgt->GetInterfaceLinkItems(ifaceLinkItems, config);
+      for (std::vector<std::string>::iterator i = ifaceLinkItems.begin(),
+             e = ifaceLinkItems.end(); i != e; ++i)
+        {
+        this->AddItem(*i, 0);
+        this->CheckInterfaceLinkItem(tgt, *i);
+        }
       }
     else
       {
@@ -1563,6 +1573,24 @@ void cmComputeLinkInformation::HandleBadFullItem(std::string const& item,
       }
       break;
     }
+}
+
+//----------------------------------------------------------------------------
+void cmComputeLinkInformation::CheckInterfaceLinkItem(cmTarget const* target,
+                                                      std::string const& item)
+{
+  if (item.find("::") == item.npos)
+    {
+    return;
+    }
+  std::ostringstream e;
+  e <<
+    "INTERFACE library \"" << target->GetName() << "\" has an invalid "
+    "INTERFACE_LINK_ITEMS entry \"" << item << "\".  "
+    "Entries may not contain \"::\"."
+    ;
+  this->CMakeInstance->IssueMessage(cmake::FATAL_ERROR, e.str(),
+                                    target->GetBacktrace());
 }
 
 //----------------------------------------------------------------------------

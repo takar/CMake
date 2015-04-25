@@ -77,7 +77,15 @@ public:
 
   void RemoveDefinition(std::string const& name)
   {
-    this->VarStack.back().Set(name, 0);
+    if (this->VarStack.size() > 1)
+      {
+      // In lower scopes we store keys, defined or not.
+      this->VarStack.back().Set(name, 0);
+      }
+    else
+      {
+      this->VarStack.back().Erase(name);
+      }
   }
 
   std::set<std::string> LocalKeys() const

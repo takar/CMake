@@ -26,12 +26,6 @@
 class cmDefinitions
 {
 public:
-  /** Construct with the given parent scope.  */
-  cmDefinitions(cmDefinitions* parent = 0);
-
-  /** Returns the parent scope, if any.  */
-  cmDefinitions* GetParent() const { return this->Up; }
-
   std::pair<const char*, bool> Get(const std::string& key);
 
   /** Set (or unset if null) a value associated with a key.  */
@@ -62,9 +56,6 @@ private:
     Def(Def const& d): std_string(d), Exists(d.Exists) {}
     bool Exists;
   };
-
-  // Parent scope, if any.
-  cmDefinitions* Up;
 
   // Local definitions, set or unset.
 #if defined(CMAKE_BUILD_WITH_CMAKE)

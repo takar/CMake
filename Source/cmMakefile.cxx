@@ -59,7 +59,8 @@ public:
   void InitializeDefinitions(cmMakefile* parent)
   {
     std::vector<cmDefinitions const*> defPtrs;
-    for (std::vector<cmDefinitions>::iterator it = parent->Internal->VarStack.begin();
+    for (std::vector<cmDefinitions>::iterator it =
+        parent->Internal->VarStack.begin();
         it != parent->Internal->VarStack.end(); ++it)
       {
       defPtrs.push_back(&*it);

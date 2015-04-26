@@ -45,7 +45,9 @@ public:
   std::vector<std::string>
   Keys(std::vector<std::string>& undefinedKeys) const;
 
-  cmDefinitions MakeClosure() const;
+  static cmDefinitions MakeClosure(
+      std::vector<cmDefinitions const*>::iterator begin,
+      std::vector<cmDefinitions const*>::iterator end);
 
 private:
   // String with existence boolean.

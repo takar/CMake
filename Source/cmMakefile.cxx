@@ -70,7 +70,23 @@ public:
 
   const char* GetDefinition(std::string const& name)
   {
-    return this->VarStack.back().Get(name);
+    std::pair<const char*, bool> result((const char*)0, false);
+    std::list<cmDefinitions>::reverse_iterator it = VarStack.rbegin();
+    for ( ; it != this->VarStack.rend(); ++it)
+      {
+      result = it->Get(name);
+      if(result.second)
+        {
+        break;
+        }
+      }
+    std::list<cmDefinitions>::reverse_iterator last = it;
+    // Store the result in intermediate scopes.
+    for (it = this->VarStack.rbegin(); it != last; ++it)
+      {
+      it->Set(name, result.first);
+      }
+    return result.first;
   }
 
   void SetDefinition(std::string const& name, std::string const& value)

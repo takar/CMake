@@ -121,7 +121,7 @@ void cmDefinitions::ClosureImpl(std::set<std::string>& undefined,
 }
 
 //----------------------------------------------------------------------------
-std::set<std::string> cmDefinitions::ClosureKeys() const
+std::vector<std::string> cmDefinitions::ClosureKeys() const
 {
   std::set<std::string> defined;
   std::set<std::string> undefined;
@@ -144,5 +144,5 @@ std::set<std::string> cmDefinitions::ClosureKeys() const
       }
     up = up->Up;
     }
-  return defined;
+  return std::vector<std::string>(defined.begin(), defined.end());
 }

@@ -14,12 +14,6 @@
 #include <assert.h>
 
 //----------------------------------------------------------------------------
-cmDefinitions::cmDefinitions(cmDefinitions* parent)
-  : Up(parent)
-{
-}
-
-//----------------------------------------------------------------------------
 std::pair<const char*, bool> cmDefinitions::Get(const std::string& key)
 {
   MapType::const_iterator i = this->Map.find(key);

@@ -34,9 +34,27 @@ cmDefinitions::GetInternal(const std::string& key)
     {
     return this->NoDef;
     }
-  // Query the parent scope and store the result locally.
-  Def def = up->GetInternal(key);
-  return this->Map.insert(MapType::value_type(key, def)).first->second;
+  std::list<cmDefinitions*> ups;
+  ups.push_back(this);
+  Def def = this->NoDef;
+  while (up)
+    {
+    i = up->Map.find(key);
+    if(i != up->Map.end())
+      {
+      def = i->second;
+      break;
+      }
+    ups.push_back(up);
+    up = up->Up;
+    }
+  // Store the result in intermediate scopes.
+  for (std::list<cmDefinitions*>::const_iterator it = ups.begin();
+       it != ups.end(); ++it)
+    {
+    i = (*it)->Map.insert(MapType::value_type(key, def)).first;
+    }
+  return i->second;
 }
 
 //----------------------------------------------------------------------------

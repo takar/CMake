@@ -68,7 +68,30 @@ public:
 
   const char* GetDefinition(std::string const& name)
   {
-    return this->VarStack.back().Get(name);
+    std::vector<cmDefinitions*> defPtrs;
+    defPtrs.reserve(this->VarStack.size());
+    for (std::list<cmDefinitions>::iterator it = this->VarStack.begin();
+        it != this->VarStack.end(); ++it)
+      {
+      defPtrs.push_back(&*it);
+      }
+    std::pair<const char*, bool> result(0, false);
+    std::vector<cmDefinitions*>::const_reverse_iterator it = defPtrs.rbegin();
+    for ( ; it != defPtrs.rend(); ++it)
+      {
+      result = (*it)->Get(name);
+      if(result.second)
+        {
+        break;
+        }
+      }
+    std::vector<cmDefinitions*>::const_reverse_iterator last = it;
+    // Store the result in intermediate scopes.
+    for (it = defPtrs.rbegin(); it != last; ++it)
+      {
+      (*it)->Set(name, result.first);
+      }
+    return result.first;
   }
 
   void SetDefinition(std::string const& name, std::string const& value)

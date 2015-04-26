@@ -32,28 +32,9 @@ std::pair<const char*, bool> cmDefinitions::GetInternal(const std::string& key)
 }
 
 //----------------------------------------------------------------------------
-const char* cmDefinitions::Get(const std::string& key)
+std::pair<const char*, bool> cmDefinitions::Get(const std::string& key)
 {
-  std::vector<cmDefinitions*> ups;
-  cmDefinitions* up = this;
-  std::pair<const char*, bool> result(0, false);
-  while (up)
-    {
-    result = up->GetInternal(key);
-    if(result.second)
-      {
-      break;
-      }
-    ups.push_back(up);
-    up = up->Up;
-    }
-  // Store the result in intermediate scopes.
-  for (std::vector<cmDefinitions*>::const_iterator it = ups.begin();
-       it != ups.end(); ++it)
-    {
-    (*it)->Set(key, result.first);
-    }
-  return result.first;
+  return this->GetInternal(key);
 }
 
 //----------------------------------------------------------------------------

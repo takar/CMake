@@ -81,7 +81,7 @@ private:
   MapType Map;
 
   // Internal query and update methods.
-  Def const& GetInternal(const std::string& key);
+  const char* GetInternal(const std::string& key);
 
   void MakeClosure(std::set<std::string>& undefined,
                    std::list<cmDefinitions>::const_reverse_iterator rbegin,

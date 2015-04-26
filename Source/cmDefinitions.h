@@ -52,6 +52,8 @@ public:
   std::vector<std::string>
   Keys(std::vector<std::string>& undefinedKeys) const;
 
+  cmDefinitions MakeClosure() const;
+
 private:
   // String with existence boolean.
   struct Def: public std::string
@@ -77,10 +79,7 @@ private:
 #endif
   MapType Map;
 
-  // Implementation of Closure() method.
-  struct ClosureTag {};
-  cmDefinitions(ClosureTag const&, cmDefinitions const* root);
-  void ClosureImpl(std::set<std::string>& undefined,
+  void MakeClosure(std::set<std::string>& undefined,
                    cmDefinitions const* defs);
 };
 

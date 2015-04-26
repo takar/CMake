@@ -46,20 +46,143 @@
 class cmMakefile::Internals
 {
 public:
-  std::stack<cmDefinitions, std::list<cmDefinitions> > VarStack;
+  std::vector<cmDefinitions> VarStack;
   std::stack<std::set<std::string> > VarInitStack;
   std::stack<std::set<std::string> > VarUsageStack;
   bool IsSourceFileTryCompile;
+
+  void PushDefinitions()
+  {
+    this->VarStack.resize(this->VarStack.size() + 1);
+  }
+
+  void InitializeDefinitions(cmMakefile* parent)
+  {
+    std::vector<cmDefinitions const*> defPtrs;
+    for (std::vector<cmDefinitions>::iterator it = parent->Internal->VarStack.begin();
+        it != parent->Internal->VarStack.end(); ++it)
+      {
+      defPtrs.push_back(&*it);
+      }
+    std::reverse(defPtrs.begin(), defPtrs.end());
+    this->VarStack.back() = cmDefinitions::MakeClosure(defPtrs.begin(),
+                                                       defPtrs.end());
+  }
+
+  const char* GetDefinition(std::string const& name)
+  {
+    std::vector<cmDefinitions*> defPtrs;
+    defPtrs.reserve(this->VarStack.size());
+    for (std::vector<cmDefinitions>::iterator it = this->VarStack.begin();
+        it != this->VarStack.end(); ++it)
+      {
+      defPtrs.push_back(&*it);
+      }
+    std::pair<const char*, bool> result(0, false);
+    std::vector<cmDefinitions*>::const_reverse_iterator it = defPtrs.rbegin();
+    for ( ; it != defPtrs.rend(); ++it)
+      {
+      result = (*it)->Get(name);
+      if(result.second)
+        {
+        break;
+        }
+      }
+    std::vector<cmDefinitions*>::const_reverse_iterator last = it;
+    // Store the result in intermediate scopes.
+    for (it = defPtrs.rbegin(); it != last; ++it)
+      {
+      (*it)->Set(name, result.first);
+      }
+    return result.first;
+  }
+
+  void SetDefinition(std::string const& name, std::string const& value)
+  {
+    this->VarStack.back().Set(name, value.c_str());
+  }
+
+  void RemoveDefinition(std::string const& name)
+  {
+    if (this->VarStack.size() > 1)
+      {
+      // In lower scopes we store keys, defined or not.
+      this->VarStack.back().Set(name, 0);
+      }
+    else
+      {
+      this->VarStack.back().Erase(name);
+      }
+  }
+
+  std::vector<std::string> LocalKeys() const
+  {
+    return this->VarStack.back().LocalKeys();
+  }
+
+  std::vector<std::string> ClosureKeys() const
+  {
+    std::vector<std::string> closureKeys;
+    std::vector<std::string> undefinedKeys;
+    for (std::vector<cmDefinitions>::const_iterator it = this->VarStack.begin();
+        it != this->VarStack.end(); ++it)
+      {
+      std::vector<std::string> const& localKeys = it->Keys(undefinedKeys);
+      closureKeys.insert(closureKeys.end(), localKeys.begin(), localKeys.end());
+      std::vector<std::string>::iterator newIt =
+          closureKeys.end() - localKeys.size();
+      std::inplace_merge(closureKeys.begin(), newIt, closureKeys.end());
+      }
+    closureKeys.erase(std::unique(closureKeys.begin(),
+                                  closureKeys.end()), closureKeys.end());
+    return closureKeys;
+  }
+
+  void PopDefinitions()
+  {
+    this->VarStack.pop_back();
+  }
+
+  bool RaiseScope(std::string const& var, const char* varDef, cmMakefile* mf)
+  {
+    if(this->VarStack.size() > 1)
+      {
+      // First localize the definition in the current scope.
+      this->GetDefinition(var);
+
+      // Now update the definition in the parent scope.
+      cmDefinitions& up = this->VarStack[this->VarStack.size() - 2];
+      up.Set(var, varDef);
+      }
+    else if(cmLocalGenerator* plg = mf->GetLocalGenerator()->GetParent())
+      {
+      // Update the definition in the parent directory top scope.  This
+      // directory's scope was initialized by the closure of the parent
+      // scope, so we do not need to localize the definition first.
+      cmMakefile* parent = plg->GetMakefile();
+      if (varDef)
+        {
+        parent->AddDefinition(var, varDef);
+        }
+      else
+        {
+        parent->RemoveDefinition(var);
+        }
+      }
+    else
+      {
+      return false;
+      }
+    return true;
+  }
 };
 
 // default is not to be building executables
 cmMakefile::cmMakefile(): Internal(new Internals)
 {
-  const cmDefinitions& defs = cmDefinitions();
-  const std::set<std::string> globalKeys = defs.LocalKeys();
-  this->Internal->VarStack.push(defs);
-  this->Internal->VarInitStack.push(globalKeys);
-  this->Internal->VarUsageStack.push(globalKeys);
+  this->Internal->PushDefinitions();
+  this->Internal->VarInitStack.push(std::set<std::string>());
+  this->Internal->VarUsageStack.push(std::set<std::string>());
   this->Internal->IsSourceFileTryCompile = false;
 
   // Initialize these first since AddDefaultDefinitions calls AddDefinition
@@ -1499,7 +1622,7 @@ void cmMakefile::InitializeFromParent()
   cmMakefile *parent = this->LocalGenerator->GetParent()->GetMakefile();
 
   // Initialize definitions with the closure of the parent scope.
-  this->Internal->VarStack.top() = parent->Internal->VarStack.top().Closure();
+  this->Internal->InitializeDefinitions(parent);
 
   this->AddDefinition("CMAKE_CURRENT_SOURCE_DIR",
                       this->GetCurrentSourceDirectory());
@@ -1699,7 +1822,7 @@ void cmMakefile::AddDefinition(const std::string& name, const char* value)
     return;
     }
 
-  this->Internal->VarStack.top().Set(name, value);
+  this->Internal->SetDefinition(name, value);
   if (!this->Internal->VarUsageStack.empty() &&
       this->VariableInitialized(name))
     {
@@ -1769,13 +1892,13 @@ void cmMakefile::AddCacheDefinition(const std::string& name, const char* value,
   this->GetState()->AddCacheEntry(name, haveVal ? val.c_str() : 0,
                                           doc, type);
   // if there was a definition then remove it
-  this->Internal->VarStack.top().Set(name, 0);
+  this->Internal->RemoveDefinition(name);
 }
 
 
 void cmMakefile::AddDefinition(const std::string& name, bool value)
 {
-  this->Internal->VarStack.top().Set(name, value? "ON" : "OFF");
+  this->Internal->SetDefinition(name, value ? "ON" : "OFF");
   if (!this->Internal->VarUsageStack.empty() &&
       this->VariableInitialized(name))
     {
@@ -1799,9 +1922,8 @@ void cmMakefile::CheckForUnusedVariables() const
     {
     return;
     }
-  const cmDefinitions& defs = this->Internal->VarStack.top();
-  const std::set<std::string>& locals = defs.LocalKeys();
-  std::set<std::string>::const_iterator it = locals.begin();
+  const std::vector<std::string>& locals = this->Internal->LocalKeys();
+  std::vector<std::string>::const_iterator it = locals.begin();
   for (; it != locals.end(); ++it)
     {
     this->CheckForUnused("out of scope", *it);
@@ -1874,7 +1996,7 @@ void cmMakefile::CheckForUnused(const char* reason,
 
 void cmMakefile::RemoveDefinition(const std::string& name)
 {
-  this->Internal->VarStack.top().Set(name, 0);
+  this->Internal->RemoveDefinition(name);
   if (!this->Internal->VarUsageStack.empty() &&
       this->VariableInitialized(name))
     {
@@ -2347,7 +2469,7 @@ const char* cmMakefile::GetRequiredDefinition(const std::string& name) const
 
 bool cmMakefile::IsDefinitionSet(const std::string& name) const
 {
-  const char* def = this->Internal->VarStack.top().Get(name);
+  const char* def = this->Internal->GetDefinition(name);
   this->Internal->VarUsageStack.top().insert(name);
   if(!def)
     {
@@ -2373,7 +2495,7 @@ const char* cmMakefile::GetDefinition(const std::string& name) const
     {
     this->Internal->VarUsageStack.top().insert(name);
     }
-  const char* def = this->Internal->VarStack.top().Get(name);
+  const char* def = this->Internal->GetDefinition(name);
   if(!def)
     {
     def = this->GetState()->GetInitializedCacheValue(name);
@@ -2413,9 +2535,7 @@ std::vector<std::string> cmMakefile
   std::vector<std::string> res;
   if ( !cacheonly )
     {
-    std::set<std::string> definitions =
-        this->Internal->VarStack.top().ClosureKeys();
-    res.insert(res.end(), definitions.begin(), definitions.end());
+    res = this->Internal->ClosureKeys();
     }
   std::vector<std::string> cacheKeys =
       this->GetState()->GetCacheEntryKeys();
@@ -4329,10 +4449,9 @@ std::string cmMakefile::GetListFileStack() const
 
 void cmMakefile::PushScope()
 {
-  cmDefinitions* parent = &this->Internal->VarStack.top();
+  this->Internal->PushDefinitions();
   const std::set<std::string>& init = this->Internal->VarInitStack.top();
   const std::set<std::string>& usage = this->Internal->VarUsageStack.top();
-  this->Internal->VarStack.push(cmDefinitions(parent));
   this->Internal->VarInitStack.push(init);
   this->Internal->VarUsageStack.push(usage);
 
@@ -4353,13 +4472,12 @@ void cmMakefile::PopScope()
 
   this->PopLoopBlockBarrier();
 
-  cmDefinitions* current = &this->Internal->VarStack.top();
   std::set<std::string> init = this->Internal->VarInitStack.top();
   std::set<std::string> usage = this->Internal->VarUsageStack.top();
-  const std::set<std::string>& locals = current->LocalKeys();
+  const std::vector<std::string>& locals = this->Internal->LocalKeys();
   // Remove initialization and usage information for variables in the local
   // scope.
-  std::set<std::string>::const_iterator it = locals.begin();
+  std::vector<std::string>::const_iterator it = locals.begin();
   for (; it != locals.end(); ++it)
     {
     init.erase(*it);
@@ -4372,7 +4490,8 @@ void cmMakefile::PopScope()
       usage.erase(*it);
       }
     }
-  this->Internal->VarStack.pop();
+
+  this->Internal->PopDefinitions();
   this->Internal->VarInitStack.pop();
   this->Internal->VarUsageStack.pop();
   // Push initialization and usage up to the parent scope.
@@ -4387,31 +4506,7 @@ void cmMakefile::RaiseScope(const std::string& var, const char *varDef)
     return;
     }
 
-  cmDefinitions& cur = this->Internal->VarStack.top();
-  if(cmDefinitions* up = cur.GetParent())
-    {
-    // First localize the definition in the current scope.
-    cur.Get(var);
-
-    // Now update the definition in the parent scope.
-    up->Set(var, varDef);
-    }
-  else if(cmLocalGenerator* plg = this->LocalGenerator->GetParent())
-    {
-    // Update the definition in the parent directory top scope.  This
-    // directory's scope was initialized by the closure of the parent
-    // scope, so we do not need to localize the definition first.
-    cmMakefile* parent = plg->GetMakefile();
-    if (varDef)
-      {
-      parent->AddDefinition(var, varDef);
-      }
-    else
-      {
-      parent->RemoveDefinition(var);
-      }
-    }
-  else
+  if (!this->Internal->RaiseScope(var, varDef, this))
     {
     std::ostringstream m;
     m << "Cannot set \"" << var << "\": current scope has no parent.";

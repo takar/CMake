@@ -27,31 +27,28 @@
 class cmDefinitions
 {
 public:
-  /** Construct with the given parent scope.  */
-  cmDefinitions(cmDefinitions* parent = 0);
-
-  /** Reset object as if newly constructed.  */
-  void Reset(cmDefinitions* parent = 0);
-
-  /** Returns the parent scope, if any.  */
-  cmDefinitions* GetParent() const { return this->Up; }
-
   /** Get the value associated with a key; null if none.
       Store the result locally if it came from a parent.  */
-  const char* Get(const std::string& key);
+  std::pair<const char*, bool> Get(const std::string& key);
 
   /** Set (or unset if null) a value associated with a key.  */
-  const char* Set(const std::string& key, const char* value);
+  void Set(const std::string& key, const char* value);
+
+  void Erase(const std::string& key);
 
   /** Get the set of all local keys.  */
-  std::set<std::string> LocalKeys() const;
+  std::vector<std::string> LocalKeys() const;
 
   /** Compute the closure of all defined keys with values.
       This flattens the scope.  The result has no parent.  */
   cmDefinitions Closure() const;
 
-  /** Compute the set of all defined keys.  */
-  std::set<std::string> ClosureKeys() const;
+  std::vector<std::string>
+  Keys(std::vector<std::string>& undefinedKeys) const;
+
+  static cmDefinitions MakeClosure(
+      std::vector<cmDefinitions const*>::iterator begin,
+      std::vector<cmDefinitions const*>::iterator end);
 
 private:
   // String with existence boolean.
@@ -66,10 +63,6 @@ private:
     Def(Def const& d): std_string(d), Exists(d.Exists) {}
     bool Exists;
   };
-  static Def NoDef;
-
-  // Parent scope, if any.
-  cmDefinitions* Up;
 
   // Local definitions, set or unset.
 #if defined(CMAKE_BUILD_WITH_CMAKE)
@@ -79,19 +72,9 @@ private:
 #endif
   MapType Map;
 
-  // Internal query and update methods.
-  Def const& GetInternal(const std::string& key);
-  Def const& SetInternal(const std::string& key, Def const& def);
-
-  // Implementation of Closure() method.
-  struct ClosureTag {};
-  cmDefinitions(ClosureTag const&, cmDefinitions const* root);
-  void ClosureImpl(std::set<std::string>& undefined,
-                   cmDefinitions const* defs);
-
-  // Implementation of ClosureKeys() method.
-  void ClosureKeys(std::set<std::string>& defined,
-                   std::set<std::string>& undefined) const;
+  void MakeClosure(std::set<std::string>& undefined,
+                   std::vector<cmDefinitions const*>::iterator begin,
+                   std::vector<cmDefinitions const*>::iterator end);
 };
 
 #endif

@@ -76,9 +76,6 @@ private:
 #endif
   MapType Map;
 
-  // Internal query and update methods.
-  std::pair<const char*, bool> GetInternal(const std::string& key);
-
   void MakeClosure(std::set<std::string>& undefined,
                    std::list<cmDefinitions>::const_reverse_iterator rbegin,
                    std::list<cmDefinitions>::const_reverse_iterator rend);

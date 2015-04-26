@@ -107,6 +107,7 @@ cmDefinitions::Keys(std::vector<std::string>& undefined) const
     std::vector<std::string>& m = mi->second.Exists? defined : undefined;
     m.push_back(mi->first);
     }
+  std::sort(defined.begin(), defined.end());
   std::sort(undefined.begin(), undefined.end());
   undefined.erase(std::unique(undefined.begin(), undefined.end()),
                   undefined.end());

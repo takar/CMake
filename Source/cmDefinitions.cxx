@@ -20,7 +20,7 @@ cmDefinitions::cmDefinitions(cmDefinitions* parent)
 }
 
 //----------------------------------------------------------------------------
-std::pair<const char*, bool> cmDefinitions::GetInternal(const std::string& key)
+std::pair<const char*, bool> cmDefinitions::Get(const std::string& key)
 {
   MapType::const_iterator i = this->Map.find(key);
   std::pair<const char*, bool> result((const char*)0, false);
@@ -29,12 +29,6 @@ std::pair<const char*, bool> cmDefinitions::GetInternal(const std::string& key)
     result = std::make_pair(i->second.Exists ? i->second.c_str() : 0, true);
     }
   return result;
-}
-
-//----------------------------------------------------------------------------
-std::pair<const char*, bool> cmDefinitions::Get(const std::string& key)
-{
-  return this->GetInternal(key);
 }
 
 //----------------------------------------------------------------------------

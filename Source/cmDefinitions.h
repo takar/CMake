@@ -77,9 +77,6 @@ private:
 #endif
   MapType Map;
 
-  // Internal query and update methods.
-  std::pair<const char*, bool> GetInternal(const std::string& key);
-
   // Implementation of Closure() method.
   struct ClosureTag {};
   cmDefinitions(ClosureTag const&, cmDefinitions const* root);

@@ -78,7 +78,7 @@ public:
       {
       defPtrs.push_back(&*it);
       }
-    std::pair<const char*, bool> result(0, false);
+    std::pair<const char*, bool> result((const char*)0, false);
     std::vector<cmDefinitions*>::const_reverse_iterator it = defPtrs.rbegin();
     for ( ; it != defPtrs.rend(); ++it)
       {

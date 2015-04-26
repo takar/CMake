@@ -47,7 +47,7 @@ public:
   cmDefinitions Closure() const;
 
   /** Compute the set of all defined keys.  */
-  std::set<std::string> ClosureKeys() const;
+  std::vector<std::string> ClosureKeys() const;
 
 private:
   // String with existence boolean.

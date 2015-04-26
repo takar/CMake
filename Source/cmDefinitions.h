@@ -73,7 +73,8 @@ private:
   MapType Map;
 
   void MakeClosure(std::set<std::string>& undefined,
-                   cmDefinitions const* defs);
+                   std::vector<cmDefinitions const*>::iterator begin,
+                   std::vector<cmDefinitions const*>::iterator end);
 };
 
 #endif

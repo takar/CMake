@@ -78,7 +78,7 @@ public:
       defPtrs.push_back(&*it);
       }
     std::pair<const char*, bool> result((const char*)0, false);
-    std::vector<cmDefinitions*>::const_reverse_iterator it = defPtrs.rbegin();
+    std::vector<cmDefinitions*>::reverse_iterator it = defPtrs.rbegin();
     for ( ; it != defPtrs.rend(); ++it)
       {
       result = (*it)->Get(name);
@@ -87,7 +87,7 @@ public:
         break;
         }
       }
-    std::vector<cmDefinitions*>::const_reverse_iterator last = it;
+    std::vector<cmDefinitions*>::reverse_iterator last = it;
     // Store the result in intermediate scopes.
     for (it = defPtrs.rbegin(); it != last; ++it)
       {

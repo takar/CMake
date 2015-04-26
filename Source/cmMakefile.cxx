@@ -46,23 +46,21 @@
 class cmMakefile::Internals
 {
 public:
-  std::list<cmDefinitions> VarStack;
+  std::vector<cmDefinitions> VarStack;
   std::stack<std::set<std::string> > VarInitStack;
   std::stack<std::set<std::string> > VarUsageStack;
   bool IsSourceFileTryCompile;
 
   void PushDefinitions()
   {
-    this->VarStack.push_back(cmDefinitions());
+    this->VarStack.resize(this->VarStack.size() + 1);
   }
 
   void InitializeDefinitions(cmMakefile* parent)
   {
     std::vector<cmDefinitions const*> defPtrs;
-    defPtrs.reserve(this->VarStack.size());
-    for (std::list<cmDefinitions>::iterator it =
-         parent->Internal->VarStack.begin();
-         it != parent->Internal->VarStack.end(); ++it)
+    for (std::vector<cmDefinitions>::iterator it = parent->Internal->VarStack.begin();
+        it != parent->Internal->VarStack.end(); ++it)
       {
       defPtrs.push_back(&*it);
       }
@@ -75,7 +73,7 @@ public:
   {
     std::vector<cmDefinitions*> defPtrs;
     defPtrs.reserve(this->VarStack.size());
-    for (std::list<cmDefinitions>::iterator it = this->VarStack.begin();
+    for (std::vector<cmDefinitions>::iterator it = this->VarStack.begin();
         it != this->VarStack.end(); ++it)
       {
       defPtrs.push_back(&*it);
@@ -126,7 +124,7 @@ public:
   {
     std::vector<std::string> closureKeys;
     std::vector<std::string> undefinedKeys;
-    for (std::list<cmDefinitions>::const_iterator it = this->VarStack.begin();
+    for (std::vector<cmDefinitions>::const_iterator it = this->VarStack.begin();
         it != this->VarStack.end(); ++it)
       {
       std::vector<std::string> const& localKeys = it->Keys(undefinedKeys);
@@ -147,14 +145,14 @@ public:
 
   bool RaiseScope(std::string const& var, const char* varDef, cmMakefile* mf)
   {
-    cmDefinitions& cur = this->VarStack.back();
-    if(cmDefinitions* up = cur.GetParent())
+    if(this->VarStack.size() > 1)
       {
       // First localize the definition in the current scope.
-      cur.Get(var);
+      this->GetDefinition(var);
 
       // Now update the definition in the parent scope.
-      up->Set(var, varDef);
+      cmDefinitions& up = this->VarStack[this->VarStack.size() - 2];
+      up.Set(var, varDef);
       }
     else if(cmLocalGenerator* plg = mf->GetLocalGenerator()->GetParent())
       {

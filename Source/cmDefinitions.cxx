@@ -26,19 +26,10 @@ cmDefinitions::cmDefinitions(cmDefinitions* parent)
 cmDefinitions::Def const&
 cmDefinitions::GetInternal(const std::string& key)
 {
-  MapType::const_iterator i = this->Map.find(key);
-  if(i != this->Map.end())
-    {
-    return i->second;
-    }
-  cmDefinitions* up = this->Up;
-  if(!up)
-    {
-    return this->NoDef;
-    }
   std::vector<cmDefinitions*> ups;
-  ups.push_back(this);
   Def def = this->NoDef;
+  MapType::const_iterator i;
+  cmDefinitions* up = this;
   while (up)
     {
     i = up->Map.find(key);

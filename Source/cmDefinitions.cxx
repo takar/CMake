@@ -105,28 +105,19 @@ void cmDefinitions::ClosureImpl(std::set<std::string>& undefined,
 }
 
 //----------------------------------------------------------------------------
-std::vector<std::string> cmDefinitions::ClosureKeys() const
+std::vector<std::string>
+cmDefinitions::Keys(std::vector<std::string>& undefined) const
 {
-  std::set<std::string> defined;
-  std::set<std::string> undefined;
-
-  cmDefinitions const* up = this;
-
-  while (up)
+  std::vector<std::string> defined;
+  defined.reserve(this->Map.size());
+  for(MapType::const_iterator mi = this->Map.begin();
+      mi != this->Map.end(); ++mi)
     {
-    // Consider local definitions.
-    for(MapType::const_iterator mi = up->Map.begin();
-        mi != up->Map.end(); ++mi)
-      {
-      // Use this key if it is not already set or unset.
-      if(defined.find(mi->first) == defined.end() &&
-         undefined.find(mi->first) == undefined.end())
-        {
-        std::set<std::string>& m = mi->second.Exists? defined : undefined;
-        m.insert(mi->first);
-        }
-      }
-    up = this->Up;
+    std::vector<std::string>& m = mi->second.Exists? defined : undefined;
+    m.push_back(mi->first);
     }
-  return std::vector<std::string>(defined.begin(), defined.end());
+  std::sort(undefined.begin(), undefined.end());
+  undefined.erase(std::unique(undefined.begin(), undefined.end()),
+                  undefined.end());
+  return defined;
 }

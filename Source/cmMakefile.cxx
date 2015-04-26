@@ -118,7 +118,20 @@ public:
 
   std::vector<std::string> ClosureKeys() const
   {
-    return this->VarStack.back().ClosureKeys();
+    std::vector<std::string> closureKeys;
+    std::vector<std::string> undefinedKeys;
+    for (std::list<cmDefinitions>::const_iterator it = this->VarStack.begin();
+        it != this->VarStack.end(); ++it)
+      {
+      std::vector<std::string> const& localKeys = it->Keys(undefinedKeys);
+      closureKeys.insert(closureKeys.end(), localKeys.begin(), localKeys.end());
+      std::vector<std::string>::iterator newIt =
+          closureKeys.end() - localKeys.size();
+      std::inplace_merge(closureKeys.begin(), newIt, closureKeys.end());
+      }
+    closureKeys.erase(std::unique(closureKeys.begin(),
+                                  closureKeys.end()), closureKeys.end());
+    return closureKeys;
   }
 
   void PopDefinitions()

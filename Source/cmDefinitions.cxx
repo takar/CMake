@@ -23,16 +23,14 @@ cmDefinitions::cmDefinitions(cmDefinitions* parent)
 }
 
 //----------------------------------------------------------------------------
-cmDefinitions::Def const&
-cmDefinitions::GetInternal(const std::string& key)
+const char* cmDefinitions::GetInternal(const std::string& key)
 {
   std::vector<cmDefinitions*> ups;
   Def def = this->NoDef;
-  MapType::const_iterator i;
   cmDefinitions* up = this;
   while (up)
     {
-    i = up->Map.find(key);
+    MapType::const_iterator i = up->Map.find(key);
     if(i != up->Map.end())
       {
       def = i->second;
@@ -45,16 +43,15 @@ cmDefinitions::GetInternal(const std::string& key)
   for (std::vector<cmDefinitions*>::const_iterator it = ups.begin();
        it != ups.end(); ++it)
     {
-    i = (*it)->Map.insert(MapType::value_type(key, def)).first;
+    (*it)->Map.insert(MapType::value_type(key, def));
     }
-  return i->second;
+  return def.Exists? def.c_str() : 0;
 }
 
 //----------------------------------------------------------------------------
 const char* cmDefinitions::Get(const std::string& key)
 {
-  Def const& def = this->GetInternal(key);
-  return def.Exists? def.c_str() : 0;
+  return this->GetInternal(key);
 }
 
 //----------------------------------------------------------------------------

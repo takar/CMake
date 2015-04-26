@@ -43,7 +43,7 @@ const char* cmDefinitions::GetInternal(const std::string& key)
   for (std::vector<cmDefinitions*>::const_iterator it = ups.begin();
        it != ups.end(); ++it)
     {
-    (*it)->Map.insert(MapType::value_type(key, def));
+    (*it)->Map[key] = def;
     }
   return def.Exists? def.c_str() : 0;
 }

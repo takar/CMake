@@ -64,22 +64,25 @@ cmDefinitions cmDefinitions::MakeClosure() const
 {
   std::set<std::string> undefined;
   cmDefinitions closure;
-  closure.MakeClosure(undefined, this);
-  return closure;
-}
-
-//----------------------------------------------------------------------------
-void cmDefinitions::MakeClosure(std::set<std::string>& undefined,
-                                cmDefinitions const* defs)
-{
-  std::vector<cmDefinitions*> ups;
+  cmDefinitions const* defs = this;
+  std::vector<cmDefinitions const*> ups;
   while(defs)
     {
     ups.push_back(defs);
     defs = defs->Up;
     }
-  for (std::vector<cmDefinitions*>::const_iterator it = ups.begin();
-       it != ups.end(); ++it)
+  closure.MakeClosure(undefined, ups.begin(), ups.end());
+  return closure;
+}
+
+//----------------------------------------------------------------------------
+void
+cmDefinitions::MakeClosure(std::set<std::string>& undefined,
+                           std::vector<cmDefinitions const*>::iterator begin,
+                           std::vector<cmDefinitions const*>::iterator end)
+{
+  for (std::vector<cmDefinitions const*>::const_iterator it = begin;
+       it != end; ++it)
     {
     // Consider local definitions.
     for(MapType::const_iterator mi = (*it)->Map.begin();

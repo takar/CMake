@@ -125,14 +125,7 @@ std::set<std::string> cmDefinitions::ClosureKeys() const
 {
   std::set<std::string> defined;
   std::set<std::string> undefined;
-  this->ClosureKeys(defined, undefined);
-  return defined;
-}
 
-//----------------------------------------------------------------------------
-void cmDefinitions::ClosureKeys(std::set<std::string>& defined,
-                                std::set<std::string>& undefined) const
-{
   cmDefinitions const* up = this;
 
   while (up)
@@ -151,4 +144,5 @@ void cmDefinitions::ClosureKeys(std::set<std::string>& defined,
       }
     up = up->Up;
     }
+  return defined;
 }

@@ -79,7 +79,7 @@ private:
   MapType Map;
 
   // Internal query and update methods.
-  Def const& GetInternal(const std::string& key);
+  const char* GetInternal(const std::string& key);
 
   // Implementation of Closure() method.
   struct ClosureTag {};

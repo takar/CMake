@@ -49,8 +49,8 @@ public:
       This flattens the scope.  The result has no parent.  */
   cmDefinitions Closure() const;
 
-  /** Compute the set of all defined keys.  */
-  std::vector<std::string> ClosureKeys() const;
+  std::vector<std::string>
+  Keys(std::vector<std::string>& undefinedKeys) const;
 
 private:
   // String with existence boolean.

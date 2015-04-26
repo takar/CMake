@@ -14,26 +14,34 @@
 #include <assert.h>
 
 //----------------------------------------------------------------------------
-cmDefinitions::Def cmDefinitions::NoDef;
-
-//----------------------------------------------------------------------------
 cmDefinitions::cmDefinitions(cmDefinitions* parent)
   : Up(parent)
 {
 }
 
 //----------------------------------------------------------------------------
-const char* cmDefinitions::GetInternal(const std::string& key)
+std::pair<const char*, bool> cmDefinitions::GetInternal(const std::string& key)
+{
+  MapType::const_iterator i = this->Map.find(key);
+  std::pair<const char*, bool> result(0, false);
+  if(i != this->Map.end())
+    {
+    result = std::make_pair(i->second.Exists ? i->second.c_str() : 0, true);
+    }
+  return result;
+}
+
+//----------------------------------------------------------------------------
+const char* cmDefinitions::Get(const std::string& key)
 {
   std::vector<cmDefinitions*> ups;
-  Def def = this->NoDef;
   cmDefinitions* up = this;
+  std::pair<const char*, bool> result(0, false);
   while (up)
     {
-    MapType::const_iterator i = up->Map.find(key);
-    if(i != up->Map.end())
+    result = up->GetInternal(key);
+    if(result.second)
       {
-      def = i->second;
       break;
       }
     ups.push_back(up);
@@ -43,15 +51,9 @@ const char* cmDefinitions::GetInternal(const std::string& key)
   for (std::vector<cmDefinitions*>::const_iterator it = ups.begin();
        it != ups.end(); ++it)
     {
-    (*it)->Set(key, def.Exists? def.c_str() : 0);
+    (*it)->Set(key, result.first);
     }
-  return def.Exists? def.c_str() : 0;
-}
-
-//----------------------------------------------------------------------------
-const char* cmDefinitions::Get(const std::string& key)
-{
-  return this->GetInternal(key);
+  return result.first;
 }
 
 //----------------------------------------------------------------------------

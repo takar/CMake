@@ -21,14 +21,11 @@
  * \brief Store a scope of variable definitions for CMake language.
  *
  * This stores the state of variable definitions (set or unset) for
- * one scope.  Sets are always local.  Gets search parent scopes
- * transitively and save results locally.
+ * one scope.  Sets are always local.
  */
 class cmDefinitions
 {
 public:
-  /** Get the value associated with a key; null if none.
-      Store the result locally if it came from a parent.  */
   std::pair<const char*, bool> Get(const std::string& key);
 
   /** Set (or unset if null) a value associated with a key.  */
@@ -38,10 +35,6 @@ public:
 
   /** Get the set of all local keys.  */
   std::vector<std::string> LocalKeys() const;
-
-  /** Compute the closure of all defined keys with values.
-      This flattens the scope.  The result has no parent.  */
-  cmDefinitions Closure() const;
 
   std::vector<std::string>
   Keys(std::vector<std::string>& undefinedKeys) const;

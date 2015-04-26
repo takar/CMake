@@ -35,7 +35,7 @@ public:
 
   /** Get the value associated with a key; null if none.
       Store the result locally if it came from a parent.  */
-  const char* Get(const std::string& key);
+  std::pair<const char*, bool> Get(const std::string& key);
 
   /** Set (or unset if null) a value associated with a key.  */
   void Set(const std::string& key, const char* value);

@@ -67,7 +67,6 @@ private:
     Def(Def const& d): std_string(d), Exists(d.Exists) {}
     bool Exists;
   };
-  static Def NoDef;
 
   // Parent scope, if any.
   cmDefinitions* Up;
@@ -81,7 +80,7 @@ private:
   MapType Map;
 
   // Internal query and update methods.
-  const char* GetInternal(const std::string& key);
+  std::pair<const char*, bool> GetInternal(const std::string& key);
 
   void MakeClosure(std::set<std::string>& undefined,
                    std::list<cmDefinitions>::const_reverse_iterator rbegin,

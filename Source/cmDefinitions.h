@@ -45,8 +45,8 @@ public:
   /** Get the set of all local keys.  */
   std::vector<std::string> LocalKeys() const;
 
-  /** Compute the set of all defined keys.  */
-  std::vector<std::string> ClosureKeys() const;
+  std::vector<std::string>
+  ClosureKeys(std::set<std::string>& bound) const;
 
   cmDefinitions MakeClosure() const;
 

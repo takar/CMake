@@ -43,14 +43,14 @@ public:
   void Erase(const std::string& key);
 
   /** Get the set of all local keys.  */
-  std::set<std::string> LocalKeys() const;
+  std::vector<std::string> LocalKeys() const;
 
   /** Compute the closure of all defined keys with values.
       This flattens the scope.  The result has no parent.  */
   cmDefinitions Closure() const;
 
   /** Compute the set of all defined keys.  */
-  std::set<std::string> ClosureKeys() const;
+  std::vector<std::string> ClosureKeys() const;
 
 private:
   // String with existence boolean.
@@ -86,10 +86,6 @@ private:
   cmDefinitions(ClosureTag const&, cmDefinitions const* root);
   void ClosureImpl(std::set<std::string>& undefined,
                    cmDefinitions const* defs);
-
-  // Implementation of ClosureKeys() method.
-  void ClosureKeys(std::set<std::string>& defined,
-                   std::set<std::string>& undefined) const;
 };
 
 #endif

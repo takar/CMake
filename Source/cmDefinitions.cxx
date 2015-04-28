@@ -60,16 +60,17 @@ void cmDefinitions::Erase(const std::string& key)
 }
 
 //----------------------------------------------------------------------------
-std::set<std::string> cmDefinitions::LocalKeys() const
+std::vector<std::string> cmDefinitions::LocalKeys() const
 {
-  std::set<std::string> keys;
+  std::vector<std::string> keys;
+  keys.reserve(this->Map.size());
   // Consider local definitions.
   for(MapType::const_iterator mi = this->Map.begin();
       mi != this->Map.end(); ++mi)
     {
     if (mi->second.Exists)
       {
-      keys.insert(mi->first);
+      keys.push_back(mi->first);
       }
     }
   return keys;
@@ -120,34 +121,28 @@ void cmDefinitions::ClosureImpl(std::set<std::string>& undefined,
 }
 
 //----------------------------------------------------------------------------
-std::set<std::string> cmDefinitions::ClosureKeys() const
+std::vector<std::string> cmDefinitions::ClosureKeys() const
 {
   std::set<std::string> defined;
   std::set<std::string> undefined;
-  this->ClosureKeys(defined, undefined);
-  return defined;
-}
 
-//----------------------------------------------------------------------------
-void cmDefinitions::ClosureKeys(std::set<std::string>& defined,
-                                std::set<std::string>& undefined) const
-{
-  // Consider local definitions.
-  for(MapType::const_iterator mi = this->Map.begin();
-      mi != this->Map.end(); ++mi)
+  cmDefinitions const* up = this;
+
+  while (up)
     {
-    // Use this key if it is not already set or unset.
-    if(defined.find(mi->first) == defined.end() &&
-       undefined.find(mi->first) == undefined.end())
+    // Consider local definitions.
+    for(MapType::const_iterator mi = up->Map.begin();
+        mi != up->Map.end(); ++mi)
       {
-      std::set<std::string>& m = mi->second.Exists? defined : undefined;
-      m.insert(mi->first);
+      // Use this key if it is not already set or unset.
+      if(defined.find(mi->first) == defined.end() &&
+         undefined.find(mi->first) == undefined.end())
+        {
+        std::set<std::string>& m = mi->second.Exists? defined : undefined;
+        m.insert(mi->first);
+        }
       }
+    up = up->Up;
     }
-
-  // Traverse parents.
-  if(cmDefinitions const* up = this->Up)
-    {
-    up->ClosureKeys(defined, undefined);
-    }
+  return std::vector<std::string>(defined.begin(), defined.end());
 }

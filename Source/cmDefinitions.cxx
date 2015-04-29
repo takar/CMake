@@ -123,8 +123,8 @@ void cmDefinitions::ClosureImpl(std::set<std::string>& undefined,
 //----------------------------------------------------------------------------
 std::vector<std::string> cmDefinitions::ClosureKeys() const
 {
-  std::set<std::string> defined;
-  std::set<std::string> undefined;
+  std::vector<std::string> defined;
+  std::set<std::string> bound;
 
   cmDefinitions const* up = this;
 
@@ -135,14 +135,12 @@ std::vector<std::string> cmDefinitions::ClosureKeys() const
         mi != up->Map.end(); ++mi)
       {
       // Use this key if it is not already set or unset.
-      if(defined.find(mi->first) == defined.end() &&
-         undefined.find(mi->first) == undefined.end())
+      if(bound.insert(mi->first).second && mi->second.Exists)
         {
-        std::set<std::string>& m = mi->second.Exists? defined : undefined;
-        m.insert(mi->first);
+        defined.push_back(mi->first);
         }
       }
     up = up->Up;
     }
-  return std::vector<std::string>(defined.begin(), defined.end());
+  return defined;
 }

@@ -11,6 +11,8 @@
 ============================================================================*/
 #include "cmDefinitions.h"
 
+#include <assert.h>
+
 //----------------------------------------------------------------------------
 cmDefinitions::Def cmDefinitions::NoDef;
 
@@ -22,27 +24,32 @@ cmDefinitions::cmDefinitions(cmDefinitions* parent)
 
 //----------------------------------------------------------------------------
 cmDefinitions::Def const&
-cmDefinitions::GetInternal(const std::string& key)
+cmDefinitions::GetInternal(const std::string& key,
+    std::list<cmDefinitions>::reverse_iterator rit,
+    std::list<cmDefinitions>::reverse_iterator rend)
 {
+  assert(&*rit == this);
   MapType::const_iterator i = this->Map.find(key);
   if(i != this->Map.end())
     {
     return i->second;
     }
-  cmDefinitions* up = this->Up;
-  if(!up)
+  ++rit;
+  if(rit == rend)
     {
     return this->NoDef;
     }
   // Query the parent scope and store the result locally.
-  Def def = up->GetInternal(key);
+  Def def = rit->GetInternal(key, rit, rend);
   return this->Map.insert(MapType::value_type(key, def)).first->second;
 }
 
 //----------------------------------------------------------------------------
-const char* cmDefinitions::Get(const std::string& key)
+const char* cmDefinitions::Get(const std::string& key,
+    std::list<cmDefinitions>::reverse_iterator rit,
+    std::list<cmDefinitions>::reverse_iterator rend)
 {
-  Def const& def = this->GetInternal(key);
+  Def const& def = this->GetInternal(key, rit, rend);
   return def.Exists? def.c_str() : 0;
 }
 

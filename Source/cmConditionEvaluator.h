@@ -93,7 +93,6 @@ private:
   cmMakefile& Makefile;
   cmPolicies::PolicyStatus Policy12Status;
   cmPolicies::PolicyStatus Policy54Status;
-  cmPolicies::PolicyStatus Policy61Status;
 };
 
 #endif

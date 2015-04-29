@@ -12,37 +12,15 @@
 #include "cmDefinitions.h"
 
 //----------------------------------------------------------------------------
-cmDefinitions::Def cmDefinitions::NoDef;
-
-//----------------------------------------------------------------------------
-cmDefinitions::cmDefinitions(cmDefinitions* parent)
-  : Up(parent)
-{
-}
-
-//----------------------------------------------------------------------------
-cmDefinitions::Def const&
-cmDefinitions::GetInternal(const std::string& key)
+std::pair<const char*, bool> cmDefinitions::Get(const std::string& key)
 {
   MapType::const_iterator i = this->Map.find(key);
+  std::pair<const char*, bool> result((const char*)0, false);
   if(i != this->Map.end())
     {
-    return i->second;
+    result = std::make_pair(i->second.Exists ? i->second.c_str() : 0, true);
     }
-  if(cmDefinitions* up = this->Up)
-    {
-    // Query the parent scope and store the result locally.
-    Def def = up->GetInternal(key);
-    return this->Map.insert(MapType::value_type(key, def)).first->second;
-    }
-  return this->NoDef;
-}
-
-//----------------------------------------------------------------------------
-const char* cmDefinitions::Get(const std::string& key)
-{
-  Def const& def = this->GetInternal(key);
-  return def.Exists? def.c_str() : 0;
+  return result;
 }
 
 //----------------------------------------------------------------------------

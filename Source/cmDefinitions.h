@@ -23,21 +23,12 @@
  * \brief Store a scope of variable definitions for CMake language.
  *
  * This stores the state of variable definitions (set or unset) for
- * one scope.  Sets are always local.  Gets search parent scopes
- * transitively and save results locally.
+ * one scope.  Sets are always local.
  */
 class cmDefinitions
 {
 public:
-  /** Construct with the given parent scope.  */
-  cmDefinitions(cmDefinitions* parent = 0);
-
-  /** Returns the parent scope, if any.  */
-  cmDefinitions* GetParent() const { return this->Up; }
-
-  /** Get the value associated with a key; null if none.
-      Store the result locally if it came from a parent.  */
-  const char* Get(const std::string& key);
+  std::pair<const char*, bool> Get(const std::string& key);
 
   /** Set (or unset if null) a value associated with a key.  */
   void Set(const std::string& key, const char* value);
@@ -67,10 +58,6 @@ private:
     Def(Def const& d): std_string(d), Exists(d.Exists) {}
     bool Exists;
   };
-  static Def NoDef;
-
-  // Parent scope, if any.
-  cmDefinitions* Up;
 
   // Local definitions, set or unset.
 #if defined(CMAKE_BUILD_WITH_CMAKE)
@@ -79,9 +66,6 @@ private:
   typedef std::map<std::string, Def> MapType;
 #endif
   MapType Map;
-
-  // Internal query and update methods.
-  Def const& GetInternal(const std::string& key);
 
   void MakeClosure(std::set<std::string>& undefined,
                    std::list<cmDefinitions>::const_reverse_iterator rbegin,

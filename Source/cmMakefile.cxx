@@ -53,12 +53,7 @@ public:
 
   void PushDefinitions()
   {
-    cmDefinitions* parent = 0;
-    if (!this->VarStack.empty())
-      {
-      parent = &this->VarStack.back();
-      }
-    this->VarStack.push_back(cmDefinitions(parent));
+    this->VarStack.push_back(cmDefinitions());
   }
 
   void InitializeDefinitions(cmMakefile* parent)
@@ -70,7 +65,23 @@ public:
 
   const char* GetDefinition(std::string const& name)
   {
-    return this->VarStack.back().Get(name);
+    std::pair<const char*, bool> result((const char*)0, false);
+    std::list<cmDefinitions>::reverse_iterator it = VarStack.rbegin();
+    for ( ; it != this->VarStack.rend(); ++it)
+      {
+      result = it->Get(name);
+      if(result.second)
+        {
+        break;
+        }
+      }
+    std::list<cmDefinitions>::reverse_iterator last = it;
+    // Store the result in intermediate scopes.
+    for (it = this->VarStack.rbegin(); it != last; ++it)
+      {
+      it->Set(name, result.first);
+      }
+    return result.first;
   }
 
   void SetDefinition(std::string const& name, std::string const& value)
@@ -117,14 +128,14 @@ public:
 
   bool RaiseScope(std::string const& var, const char* varDef, cmMakefile* mf)
   {
-    cmDefinitions& cur = this->VarStack.back();
-    if(cmDefinitions* up = cur.GetParent())
+    if(this->VarStack.size() > 1)
       {
       // First localize the definition in the current scope.
-      cur.Get(var);
+      this->GetDefinition(var);
 
       // Now update the definition in the parent scope.
-      up->Set(var, varDef);
+      cmDefinitions& up = *(++this->VarStack.rbegin());
+      up.Set(var, varDef);
       }
     else if(cmLocalGenerator* plg = mf->GetLocalGenerator()->GetParent())
       {

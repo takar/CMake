@@ -75,23 +75,28 @@ std::vector<std::string> cmDefinitions::LocalKeys() const
 }
 
 //----------------------------------------------------------------------------
-cmDefinitions cmDefinitions::MakeClosure() const
+cmDefinitions cmDefinitions::MakeClosure(
+    std::list<cmDefinitions>::const_reverse_iterator rbegin,
+    std::list<cmDefinitions>::const_reverse_iterator rend)
 {
   std::set<std::string> undefined;
   cmDefinitions closure;
-  closure.MakeClosure(undefined, this);
+  closure.MakeClosure(undefined, rbegin, rend);
   return closure;
 }
 
 //----------------------------------------------------------------------------
-void cmDefinitions::MakeClosure(std::set<std::string>& undefined,
-                                cmDefinitions const* defs)
+void
+cmDefinitions::MakeClosure(std::set<std::string>& undefined,
+    std::list<cmDefinitions>::const_reverse_iterator rbegin,
+    std::list<cmDefinitions>::const_reverse_iterator rend)
 {
-  while(defs)
+  for (std::list<cmDefinitions>::const_reverse_iterator it = rbegin;
+       it != rend; ++it)
     {
     // Consider local definitions.
-    for(MapType::const_iterator mi = defs->Map.begin();
-        mi != defs->Map.end(); ++mi)
+    for(MapType::const_iterator mi = it->Map.begin();
+        mi != it->Map.end(); ++mi)
       {
       // Use this key if it is not already set or unset.
       if(this->Map.find(mi->first) == this->Map.end() &&
@@ -107,7 +112,6 @@ void cmDefinitions::MakeClosure(std::set<std::string>& undefined,
           }
         }
       }
-    defs = defs->Up;
     }
 }
 

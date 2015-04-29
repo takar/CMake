@@ -17,6 +17,8 @@
 #include "cmsys/hash_map.hxx"
 #endif
 
+#include <list>
+
 /** \class cmDefinitions
  * \brief Store a scope of variable definitions for CMake language.
  *
@@ -48,7 +50,9 @@ public:
   std::vector<std::string>
   ClosureKeys(std::set<std::string>& bound) const;
 
-  cmDefinitions MakeClosure() const;
+  static cmDefinitions MakeClosure(
+      std::list<cmDefinitions>::const_reverse_iterator rbegin,
+      std::list<cmDefinitions>::const_reverse_iterator rend);
 
 private:
   // String with existence boolean.
@@ -80,7 +84,8 @@ private:
   Def const& GetInternal(const std::string& key);
 
   void MakeClosure(std::set<std::string>& undefined,
-                   cmDefinitions const* defs);
+                   std::list<cmDefinitions>::const_reverse_iterator rbegin,
+                   std::list<cmDefinitions>::const_reverse_iterator rend);
 };
 
 #endif

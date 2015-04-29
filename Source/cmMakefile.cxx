@@ -63,7 +63,9 @@ public:
 
   void InitializeDefinitions(cmMakefile* parent)
   {
-    this->VarStack.back() = parent->Internal->VarStack.back().MakeClosure();
+    this->VarStack.back() =
+        cmDefinitions::MakeClosure(parent->Internal->VarStack.rbegin(),
+                                   parent->Internal->VarStack.rend());
   }
 
   const char* GetDefinition(std::string const& name)

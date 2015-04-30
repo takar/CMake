@@ -14,8 +14,7 @@
 #include <assert.h>
 
 //----------------------------------------------------------------------------
-cmDefinitions::Def const&
-cmDefinitions::GetInternal(const std::string& key,
+const char* cmDefinitions::Get(const std::string& key,
     std::list<cmDefinitions>::reverse_iterator rit,
     std::list<cmDefinitions>::reverse_iterator rend)
 {
@@ -38,16 +37,7 @@ cmDefinitions::GetInternal(const std::string& key,
     i = rit->Map.insert(MapType::value_type(
          key, Def(i != rit->Map.end() ? i->second : 0))).first;
     }
-  return i->second;
-}
-
-//----------------------------------------------------------------------------
-const char* cmDefinitions::Get(const std::string& key,
-    std::list<cmDefinitions>::reverse_iterator rit,
-    std::list<cmDefinitions>::reverse_iterator rend)
-{
-  Def const& def = this->GetInternal(key, rit, rend);
-  return def.Exists? def.c_str() : 0;
+  return i->second.Exists ? i->second.c_str() : 0;
 }
 
 //----------------------------------------------------------------------------

@@ -128,14 +128,14 @@ public:
 
   bool RaiseScope(std::string const& var, const char* varDef, cmMakefile* mf)
   {
-    if(this->VarStack.size() > 1)
+    cmDefinitions& cur = this->VarStack.back();
+    if(cmDefinitions* up = cur.GetParent())
       {
       // First localize the definition in the current scope.
-      this->GetDefinition(var);
+      cur.Get(var);
 
       // Now update the definition in the parent scope.
-      cmDefinitions& up = *(++this->VarStack.rbegin());
-      up.Set(var, varDef);
+      up->Set(var, varDef);
       }
     else if(cmLocalGenerator* plg = mf->GetLocalGenerator()->GetParent())
       {

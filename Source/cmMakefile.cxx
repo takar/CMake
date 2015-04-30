@@ -130,8 +130,10 @@ public:
   {
     if(this->VarStack.size() > 1)
       {
+      cmDefinitions& cur = this->VarStack.back();
+
       // First localize the definition in the current scope.
-      this->GetDefinition(var);
+      cur.Get(var);
 
       // Now update the definition in the parent scope.
       cmDefinitions& up = *(++this->VarStack.rbegin());

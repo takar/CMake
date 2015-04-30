@@ -22,20 +22,27 @@ cmDefinitions::GetInternal(const std::string& key,
     std::list<cmDefinitions>::reverse_iterator rit,
     std::list<cmDefinitions>::reverse_iterator rend)
 {
-  assert(&*rit == this);
-  MapType::const_iterator i = this->Map.find(key);
-  if(i != this->Map.end())
+  std::list<cmDefinitions>::reverse_iterator rbegin = rit;
+  assert(rit != rend);
+  MapType::const_iterator i;
+  Def def = this->NoDef;
+  for ( ; rit != rend; ++rit)
     {
-    return i->second;
+    i = rit->Map.find(key);
+    if(i != rit->Map.end())
+      {
+      def = i->second;
+      break;
+      }
     }
-  ++rit;
-  if(rit == rend)
+
+  std::list<cmDefinitions>::reverse_iterator last = rit;
+  // Store the result in intermediate scopes.
+  for (rit = rbegin; rit != last; ++rit)
     {
-    return this->NoDef;
+    i = rit->Map.insert(MapType::value_type(key, def)).first;
     }
-  // Query the parent scope and store the result locally.
-  Def def = rit->GetInternal(key, rit, rend);
-  return this->Map.insert(MapType::value_type(key, def)).first->second;
+  return i->second;
 }
 
 //----------------------------------------------------------------------------

@@ -31,9 +31,9 @@ class cmDefinitions
 public:
   /** Get the value associated with a key; null if none.
       Store the result locally if it came from a parent.  */
-  const char* Get(const std::string& key,
-                  std::list<cmDefinitions>::reverse_iterator rit,
-                  std::list<cmDefinitions>::reverse_iterator rend);
+  static const char* Get(const std::string& key,
+                         std::list<cmDefinitions>::reverse_iterator rit,
+                         std::list<cmDefinitions>::reverse_iterator rend);
 
   /** Set (or unset if null) a value associated with a key.  */
   void Set(const std::string& key, const char* value);
@@ -63,7 +63,6 @@ private:
     Def(Def const& d): std_string(d), Exists(d.Exists) {}
     bool Exists;
   };
-  static Def NoDef;
 
   // Local definitions, set or unset.
 #if defined(CMAKE_BUILD_WITH_CMAKE)
@@ -72,11 +71,6 @@ private:
   typedef std::map<std::string, Def> MapType;
 #endif
   MapType Map;
-
-  // Internal query and update methods.
-  Def const& GetInternal(const std::string& key,
-                         std::list<cmDefinitions>::reverse_iterator rit,
-                         std::list<cmDefinitions>::reverse_iterator rend);
 
   void MakeClosure(std::set<std::string>& undefined,
                    std::list<cmDefinitions>::const_reverse_iterator rbegin,

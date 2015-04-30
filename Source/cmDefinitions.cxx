@@ -14,9 +14,6 @@
 #include <assert.h>
 
 //----------------------------------------------------------------------------
-cmDefinitions::Def cmDefinitions::NoDef;
-
-//----------------------------------------------------------------------------
 cmDefinitions::Def const&
 cmDefinitions::GetInternal(const std::string& key,
     std::list<cmDefinitions>::reverse_iterator rit,
@@ -25,7 +22,7 @@ cmDefinitions::GetInternal(const std::string& key,
   std::list<cmDefinitions>::reverse_iterator rbegin = rit;
   assert(rit != rend);
   MapType::const_iterator i;
-  Def def = this->NoDef;
+  Def def;
   for ( ; rit != rend; ++rit)
     {
     i = rit->Map.find(key);

@@ -17,15 +17,6 @@
 cmDefinitions::Def cmDefinitions::NoDef;
 
 //----------------------------------------------------------------------------
-const char* cmDefinitions::Get(const std::string& key,
-    std::list<cmDefinitions>::reverse_iterator rbegin,
-    std::list<cmDefinitions>::reverse_iterator rend)
-{
-  Def const& def = cmDefinitions::GetInternal(key, rbegin, rend);
-  return def.Exists? def.c_str() : 0;
-}
-
-//----------------------------------------------------------------------------
 cmDefinitions::Def const& cmDefinitions::GetInternal(
   const std::string& key,
   std::list<cmDefinitions>::reverse_iterator rbegin,
@@ -45,6 +36,15 @@ cmDefinitions::Def const& cmDefinitions::GetInternal(
     }
   Def const& def = cmDefinitions::GetInternal(key, rit, rend);
   return rbegin->Map.insert(MapType::value_type(key, def)).first->second;
+}
+
+//----------------------------------------------------------------------------
+const char* cmDefinitions::Get(const std::string& key,
+    std::list<cmDefinitions>::reverse_iterator rbegin,
+    std::list<cmDefinitions>::reverse_iterator rend)
+{
+  Def const& def = cmDefinitions::GetInternal(key, rbegin, rend);
+  return def.Exists? def.c_str() : 0;
 }
 
 //----------------------------------------------------------------------------

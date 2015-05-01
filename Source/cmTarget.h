@@ -587,9 +587,6 @@ public:
   void GetCompileFeatures(std::vector<std::string> &features,
                           const std::string& config) const;
 
-  void GetInterfaceLinkItems(std::vector<std::string> &items,
-                             std::string const& config) const;
-
   bool IsNullImpliedByLinkLibraries(const std::string &p) const;
   bool IsLinkInterfaceDependentBoolProperty(const std::string &p,
                          const std::string& config) const;

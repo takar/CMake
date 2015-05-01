@@ -125,7 +125,6 @@ bool cmExportInstallFileGenerator::GenerateMainFile(std::ostream& os)
   bool require2_8_12 = false;
   bool require3_0_0 = false;
   bool require3_1_0 = false;
-  bool require3_3_0 = false;
   bool requiresConfigFiles = false;
   // Create all the imported targets.
   for(std::vector<cmTargetExport*>::const_iterator
@@ -167,10 +166,6 @@ bool cmExportInstallFileGenerator::GenerateMainFile(std::ostream& os)
                                   te,
                                   cmGeneratorExpression::InstallInterface,
                                   properties, missingTargets);
-    this->PopulateInterfaceProperty("INTERFACE_LINK_ITEMS",
-                                  te,
-                                  cmGeneratorExpression::InstallInterface,
-                                  properties, missingTargets);
 
     const bool newCMP0022Behavior =
                               te->GetPolicyStatusCMP0022() != cmPolicies::WARN
@@ -195,10 +190,6 @@ bool cmExportInstallFileGenerator::GenerateMainFile(std::ostream& os)
       // can consume them.
       require3_1_0 = true;
       }
-    if(te->GetProperty("INTERFACE_LINK_ITEMS"))
-      {
-      require3_3_0 = true;
-      }
 
     this->PopulateInterfaceProperty("INTERFACE_POSITION_INDEPENDENT_CODE",
                                   te, properties);
@@ -207,11 +198,7 @@ bool cmExportInstallFileGenerator::GenerateMainFile(std::ostream& os)
     this->GenerateInterfaceProperties(te, os, properties);
     }
 
-  if (require3_3_0)
-    {
-    this->GenerateRequiredCMakeVersion(os, DEVEL_CMAKE_VERSION(3,3));
-    }
-  else if (require3_1_0)
+  if (require3_1_0)
     {
     this->GenerateRequiredCMakeVersion(os, "3.1.0");
     }

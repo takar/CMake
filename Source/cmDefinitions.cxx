@@ -14,31 +14,37 @@
 #include <assert.h>
 
 //----------------------------------------------------------------------------
+cmDefinitions::Def cmDefinitions::NoDef;
+
+//----------------------------------------------------------------------------
 const char* cmDefinitions::Get(const std::string& key,
-    std::list<cmDefinitions>::reverse_iterator rit,
+    std::list<cmDefinitions>::reverse_iterator rbegin,
     std::list<cmDefinitions>::reverse_iterator rend)
 {
-  std::list<cmDefinitions>::reverse_iterator rbegin = rit;
-  assert(rit != rend);
-  MapType::const_iterator i;
-  Def def;
-  for ( ; rit != rend; ++rit)
-    {
-    i = rit->Map.find(key);
-    if(i != rit->Map.end())
-      {
-      def = i->second;
-      break;
-      }
-    }
+  Def const& def = cmDefinitions::GetInternal(key, rbegin, rend);
+  return def.Exists? def.c_str() : 0;
+}
 
-  std::list<cmDefinitions>::reverse_iterator last = rit;
-  // Store the result in intermediate scopes.
-  for (rit = rbegin; rit != last; ++rit)
+//----------------------------------------------------------------------------
+cmDefinitions::Def const& cmDefinitions::GetInternal(
+  const std::string& key,
+  std::list<cmDefinitions>::reverse_iterator rbegin,
+  std::list<cmDefinitions>::reverse_iterator rend)
+{
+  assert(rbegin != rend);
+  MapType::const_iterator i = rbegin->Map.find(key);
+  if (i != rbegin->Map.end())
     {
-    i = rit->Map.insert(MapType::value_type(key, def)).first;
+    return i->second;
     }
-  return i->second.Exists ? i->second.c_str() : 0;
+  std::list<cmDefinitions>::reverse_iterator rit = rbegin;
+  ++rit;
+  if (rit == rend)
+    {
+    return cmDefinitions::NoDef;
+    }
+  Def const& def = cmDefinitions::GetInternal(key, rit, rend);
+  return rbegin->Map.insert(MapType::value_type(key, def)).first->second;
 }
 
 //----------------------------------------------------------------------------

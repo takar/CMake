@@ -32,7 +32,7 @@ public:
   /** Get the value associated with a key; null if none.
       Store the result locally if it came from a parent.  */
   static const char* Get(const std::string& key,
-                         std::list<cmDefinitions>::reverse_iterator rit,
+                         std::list<cmDefinitions>::reverse_iterator rbegin,
                          std::list<cmDefinitions>::reverse_iterator rend);
 
   /** Set (or unset if null) a value associated with a key.  */
@@ -63,6 +63,7 @@ private:
     Def(Def const& d): std_string(d), Exists(d.Exists) {}
     bool Exists;
   };
+  static Def NoDef;
 
   // Local definitions, set or unset.
 #if defined(CMAKE_BUILD_WITH_CMAKE)
@@ -72,6 +73,9 @@ private:
 #endif
   MapType Map;
 
+  static Def const& GetInternal(const std::string& key,
+    std::list<cmDefinitions>::reverse_iterator rbegin,
+    std::list<cmDefinitions>::reverse_iterator rend);
   void MakeClosure(std::set<std::string>& undefined,
                    std::list<cmDefinitions>::const_reverse_iterator rbegin,
                    std::list<cmDefinitions>::const_reverse_iterator rend);

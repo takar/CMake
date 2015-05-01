@@ -1762,14 +1762,6 @@ void cmTarget::SetProperty(const std::string& prop, const char* value)
           << this->Name << "\")\n";
     this->Makefile->IssueMessage(cmake::FATAL_ERROR, e.str());
     }
-  else if(prop == "INTERFACE_LINK_ITEMS" &&
-          this->GetType() != cmTarget::INTERFACE_LIBRARY)
-    {
-    std::ostringstream e;
-    e << "INTERFACE_LINK_ITEMS property may be set only on "
-      << "INTERFACE library targets.\n";
-    this->Makefile->IssueMessage(cmake::FATAL_ERROR, e.str());
-    }
   else if (prop == "LINK_LIBRARIES")
     {
     this->Internal->LinkImplementationPropertyEntries.clear();
@@ -1855,14 +1847,6 @@ void cmTarget::AppendProperty(const std::string& prop, const char* value,
     std::ostringstream e;
     e << "EXPORT_NAME property can't be set on imported targets (\""
           << this->Name << "\")\n";
-    this->Makefile->IssueMessage(cmake::FATAL_ERROR, e.str());
-    }
-  else if(prop == "INTERFACE_LINK_ITEMS" &&
-          this->GetType() != cmTarget::INTERFACE_LIBRARY)
-    {
-    std::ostringstream e;
-    e << "INTERFACE_LINK_ITEMS property may be set only on "
-      << "INTERFACE library targets.\n";
     this->Makefile->IssueMessage(cmake::FATAL_ERROR, e.str());
     }
   else if (prop == "LINK_LIBRARIES")
@@ -2513,28 +2497,6 @@ void cmTarget::GetCompileFeatures(std::vector<std::string> &result,
                             debugFeatures);
 
   deleteAndClear(linkInterfaceCompileFeaturesEntries);
-}
-
-//----------------------------------------------------------------------------
-void cmTarget::GetInterfaceLinkItems(std::vector<std::string> &items,
-                                     std::string const& config) const
-{
-  const char *prop = this->GetProperty("INTERFACE_LINK_ITEMS");
-  if (!prop)
-    {
-    return;
-    }
-  cmGeneratorExpression ge;
-  cmGeneratorExpressionDAGChecker dagChecker(
-                                      this->GetName(),
-                                      "INTERFACE_LINK_ITEMS", 0, 0);
-  cmSystemTools::ExpandListArgument(ge.Parse(prop)
-                                      ->Evaluate(this->Makefile,
-                                                config,
-                                                false,
-                                                this,
-                                                &dagChecker),
-                                    items);
 }
 
 //----------------------------------------------------------------------------

@@ -1,9 +1,3 @@
-add_library(item STATIC item.cpp)
-add_library(item_iface INTERFACE)
-set_property(TARGET item_iface PROPERTY INTERFACE_LINK_ITEMS
-  $<TARGET_FILE:$<TARGET_NAME:item>>
-)
-add_dependencies(item_iface item)
 
 add_library(headeronly INTERFACE)
 set_property(TARGET headeronly PROPERTY INTERFACE_INCLUDE_DIRECTORIES
@@ -27,7 +21,7 @@ set_property(TARGET sharedlib PROPERTY INTERFACE_INCLUDE_DIRECTORIES
 set_property(TARGET sharedlib PROPERTY INTERFACE_COMPILE_DEFINITIONS "SHAREDLIB_DEFINE")
 
 add_library(sharediface INTERFACE)
-target_link_libraries(sharediface INTERFACE sharedlib item_iface)
+target_link_libraries(sharediface INTERFACE sharedlib)
 
 add_library(use_auto_type INTERFACE)
 target_compile_features(use_auto_type INTERFACE cxx_auto_type)
@@ -46,11 +40,9 @@ install(FILES
 )
 
 install(TARGETS headeronly sharediface use_auto_type use_c_restrict source_target
-                item_iface
   EXPORT expInterface
 )
 install(TARGETS sharedlib
-                item
   EXPORT expInterface
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib NAMELINK_SKIP

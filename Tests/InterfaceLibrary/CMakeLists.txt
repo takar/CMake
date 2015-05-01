@@ -25,22 +25,8 @@ target_sources(iface_objlib INTERFACE $<TARGET_OBJECTS:objlib>)
 add_library(intermediate INTERFACE)
 target_link_libraries(intermediate INTERFACE iface_objlib)
 
-add_library(item STATIC item.cpp)
-add_library(item_iface INTERFACE)
-set_property(TARGET item_iface PROPERTY INTERFACE_LINK_ITEMS $<TARGET_FILE:item>)
-add_dependencies(item_iface item)
-add_library(item_fake STATIC item_fake.cpp)
-
 add_executable(InterfaceLibrary definetestexe.cpp)
-target_link_libraries(InterfaceLibrary
-  iface_nodepends
-  headeriface
-  subiface
-  intermediate
-
-  item_iface
-  item_fake # ensure that 'item' is ordered in place of item_iface
-  )
+target_link_libraries(InterfaceLibrary iface_nodepends headeriface subiface intermediate)
 
 add_subdirectory(libsdir)
 

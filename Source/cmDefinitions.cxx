@@ -21,11 +21,13 @@ const char* cmDefinitions::Get(const std::string& key,
   std::list<cmDefinitions>::reverse_iterator rbegin = rit;
   assert(rit != rend);
   MapType::const_iterator i;
+  Def def;
   for ( ; rit != rend; ++rit)
     {
     i = rit->Map.find(key);
     if(i != rit->Map.end())
       {
+      def = i->second;
       break;
       }
     }
@@ -34,8 +36,7 @@ const char* cmDefinitions::Get(const std::string& key,
   // Store the result in intermediate scopes.
   for (rit = rbegin; rit != last; ++rit)
     {
-    i = rit->Map.insert(MapType::value_type(
-         key, Def(i != rit->Map.end() ? i->second : 0))).first;
+    i = rit->Map.insert(MapType::value_type(key, def)).first;
     }
   return i->second.Exists ? i->second.c_str() : 0;
 }

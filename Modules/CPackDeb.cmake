@@ -103,16 +103,23 @@
 #  characters such as <>.
 #
 # .. variable:: CPACK_DEBIAN_PACKAGE_SHLIBDEPS
-#
-#  * Mandatory : NO
-#  * Default   : OFF
+#               CPACK_DEBIAN_<COMPONENT>_PACKAGE_SHLIBDEPS
 #
 #  May be set to ON in order to use dpkg-shlibdeps to generate
 #  better package dependency list.
-#  You may need set CMAKE_INSTALL_RPATH toi appropriate value
-#  if you use this feature, because if you don't dpkg-shlibdeps
-#  may fail to find your own shared libs.
-#  See http://www.cmake.org/Wiki/CMake_RPATH_handling.
+#
+#  * Mandatory : NO
+#  * Default   :
+#
+#    - :variable:`CPACK_DEBIAN_PACKAGE_SHLIBDEPS` if set or
+#    - OFF
+#
+#  .. note::
+#
+#    You may need set :variable:`CMAKE_INSTALL_RPATH` to an appropriate value
+#    if you use this feature, because if you don't :code:`dpkg-shlibdeps`
+#    may fail to find your own shared libs.
+#    See http://www.cmake.org/Wiki/CMake_RPATH_handling.
 #
 # .. variable:: CPACK_DEBIAN_PACKAGE_DEBUG
 #
@@ -243,6 +250,21 @@ function(cpack_deb_prepare_package_vars)
   find_program(FAKEROOT_EXECUTABLE fakeroot)
   if(FAKEROOT_EXECUTABLE)
     set(CPACK_DEBIAN_FAKEROOT_EXECUTABLE ${FAKEROOT_EXECUTABLE})
+  endif()
+
+  # per component automatic discover: some of the component might not have
+  # binaries.
+  if(CPACK_DEB_PACKAGE_COMPONENT)
+    string(TOUPPER "${CPACK_DEB_PACKAGE_COMPONENT}" _local_component_name)
+    set(_component_shlibdeps_var "CPACK_DEBIAN_${_local_component_name}_PACKAGE_SHLIBDEPS")
+
+    # if set, overrides the global configuration
+    if(DEFINED ${_component_shlibdeps_var})
+      set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS "${${_component_shlibdeps_var}}")
+      if(CPACK_DEBIAN_PACKAGE_DEBUG)
+        message("CPackDeb Debug: component '${CPACK_DEB_PACKAGE_COMPONENT}' dpkg-shlibdeps set to ${CPACK_DEBIAN_PACKAGE_SHLIBDEPS}")
+      endif()
+    endif()
   endif()
 
   if(CPACK_DEBIAN_PACKAGE_SHLIBDEPS)

@@ -30,11 +30,25 @@ static bool stringToId(const char* input, cmPolicies::PolicyID& pid)
   return false;
 }
 
+static const char* idToString(cmPolicies::PolicyID id)
+{
+  switch(id)
+    {
+#define POLICY_CASE(ID) \
+    case cmPolicies::ID: \
+      return #ID;
+  CM_FOR_EACH_POLICY_ID(POLICY_CASE)
+#undef POLICY_CASE
+    case cmPolicies::CMPCOUNT:
+      return 0;
+    }
+  return 0;
+}
+
 class cmPolicy
 {
 public:
   cmPolicy(cmPolicies::PolicyID iD,
-            const char *idString,
             const char *shortDescription,
             unsigned int majorVersionIntroduced,
             unsigned int minorVersionIntroduced,
@@ -42,7 +56,6 @@ public:
             cmPolicies::PolicyStatus status)
   {
     this->ID = iD;
-    this->IDString = idString;
     this->ShortDescription = shortDescription;
     this->MajorVersionIntroduced = majorVersionIntroduced;
     this->MinorVersionIntroduced = minorVersionIntroduced;
@@ -74,7 +87,6 @@ public:
   }
 
   cmPolicies::PolicyID ID;
-  std::string IDString;
   std::string ShortDescription;
   unsigned int MajorVersionIntroduced;
   unsigned int MinorVersionIntroduced;
@@ -402,14 +414,14 @@ cmPolicies::~cmPolicies()
 }
 
 void cmPolicies::DefinePolicy(cmPolicies::PolicyID iD,
-                              const char *idString,
+                              const char *,
                               const char *shortDescription,
                               unsigned int majorVersionIntroduced,
                               unsigned int minorVersionIntroduced,
                               unsigned int patchVersionIntroduced,
                               cmPolicies::PolicyStatus status)
 {
-  this->Policies[iD] = new cmPolicy(iD, idString,
+  this->Policies[iD] = new cmPolicy(iD,
                                     shortDescription,
                                     majorVersionIntroduced,
                                     minorVersionIntroduced,
@@ -521,7 +533,7 @@ bool cmPolicies::ApplyPolicyVersion(cmMakefile *mf,
       else
         {
         cmPolicies::PolicyStatus status = cmPolicies::WARN;
-        if(!GetPolicyDefault(mf, i->second->IDString, &status) ||
+        if(!GetPolicyDefault(mf, idToString(i->first), &status) ||
            !mf->SetPolicy(i->second->ID, status))
           {
           return false;
@@ -554,18 +566,6 @@ bool cmPolicies::GetPolicyID(const char *id, cmPolicies::PolicyID &pid)
   return stringToId(id, pid);
 }
 
-std::string cmPolicies::GetPolicyIDString(cmPolicies::PolicyID pid)
-{
-  std::map<cmPolicies::PolicyID,cmPolicy *>::iterator pos =
-    this->Policies.find(pid);
-  if (pos == this->Policies.end())
-    {
-    return "";
-    }
-  return pos->second->IDString;
-}
-
-
 ///! return a warning string for a given policy
 std::string cmPolicies::GetPolicyWarning(cmPolicies::PolicyID id)
 {
@@ -574,9 +574,9 @@ std::string cmPolicies::GetPolicyWarning(cmPolicies::PolicyID id)
 
   std::ostringstream msg;
   msg <<
-    "Policy " << pos->second->IDString << " is not set: "
+    "Policy " << idToString(id) << " is not set: "
     "" << pos->second->ShortDescription << "  "
-    "Run \"cmake --help-policy " << pos->second->IDString << "\" for "
+    "Run \"cmake --help-policy " << idToString(id) << "\" for "
     "policy details.  "
     "Use the cmake_policy command to set the policy "
     "and suppress this warning.";
@@ -592,13 +592,13 @@ std::string cmPolicies::GetRequiredPolicyError(cmPolicies::PolicyID id)
 
   std::ostringstream error;
   error <<
-    "Policy " << pos->second->IDString << " is not set to NEW: "
+    "Policy " << idToString(id) << " is not set to NEW: "
     "" << pos->second->ShortDescription << "  "
-    "Run \"cmake --help-policy " << pos->second->IDString << "\" for "
+    "Run \"cmake --help-policy " << idToString(id) << "\" for "
     "policy details.  "
     "CMake now requires this policy to be set to NEW by the project.  "
     "The policy may be set explicitly using the code\n"
-    "  cmake_policy(SET " << pos->second->IDString << " NEW)\n"
+    "  cmake_policy(SET " << idToString(id) << " NEW)\n"
     "or by upgrading all policies with the code\n"
     "  cmake_policy(VERSION " << pos->second->GetVersionString() <<
     ") # or later\n"
@@ -626,7 +626,7 @@ cmPolicies::GetPolicyStatus(cmPolicies::PolicyID id)
 std::string
 cmPolicies::GetRequiredAlwaysPolicyError(cmPolicies::PolicyID id)
 {
-  std::string pid = this->GetPolicyIDString(id);
+  std::string pid = idToString(id);
   std::ostringstream e;
   e << "Policy " << pid << " may not be set to OLD behavior because this "
     << "version of CMake no longer supports it.  "
@@ -657,7 +657,7 @@ cmPolicies::DiagnoseAncientPolicies(std::vector<PolicyID> const& ancient,
         i = ancient.begin(); i != ancient.end(); ++i)
     {
     cmPolicy const* policy = this->Policies[*i];
-    e << "  " << policy->IDString << ": " << policy->ShortDescription << "\n";
+    e << "  " << idToString(*i) << ": " << policy->ShortDescription << "\n";
     }
   e << "However, this version of CMake no longer supports the OLD "
     << "behavior for these policies.  "

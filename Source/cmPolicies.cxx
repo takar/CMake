@@ -331,21 +331,42 @@ cmPolicies::GetRequiredAlwaysPolicyError(cmPolicies::PolicyID id)
 cmPolicies::PolicyStatus
 cmPolicies::PolicyMap::Get(cmPolicies::PolicyID id) const
 {
-  return this->find(id)->second;
+  PolicyStatus status = cmPolicies::WARN;
+
+  if (this->OLD[id])
+    {
+    status = cmPolicies::OLD;
+    }
+  else if (this->NEW[id])
+    {
+    status = cmPolicies::NEW;
+    }
+  else if (this->REQUIRED_ALWAYS[id])
+    {
+    status = cmPolicies::REQUIRED_ALWAYS;
+    }
+  else if (this->REQUIRED_IF_USED[id])
+    {
+    status = cmPolicies::REQUIRED_IF_USED;
+    }
+  return status;
 }
 
 void cmPolicies::PolicyMap::Set(cmPolicies::PolicyID id,
                                 cmPolicies::PolicyStatus status)
 {
-  (*this)[id] = status;
+  this->OLD[id] = (status == cmPolicies::OLD);
+  this->NEW[id] = (status == cmPolicies::NEW);
+  this->REQUIRED_ALWAYS[id] = (status == cmPolicies::REQUIRED_ALWAYS);
+  this->REQUIRED_IF_USED[id] = (status == cmPolicies::REQUIRED_IF_USED);
 }
 
 bool cmPolicies::PolicyMap::IsDefined(cmPolicies::PolicyID id) const
 {
-  return this->find(id) != this->end();
+  return this->OLD[id] || this->NEW[id];
 }
 
 bool cmPolicies::PolicyMap::IsEmpty() const
 {
-  return this->empty();
+  return this->OLD.none() && this->NEW.none();
 }

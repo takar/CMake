@@ -581,7 +581,7 @@ bool cmPolicies::ApplyPolicyVersion(cmMakefile *mf,
         {
         cmPolicies::PolicyStatus status = cmPolicies::WARN;
         if(!GetPolicyDefault(mf, idToString(i->first), &status) ||
-           !mf->SetPolicy(i->second->ID, status))
+           !mf->SetPolicy(i->first, status))
           {
           return false;
           }
@@ -589,7 +589,7 @@ bool cmPolicies::ApplyPolicyVersion(cmMakefile *mf,
       }
     else
       {
-      if (!mf->SetPolicy(i->second->ID, cmPolicies::NEW))
+      if (!mf->SetPolicy(i->first, cmPolicies::NEW))
         {
         return false;
         }

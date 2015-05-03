@@ -328,6 +328,11 @@ cmPolicies::GetRequiredAlwaysPolicyError(cmPolicies::PolicyID id)
   return e.str();
 }
 
+cmPolicies::PolicyMap::PolicyMap()
+{
+  this->UNDEFINED.set();
+}
+
 cmPolicies::PolicyStatus
 cmPolicies::PolicyMap::Get(cmPolicies::PolicyID id) const
 {
@@ -355,6 +360,7 @@ cmPolicies::PolicyMap::Get(cmPolicies::PolicyID id) const
 void cmPolicies::PolicyMap::Set(cmPolicies::PolicyID id,
                                 cmPolicies::PolicyStatus status)
 {
+  this->UNDEFINED.reset(id);
   this->OLD[id] = (status == cmPolicies::OLD);
   this->NEW[id] = (status == cmPolicies::NEW);
   this->REQUIRED_ALWAYS[id] = (status == cmPolicies::REQUIRED_ALWAYS);
@@ -363,10 +369,10 @@ void cmPolicies::PolicyMap::Set(cmPolicies::PolicyID id,
 
 bool cmPolicies::PolicyMap::IsDefined(cmPolicies::PolicyID id) const
 {
-  return this->OLD[id] || this->NEW[id];
+  return !this->UNDEFINED[id];
 }
 
 bool cmPolicies::PolicyMap::IsEmpty() const
 {
-  return this->OLD.none() && this->NEW.none();
+  return !this->UNDEFINED.none();
 }

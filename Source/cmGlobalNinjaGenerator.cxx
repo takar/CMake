@@ -499,9 +499,7 @@ cmGlobalNinjaGenerator::cmGlobalNinjaGenerator()
 cmLocalGenerator*
 cmGlobalNinjaGenerator::CreateLocalGenerator(cmLocalGenerator* parent)
 {
-  cmLocalGenerator* lg = new cmLocalNinjaGenerator(parent);
-  lg->SetGlobalGenerator(this);
-  return lg;
+  return new cmLocalNinjaGenerator(this, parent);
 }
 
 void cmGlobalNinjaGenerator

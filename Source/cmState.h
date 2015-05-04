@@ -36,6 +36,9 @@ public:
     const char* GetCurrentBinaryDirectory() const;
     void SetCurrentBinaryDirectory(std::string const& dir);
 
+    std::vector<std::string> const& GetCurrentSourceDirectoryComponents();
+    std::vector<std::string> const& GetCurrentBinaryDirectoryComponents();
+
     bool IsValid() const;
     Snapshot GetParent() const;
 
@@ -138,6 +141,8 @@ private:
 
   std::vector<std::string> SourceDirectoryComponents;
   std::vector<std::string> BinaryDirectoryComponents;
+  std::vector<std::vector<std::string> > CurrentSourceDirectoryComponents;
+  std::vector<std::vector<std::string> > CurrentBinaryDirectoryComponents;
 
   std::string SourceDirectory;
   std::string BinaryDirectory;

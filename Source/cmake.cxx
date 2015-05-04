@@ -2580,6 +2580,9 @@ int cmake::Build(const std::string& dir,
                  const std::vector<std::string>& nativeOptions,
                  bool clean)
 {
+
+  this->SetHomeDirectory("");
+  this->SetHomeOutputDirectory("");
   if(!cmSystemTools::FileIsDirectory(dir))
     {
     std::cerr << "Error: " << dir << " is not a directory\n";

@@ -37,6 +37,7 @@ endif()
 
 
 # dpkg-deb checks for the summary of the packages
+find_program(DPKGDEB_EXECUTABLE dpkg-deb)
 if(DPKGDEB_EXECUTABLE)
   set(dpkgdeb_output_errors_all)
   foreach(_f IN LISTS actual_output)

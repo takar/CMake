@@ -16,18 +16,33 @@ static bool stringToId(const char* input, cmPolicies::PolicyID& pid)
     {
     return false;
     }
-  if (cmHasLiteralPrefix(input, "CMP0000"))
+  if (!cmHasLiteralPrefix(input, "CMP"))
+    {
+    return false;
+    }
+  if (cmHasLiteralSuffix(input, "0000"))
     {
     pid = cmPolicies::CMP0000;
     return true;
     }
-  long id = strtol(input + 3, (char **)0, 10);
-  if (id != 0)
+  for (int i = 3; i < 7; ++i)
     {
-    pid = cmPolicies::PolicyID(id);
-    return true;
+    if (!isdigit(*(input + i)))
+      {
+      return false;
+      }
     }
-  return false;
+  long id;
+  if (!cmSystemTools::StringToLong(input + 3, &id))
+    {
+    return false;
+    }
+  if (id >= cmPolicies::CMPCOUNT)
+    {
+    return false;
+    }
+  pid = cmPolicies::PolicyID(id);
+  return true;
 }
 
 #define CM_SELECT_ID_VERSION(F, A1, A2, A3, A4, A5, A6) F(A1, A3, A4, A5)

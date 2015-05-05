@@ -1,7 +1,7 @@
 CMP0054
 -------
 
-Only interpret :command:`if` arguments as variables or keywords when unquoted.
+.. cmake-policy:: CMP0054
 
 CMake 3.1 and above no longer implicitly dereference variables or
 interpret keywords in an :command:`if` command argument when

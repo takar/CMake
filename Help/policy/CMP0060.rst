@@ -1,7 +1,7 @@
 CMP0060
 -------
 
-Link libraries by full path even in implicit directories.
+.. cmake-policy:: CMP0060
 
 Policy :policy:`CMP0003` was introduced with the intention of always
 linking library files by full path when a full path is given to the

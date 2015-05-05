@@ -1,7 +1,7 @@
 CMP0051
 -------
 
-List TARGET_OBJECTS in SOURCES target property.
+.. cmake-policy:: CMP0051
 
 CMake 3.0 and lower did not include the ``TARGET_OBJECTS``
 :manual:`generator expression <cmake-generator-expressions(7)>` when

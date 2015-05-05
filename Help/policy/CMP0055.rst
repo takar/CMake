@@ -1,7 +1,7 @@
 CMP0055
 -------
 
-Strict checking for the :command:`break` command.
+.. cmake-policy:: CMP0055
 
 CMake 3.1 and lower allowed calls to the :command:`break` command
 outside of a loop context and also ignored any given arguments.

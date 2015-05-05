@@ -1,7 +1,7 @@
 CMP0021
 -------
 
-Fatal error on relative paths in INCLUDE_DIRECTORIES target property.
+.. cmake-policy:: CMP0021
 
 CMake 2.8.10.2 and lower allowed the INCLUDE_DIRECTORIES target
 property to contain relative paths.  The base path for such relative

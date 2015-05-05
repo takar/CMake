@@ -1,7 +1,7 @@
 CMP0007
 -------
 
-list command no longer ignores empty elements.
+.. cmake-policy:: CMP0007
 
 This policy determines whether the list command will ignore empty
 elements in the list.  CMake 2.4 and below list commands ignored all

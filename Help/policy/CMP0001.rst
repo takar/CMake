@@ -1,7 +1,7 @@
 CMP0001
 -------
 
-CMAKE_BACKWARDS_COMPATIBILITY should no longer be used.
+.. cmake-policy:: CMP0001
 
 The OLD behavior is to check CMAKE_BACKWARDS_COMPATIBILITY and present
 it to the user.  The NEW behavior is to ignore

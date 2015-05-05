@@ -1,7 +1,7 @@
 CMP0047
 -------
 
-Use ``QCC`` compiler id for the qcc drivers on QNX.
+.. cmake-policy:: CMP0047
 
 CMake 3.0 and above recognize that the QNX qcc compiler driver is
 different from the GNU compiler.

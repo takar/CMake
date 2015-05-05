@@ -1,7 +1,7 @@
 CMP0009
 -------
 
-FILE GLOB_RECURSE calls should not follow symlinks by default.
+.. cmake-policy:: CMP0009
 
 In CMake 2.6.1 and below, FILE GLOB_RECURSE calls would follow through
 symlinks, sometimes coming up with unexpectedly large result sets

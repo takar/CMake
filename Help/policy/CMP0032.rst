@@ -1,7 +1,7 @@
 CMP0032
 -------
 
-The :command:`output_required_files` command should not be called.
+.. cmake-policy:: CMP0032
 
 This command was added in June 2001 to expose the then-current CMake
 implicit dependency scanner.  CMake's real implicit dependency scanner

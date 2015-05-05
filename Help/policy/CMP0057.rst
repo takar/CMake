@@ -1,7 +1,7 @@
 CMP0057
 -------
 
-Support new :command:`if` IN_LIST operator.
+.. cmake-policy:: CMP0057
 
 CMake 3.3 adds support for the new IN_LIST operator.
 

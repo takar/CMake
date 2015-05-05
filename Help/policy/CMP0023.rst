@@ -1,7 +1,7 @@
 CMP0023
 -------
 
-Plain and keyword target_link_libraries signatures cannot be mixed.
+.. cmake-policy:: CMP0023
 
 CMake 2.8.12 introduced the target_link_libraries signature using the
 PUBLIC, PRIVATE, and INTERFACE keywords to generalize the LINK_PUBLIC

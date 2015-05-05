@@ -1,7 +1,7 @@
 CMP0020
 -------
 
-Automatically link Qt executables to qtmain target on Windows.
+.. cmake-policy:: CMP0020
 
 CMake 2.8.10 and lower required users of Qt to always specify a link
 dependency to the qtmain.lib static library manually on Windows.

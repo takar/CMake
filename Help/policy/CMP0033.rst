@@ -1,7 +1,7 @@
 CMP0033
 -------
 
-The :command:`export_library_dependencies` command should not be called.
+.. cmake-policy:: CMP0033
 
 This command was added in January 2003 to export ``<tgt>_LIB_DEPENDS``
 internal CMake cache entries to a file for installation with a project.

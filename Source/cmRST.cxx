@@ -206,15 +206,16 @@ void cmRST::ProcessLine(std::string const& line)
         }
       else
         {
-        cmPolicies pols;
-
         cmPolicies::PolicyID id;
-        bool b = pols.GetPolicyID(policy.c_str(), id);
+        bool b = cmPolicies::GetPolicyID(policy.c_str(), id);
         if (!b)
           {
           this->NormalLine(line);
           }
-        this->OutputLine(pols.GetPolicyDocTitle(id) + "\n", true);
+        else
+          {
+          this->OutputLine(cmPolicies::GetPolicyDocTitle(id) + "\n", true);
+          }
         }
       }
     else if(this->ParsedLiteralDirective.find(line))

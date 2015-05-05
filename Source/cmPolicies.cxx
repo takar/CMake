@@ -45,13 +45,17 @@ static bool stringToId(const char* input, cmPolicies::PolicyID& pid)
   return true;
 }
 
-#define CM_SELECT_ID_VERSION(F, A1, A2, A3, A4, A5, A6) F(A1, A3, A4, A5)
+#define CM_SELECT_ID_VERSION(F, A1, A2, A3, A4, A5, A6, A7) F(A1, A4, A5, A6)
 #define CM_FOR_EACH_POLICY_ID_VERSION(POLICY) \
   CM_FOR_EACH_POLICY_TABLE(POLICY, CM_SELECT_ID_VERSION)
 
-#define CM_SELECT_ID_DOC(F, A1, A2, A3, A4, A5, A6) F(A1, A2)
+#define CM_SELECT_ID_DOC(F, A1, A2, A3, A4, A5, A6, A7) F(A1, A2)
 #define CM_FOR_EACH_POLICY_ID_DOC(POLICY) \
   CM_FOR_EACH_POLICY_TABLE(POLICY, CM_SELECT_ID_DOC)
+
+#define CM_SELECT_ID_RST(F, A1, A2, A3, A4, A5, A6, A7) F(A1, A3)
+#define CM_FOR_EACH_POLICY_ID_RST(POLICY) \
+  CM_FOR_EACH_POLICY_TABLE(POLICY, CM_SELECT_ID_RST)
 
 static const char* idToString(cmPolicies::PolicyID id)
 {
@@ -341,6 +345,21 @@ cmPolicies::GetRequiredAlwaysPolicyError(cmPolicies::PolicyID id)
     << "supports the old behavior.  "
     << "Run cmake --help-policy " << pid << " for more information.";
   return e.str();
+}
+
+std::string cmPolicies::GetPolicyDocTitle(cmPolicies::PolicyID id)
+{
+  switch(id)
+    {
+#define POLICY_CASE(ID, DOC_TITLE) \
+    case cmPolicies::ID: \
+      return DOC_TITLE;
+  CM_FOR_EACH_POLICY_ID_RST(POLICY_CASE)
+#undef POLICY_CASE
+    case cmPolicies::CMPCOUNT:
+      return 0;
+    }
+  return 0;
 }
 
 cmPolicies::PolicyMap::PolicyMap()

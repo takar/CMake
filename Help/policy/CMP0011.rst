@@ -1,7 +1,7 @@
 CMP0011
 -------
 
-Included scripts do automatic cmake_policy PUSH and POP.
+.. cmake-policy:: CMP0011
 
 In CMake 2.6.2 and below, CMake Policy settings in scripts loaded by
 the include() and find_package() commands would affect the includer.

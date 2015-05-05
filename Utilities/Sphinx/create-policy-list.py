@@ -7,6 +7,10 @@ def collectString(s):
 
   result = ""
   idx = s.find('"')
+  nullptr = s.find('0')
+  if (nullptr < idx):
+    return (None, None)
+
   oldIdx = idx + 1
   i = 0
   while idx != -1:
@@ -41,13 +45,19 @@ with open(sys.argv[2]) as policyHeader:
     policyId, content = content.split(",", 1)
     docString, docLength = collectString(content)
     content = content[docLength:]
+    rstString, rstLength = collectString(content)
+    if (rstString is None):
+      rstString = docString
+    else:
+      content = content[rstLength:]
     versionMajor, versionMinor, versionPatch, content = content.split(",", 3)
     versionMajor = cleanString(versionMajor)
     versionMinor = cleanString(versionMinor)
     versionPatch = cleanString(versionPatch)
     version = versionMajor + "." + versionMinor + "." + versionPatch
 
-    policies.append({"id": policyId, "doc": docString, "version": version})
+    policies.append({"id": policyId, "doc": docString,
+                     "rst": rstString, "version": version})
 
     start = content.find("SELECT(POLICY, ")
 

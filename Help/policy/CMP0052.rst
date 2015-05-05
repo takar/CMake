@@ -1,7 +1,7 @@
 CMP0052
 -------
 
-Reject source and build dirs in installed INTERFACE_INCLUDE_DIRECTORIES.
+.. cmake-policy:: CMP0052
 
 CMake 3.0 and lower allowed subdirectories of the source directory or build
 directory to be in the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` of

@@ -1,7 +1,7 @@
 CMake Warning \(dev\) at subdir2/CMakeLists.txt:2 \(include\):
-  Policy CMP0024 is not set: Disallow include export result.  Run "cmake
-  --help-policy CMP0024" for policy details.  Use the cmake_policy command to
-  set the policy and suppress this warning.
+  Policy CMP0024 is not set: Disallow include\(\) of export\(\) result.  Run
+  "cmake --help-policy CMP0024" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
 
   The file
 

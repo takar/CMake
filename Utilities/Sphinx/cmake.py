@@ -150,6 +150,21 @@ class CMakePolicyList(Directive):
             self.state_machine.insert_input(include_lines, "")
         return []
 
+class CMakePolicy(Directive):
+    required_arguments = 1
+    def run(self):
+
+        env = self.state.document.settings.env
+        with open("PolicyList.json", "r") as f:
+            policies = json.load(f)
+
+            for policy in policies:
+              if policy["id"] == self.arguments[0]:
+                include_lines = statemachine.string2lines(policy["rst"])
+                self.state_machine.insert_input(include_lines, "")
+                break
+        return []
+
 class _cmake_index_entry:
     def __init__(self, desc):
         self.desc = desc
@@ -411,6 +426,7 @@ class CMakeDomain(Domain):
 
 def setup(app):
     app.add_directive('cmake-module', CMakeModule)
+    app.add_directive('cmake-policy', CMakePolicy)
     app.add_directive('cmake-policy-list', CMakePolicyList)
     app.add_transform(CMakeTransform)
     app.add_transform(CMakeXRefTransform)

@@ -21,196 +21,261 @@ class cmPolicy;
 
 #define CM_FOR_EACH_POLICY_TABLE(POLICY, SELECT) \
   SELECT(POLICY, CMP0000, \
-    "A minimum required CMake version must be specified.", \
+    "A minimum required CMake version must be specified.", 0, \
     2, 6, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0001, \
     "CMAKE_BACKWARDS_COMPATIBILITY should no longer be used.", \
+    ":variable:`CMAKE_BACKWARDS_COMPATIBILITY` should no longer be used.", \
     2, 6, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0002, \
-  "Logical target names must be globally unique.", \
+  "Logical target names must be globally unique.", 0, \
     2, 6, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0003, \
     "Libraries linked via full path no longer produce linker search paths.", \
+    0, \
     2, 6, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0004, \
-    "Libraries linked may not have leading or trailing whitespace.", \
+    "Libraries linked may not have leading or trailing whitespace.", 0, \
     2, 6, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0005, \
-    "Preprocessor definition values are now escaped automatically.", \
+    "Preprocessor definition values are now escaped automatically.", 0, \
     2, 6, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0006, \
     "Installing MACOSX_BUNDLE targets requires a BUNDLE DESTINATION.", \
+    "Installing :prop_tgt:`MACOSX_BUNDLE` targets requires a " \
+    ":command:`BUNDLE DESTINATION <install()>`.", \
     2, 6, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0007, \
     "list command no longer ignores empty elements.", \
+    ":command:`list()` command no longer ignores empty elements.", \
     2, 6, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0008, \
-    "Libraries linked by full-path must have a valid library file name.", \
+    "Libraries linked by full-path must have a valid library file name.", 0, \
     2, 6, 1, cmPolicies::WARN) \
   SELECT(POLICY, CMP0009, \
     "FILE GLOB_RECURSE calls should not follow symlinks by default.", \
+    ":command:`file(GLOB_RECURSE)` calls should not follow symlinks by " \
+    "default.", \
     2, 6, 2, cmPolicies::WARN) \
   SELECT(POLICY, CMP0010, \
-    "Bad variable reference syntax is an error.", \
+    "Bad variable reference syntax is an error.", 0, \
     2, 6, 3, cmPolicies::WARN) \
   SELECT(POLICY, CMP0011, \
     "Included scripts do automatic cmake_policy PUSH and POP.", \
+    ":command:`Included <include()>` scripts do automatic " \
+    ":command:`cmake_policy` ``PUSH`` and ``POP``.", \
     2, 6, 3, cmPolicies::WARN) \
   SELECT(POLICY, CMP0012, \
     "if() recognizes numbers and boolean constants.", \
+    ":command:`if()` recognizes numbers and boolean constants.", \
     2, 8, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0013, \
-    "Duplicate binary directories are not allowed.", \
+    "Duplicate binary directories are not allowed.", 0, \
     2, 8, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0014, \
-    "Input directories must have CMakeLists.txt.", \
+    "Input directories must have CMakeLists.txt.", 0, \
     2, 8, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0015, \
     "link_directories() treats paths relative to the source dir.", \
+    ":command:`link_directories()` treats paths relative to the " \
+    ":variable:`CMAKE_CURRENT_SOURCE_DIR`.", \
     2, 8, 1, cmPolicies::WARN) \
   SELECT(POLICY, CMP0016, \
     "target_link_libraries() reports error if its only argument " \
     "is not a target.", \
+    ":command:`target_link_libraries()` reports error if its only argument " \
+    "is not a target.", \
     2, 8, 3, cmPolicies::WARN) \
   SELECT(POLICY, CMP0017, \
     "Prefer files from the CMake module directory when including from " \
-    "there.", \
+    "there.", 0, \
     2, 8, 4, cmPolicies::WARN) \
   SELECT(POLICY, CMP0018, \
-    "Ignore CMAKE_SHARED_LIBRARY_<Lang>_FLAGS variable.", \
+    "Ignore CMAKE_SHARED_LIBRARY_<Lang>_FLAGS variable.", 0, \
     2, 8, 9, cmPolicies::WARN) \
   SELECT(POLICY, CMP0019, \
-    "Do not re-expand variables in include and link information.", \
+    "Do not re-expand variables in include and link information.", 0, \
     2, 8, 11, cmPolicies::WARN) \
   SELECT(POLICY, CMP0020, \
     "Automatically link Qt executables to qtmain target on Windows.", \
+    "Automatically link :manual:`Qt executables <cmake-qt(7)>` to qtmain " \
+    "target on Windows.", \
     2, 8, 11, cmPolicies::WARN) \
   SELECT(POLICY, CMP0021, \
     "Fatal error on relative paths in INCLUDE_DIRECTORIES target property.", \
+    "Fatal error on relative paths in :prop_tgt:`INCLUDE_DIRECTORIES` " \
+    "target property.", \
     2, 8, 12, cmPolicies::WARN) \
   SELECT(POLICY, CMP0022, \
     "INTERFACE_LINK_LIBRARIES defines the link interface.", \
+    ":prop_tgt:`INTERFACE_LINK_LIBRARIES` defines the link interface.", \
     2, 8, 12, cmPolicies::WARN) \
   SELECT(POLICY, CMP0023, \
     "Plain and keyword target_link_libraries signatures cannot be mixed.", \
+    "Plain and keyword :command:`target_link_libraries()` signatures cannot " \
+    "be mixed.", \
     2, 8, 12, cmPolicies::WARN) \
   SELECT(POLICY, CMP0024, \
-    "Disallow include export result.", \
+    "Disallow include() of export() result.", \
+    "Disallow :command:`include()` of :command:`export()` result.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0025, \
     "Compiler id for Apple Clang is now AppleClang.", \
+    ":variable:`Compiler id <CMAKE_<LANG>_COMPILER_ID>` for Apple Clang is " \
+    "now ``AppleClang``.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0026, \
     "Disallow use of the LOCATION target property.", \
+    "Disallow use of the :prop_tgt:`LOCATION` target property.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0027, \
-    "Conditionally linked imported targets with missing include " \
+    "Conditionally linked IMPORTED targets with missing include " \
+    "directories.", \
+    "Conditionally linked :prop_tgt:`IMPORTED` targets with missing include " \
     "directories.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0028, \
     "Double colon in target name means ALIAS or IMPORTED target.", \
+    "Double colon in target name means :ref:`ALIAS <Alias Targets>` or " \
+    ":ref:`IMPORTED <Imported targets>` target.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0029, \
     "The subdir_depends command should not be called.", \
+    "The :command:`subdir_depends()` command should not be called.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0030, \
     "The use_mangled_mesa command should not be called.", \
+    "The :command:`use_mangled_mesa()` command should not be called.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0031, \
     "The load_command command should not be called.", \
+    "The :command:`load_command()` command should not be called.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0032, \
     "The output_required_files command should not be called.", \
+    "The :command:`output_required_files()` command should not be called.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0033, \
     "The export_library_dependencies command should not be called.", \
+    "The :command:`export_library_dependencies()` command should not be " \
+    "called.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0034, \
     "The utility_source command should not be called.", \
+    "The :command:`utility_source()` command should not be called.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0035, \
     "The variable_requires command should not be called.", \
+    "The :command:`variable_requires()` command should not be called.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0036, \
     "The build_name command should not be called.", \
+    "The :command:`build_name()` command should not be called.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0037, \
     "Target names should not be reserved and should match a validity " \
     "pattern.", \
+    "Target :prop_tgt:`names <NAME>` should not be reserved and should " \
+    "match a validity pattern.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0038, \
-    "Targets may not link directly to themselves.", \
+    "Targets may not link directly to themselves.", 0, \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0039, \
-    "Utility targets may not have link dependencies.", \
+    "Utility targets may not have link dependencies.", 0, \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0040, \
     "The target in the TARGET signature of add_custom_command() must " \
     "exist.", \
+    "The target in the ``TARGET`` signature of " \
+    ":command:`add_custom_command()` must exist.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0041, \
     "Error on relative include with generator expression.", \
+    "Error on relative include with " \
+    ":manual:`generator expression <cmake-generator-expressions(7)>`.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0042, \
     "MACOSX_RPATH is enabled by default.", \
+    ":prop_tgt:`MACOSX_RPATH` is enabled by default.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0043, \
     "Ignore COMPILE_DEFINITIONS_<Config> properties.", \
+    "Ignore ``COMPILE_DEFINITIONS_<Config>`` properties.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0044, \
     "Case sensitive <LANG>_COMPILER_ID generator expressions.", \
+    "Case sensitive ``<LANG>_COMPILER_ID`` " \
+    ":manual:`generator expression <cmake-generator-expressions(7)>`", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0045, \
     "Error on non-existent target in get_target_property.", \
+    "Error on non-existent target in :command:`get_target_property()`.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0046, \
     "Error on non-existent dependency in add_dependencies.", \
+    "Error on non-existent dependency in :command:`add_dependencies()`.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0047, \
     "Use QCC compiler id for the qcc drivers on QNX.", \
+    "Use ``QCC`` :variable:`compiler id <CMAKE_<LANG>_COMPILER_ID>` for " \
+    "the qcc drivers on QNX.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0048, \
     "project() command manages VERSION variables.", \
+    ":command:`project()` command manages ``VERSION`` variables.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0049, \
-    "Do not expand variables in target source entries.", \
+    "Do not expand variables in target source entries.", 0, \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0050, \
     "Disallow add_custom_command SOURCE signatures.", \
+    "Disallow :command:`add_custom_command(SOURCE)` signatures.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0051, \
     "List TARGET_OBJECTS in SOURCES target property.", \
+    "List :manual:`TARGET_OBJECTS <cmake-generator-expressions(7)>` " \
+    "in :prop_tgt:`SOURCES` target property.", \
     3, 1, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0052, \
     "Reject source and build dirs in installed " \
     "INTERFACE_INCLUDE_DIRECTORIES.", \
+    "Reject source and build dirs in installed " \
+    ":prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`.", \
     3, 1, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0053, \
-    "Simplify variable reference and escape sequence evaluation.", \
+    "Simplify variable reference and escape sequence evaluation.", 0, \
     3, 1, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0054, \
     "Only interpret if() arguments as variables or keywords when unquoted.", \
+    "Only interpret :command:`if()` arguments as variables or keywords " \
+    "when unquoted.", \
     3, 1, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0055, \
     "Strict checking for break() command.", \
+    "Strict checking for :command:`break()` command.", \
     3, 2, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0056, \
     "Honor link flags in try_compile() source-file signature.", \
+    "Honor link flags in :command:`try_compile()` source-file signature.", \
     3, 2, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0057, \
     "Support new IN_LIST if() operator.", \
+    "Support new ``IN_LIST`` :command:`if()` operator.", \
     3, 3, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0058, \
-    "Ninja requires custom command byproducts to be explicit.", \
+    "Ninja requires custom command byproducts to be explicit.", 0, \
     3, 3, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0059, \
-    "Do no treat DEFINITIONS as a built-in directory property.", \
+    "Do not treat DEFINITIONS as a built-in directory property.", \
+    "Do not treat :prop_dir:`DEFINITIONS` as a built-in directory " \
+    "property.", \
     3, 3, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0060, \
-    "Link libraries by full path even in implicit directories.", \
+    "Link libraries by full path even in implicit directories.", 0, \
     3, 3, 0, cmPolicies::WARN)
 
-#define CM_SELECT_ID(F, A1, A2, A3, A4, A5, A6) F(A1)
+#define CM_SELECT_ID(F, A1, A2, A3, A4, A5, A6, A7) F(A1)
 #define CM_FOR_EACH_POLICY_ID(POLICY) \
   CM_FOR_EACH_POLICY_TABLE(POLICY, CM_SELECT_ID)
 
@@ -268,6 +333,8 @@ public:
 
   ///! return an error string for when a required policy is unspecified
   static std::string GetRequiredAlwaysPolicyError(cmPolicies::PolicyID id);
+
+  static std::string GetPolicyDocTitle(cmPolicies::PolicyID id);
 
   /** Represent a set of policy values.  */
   struct PolicyMap

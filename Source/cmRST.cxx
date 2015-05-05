@@ -14,6 +14,7 @@
 #include "cmSystemTools.h"
 #include "cmAlgorithms.h"
 #include "cmVersion.h"
+#include "cmPolicies.h"
 #include <cmsys/FStream.hxx>
 #include <ctype.h>
 
@@ -30,6 +31,7 @@ cmRST::cmRST(std::ostream& os, std::string const& docroot):
                  "command|variable"
                  ")::[ \t]+([^ \t\n]+)$"),
   CMakeModuleDirective("^.. cmake-module::[ \t]+([^ \t\n]+)$"),
+  CMakePolicyDirective("^.. cmake-policy::[ \t]+(.+)$"),
   ParsedLiteralDirective("^.. parsed-literal::[ \t]*(.*)$"),
   CodeBlockDirective("^.. code-block::[ \t]*(.*)$"),
   ReplaceDirective("^.. (\\|[^|]+\\|) replace::[ \t]*(.*)$"),
@@ -193,6 +195,27 @@ void cmRST::ProcessLine(std::string const& line)
       if(file.empty() || !this->ProcessInclude(file, IncludeModule))
         {
         this->NormalLine(line);
+        }
+      }
+    else if(this->CMakePolicyDirective.find(line))
+      {
+      std::string policy = this->CMakePolicyDirective.match(1);
+      if(policy.empty())
+        {
+        this->NormalLine(line);
+        }
+      else
+        {
+        cmPolicies::PolicyID id;
+        bool b = cmPolicies::GetPolicyID(policy.c_str(), id);
+        if (!b)
+          {
+          this->NormalLine(line);
+          }
+        else
+          {
+          this->OutputLine(cmPolicies::GetPolicyDocTitle(id) + "\n", true);
+          }
         }
       }
     else if(this->ParsedLiteralDirective.find(line))

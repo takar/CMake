@@ -1,7 +1,7 @@
 CMP0037
 -------
 
-Target names should not be reserved and should match a validity pattern.
+.. cmake-policy:: CMP0037
 
 CMake 2.8.12 and lower allowed creating targets using :command:`add_library`,
 :command:`add_executable` and :command:`add_custom_target` with unrestricted

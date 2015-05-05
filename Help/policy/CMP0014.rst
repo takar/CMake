@@ -1,7 +1,7 @@
 CMP0014
 -------
 
-Input directories must have CMakeLists.txt.
+.. cmake-policy:: CMP0014
 
 CMake versions before 2.8 silently ignored missing CMakeLists.txt
 files in directories referenced by add_subdirectory() or subdirs(),

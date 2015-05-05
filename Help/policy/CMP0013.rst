@@ -1,7 +1,7 @@
 CMP0013
 -------
 
-Duplicate binary directories are not allowed.
+.. cmake-policy:: CMP0013
 
 CMake 2.6.3 and below silently permitted add_subdirectory() calls to
 create the same binary directory multiple times.  During build system

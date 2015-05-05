@@ -1,5 +1,5 @@
 CMake Warning \(dev\) in CMakeLists.txt:
-  Policy CMP0027 is not set: Conditionally linked imported targets with
+  Policy CMP0027 is not set: Conditionally linked IMPORTED targets with
   missing include directories.  Run "cmake --help-policy CMP0027" for policy
   details.  Use the cmake_policy command to set the policy and suppress this
   warning.

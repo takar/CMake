@@ -1,7 +1,7 @@
 CMP0022
 -------
 
-INTERFACE_LINK_LIBRARIES defines the link interface.
+.. cmake-policy:: CMP0022
 
 CMake 2.8.11 constructed the 'link interface' of a target from
 properties matching ``(IMPORTED_)?LINK_INTERFACE_LIBRARIES(_<CONFIG>)?``.

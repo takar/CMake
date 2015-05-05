@@ -1,7 +1,7 @@
 CMP0006
 -------
 
-Installing MACOSX_BUNDLE targets requires a BUNDLE DESTINATION.
+.. cmake-policy:: CMP0006
 
 This policy determines whether the install(TARGETS) command must be
 given a BUNDLE DESTINATION when asked to install a target with the

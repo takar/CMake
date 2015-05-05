@@ -1,7 +1,7 @@
 CMP0005
 -------
 
-Preprocessor definition values are now escaped automatically.
+.. cmake-policy:: CMP0005
 
 This policy determines whether or not CMake should generate escaped
 preprocessor definition values added via add_definitions.  CMake

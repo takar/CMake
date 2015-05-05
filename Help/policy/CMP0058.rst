@@ -1,7 +1,7 @@
 CMP0058
 -------
 
-Ninja requires custom command byproducts to be explicit.
+.. cmake-policy:: CMP0058
 
 When an intermediate file generated during the build is consumed
 by an expensive operation or a large tree of dependents, one may

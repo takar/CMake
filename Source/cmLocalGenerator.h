@@ -438,6 +438,7 @@ protected:
   void ConfigureRelativePaths();
   std::string FindRelativePathTopSource();
   std::string FindRelativePathTopBinary();
+  void SetupPathConversions();
 
   virtual std::string ConvertToLinkReference(std::string const& lib,
                                              OutputFormat format = SHELL);
@@ -452,6 +453,8 @@ protected:
   cmMakefile *Makefile;
   cmState::Snapshot StateSnapshot;
   cmGlobalGenerator *GlobalGenerator;
+  std::vector<std::string> StartDirectoryComponents;
+  std::vector<std::string> StartOutputDirectoryComponents;
   cmLocalGenerator* Parent;
   std::vector<cmLocalGenerator*> Children;
   std::map<std::string, std::string> UniqueObjectNamesMap;
@@ -476,6 +479,7 @@ protected:
   std::string RelativePathTopSource;
   std::string RelativePathTopBinary;
   bool RelativePathsConfigured;
+  bool PathConversionsSetup;
 
   cmIML_INT_uint64_t BackwardsCompatibility;
   bool BackwardsCompatibilityFinal;

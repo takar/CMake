@@ -21,7 +21,7 @@ cmGlobalMSYSMakefileGenerator::cmGlobalMSYSMakefileGenerator()
   this->ForceUnixPaths = true;
   this->ToolSupportsColor = true;
   this->UseLinkScript = false;
-  this->SetMSYSShell = true;
+  this->MSYSShell = true;
 }
 
 std::string

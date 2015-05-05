@@ -494,6 +494,86 @@ std::vector<std::string> const& cmState::GetBinaryDirectoryComponents() const
   return this->BinaryDirectoryComponents;
 }
 
+void cmState::Snapshot::ComputeRelativePathTopSource()
+{
+  // Relative path conversion inside the source tree is not used to
+  // construct relative paths passed to build tools so it is safe to use
+  // even when the source is a network path.
+
+  cmState::Snapshot snapshot = *this;
+  std::vector<cmState::Snapshot> snapshots;
+  snapshots.push_back(snapshot);
+  while (true)
+    {
+    snapshot = snapshot.GetParent();
+    if (snapshot.IsValid())
+      {
+      snapshots.push_back(snapshot);
+      }
+    else
+      {
+      break;
+      }
+    }
+
+  std::string result = snapshots.front().GetCurrentSourceDirectory();
+
+  for (std::vector<cmState::Snapshot>::const_iterator it =
+       snapshots.begin() + 1; it != snapshots.end(); ++it)
+    {
+    std::string currentSource = it->GetCurrentSourceDirectory();
+    if(cmSystemTools::IsSubDirectory(result, currentSource))
+      {
+      result = currentSource;
+      }
+    }
+  this->State->RelativePathTopSource[this->Position] = result;
+}
+
+void cmState::Snapshot::ComputeRelativePathTopBinary()
+{
+  cmState::Snapshot snapshot = *this;
+  std::vector<cmState::Snapshot> snapshots;
+  snapshots.push_back(snapshot);
+  while (true)
+    {
+    snapshot = snapshot.GetParent();
+    if (snapshot.IsValid())
+      {
+      snapshots.push_back(snapshot);
+      }
+    else
+      {
+      break;
+      }
+    }
+
+  std::string result =
+      snapshots.front().GetCurrentBinaryDirectory();
+
+  for (std::vector<cmState::Snapshot>::const_iterator it =
+       snapshots.begin() + 1; it != snapshots.end(); ++it)
+    {
+    std::string currentBinary = it->GetCurrentBinaryDirectory();
+    if(cmSystemTools::IsSubDirectory(result, currentBinary))
+      {
+      result = currentBinary;
+      }
+    }
+
+  // The current working directory on Windows cannot be a network
+  // path.  Therefore relative paths cannot work when the binary tree
+  // is a network path.
+  if(result.size() < 2 || result.substr(0, 2) != "//")
+    {
+    this->State->RelativePathTopBinary[this->Position] = result;
+    }
+  else
+    {
+    this->State->RelativePathTopBinary[this->Position] = "";
+    }
+}
+
 cmState::Snapshot cmState::CreateSnapshot(Snapshot originSnapshot)
 {
   PositionType pos = this->ParentPositions.size();
@@ -504,6 +584,8 @@ cmState::Snapshot cmState::CreateSnapshot(Snapshot originSnapshot)
       this->CurrentSourceDirectoryComponents.size() + 1);
   this->CurrentBinaryDirectoryComponents.resize(
       this->CurrentBinaryDirectoryComponents.size() + 1);
+  this->RelativePathTopSource.resize(this->RelativePathTopSource.size() + 1);
+  this->RelativePathTopBinary.resize(this->RelativePathTopBinary.size() + 1);
   return cmState::Snapshot(this, pos);
 }
 
@@ -531,6 +613,7 @@ void cmState::Snapshot::SetCurrentSourceDirectory(std::string const& dir)
   cmSystemTools::SplitPath(
       this->State->Locations[this->Position],
       this->State->CurrentSourceDirectoryComponents[this->Position]);
+  this->ComputeRelativePathTopSource();
 }
 
 const char* cmState::Snapshot::GetCurrentBinaryDirectory() const
@@ -551,6 +634,7 @@ void cmState::Snapshot::SetCurrentBinaryDirectory(std::string const& dir)
   cmSystemTools::SplitPath(
       this->State->OutputLocations[this->Position],
       this->State->CurrentBinaryDirectoryComponents[this->Position]);
+  this->ComputeRelativePathTopBinary();
 }
 
 std::vector<std::string> const&
@@ -563,6 +647,26 @@ std::vector<std::string> const&
 cmState::Snapshot::GetCurrentBinaryDirectoryComponents()
 {
   return this->State->CurrentBinaryDirectoryComponents[this->Position];
+}
+
+const char* cmState::Snapshot::GetRelativePathTopSource() const
+{
+  return this->State->RelativePathTopSource[this->Position].c_str();
+}
+
+const char* cmState::Snapshot::GetRelativePathTopBinary() const
+{
+  return this->State->RelativePathTopBinary[this->Position].c_str();
+}
+
+void cmState::Snapshot::SetRelativePathTopSource(const char* dir)
+{
+  this->State->RelativePathTopSource[this->Position] = dir;
+}
+
+void cmState::Snapshot::SetRelativePathTopBinary(const char* dir)
+{
+  this->State->RelativePathTopBinary[this->Position] = dir;
 }
 
 bool cmState::Snapshot::IsValid() const

@@ -197,6 +197,10 @@ void cmState::Initialize()
   this->Locations.clear();
   this->OutputLocations.clear();
   this->ParentPositions.clear();
+  this->CurrentSourceDirectoryComponents.clear();
+  this->CurrentBinaryDirectoryComponents.clear();
+  this->RelativePathTopSource.clear();
+  this->RelativePathTopBinary.clear();
 
   this->CreateSnapshot(Snapshot());
   this->DefineProperty

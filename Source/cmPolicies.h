@@ -157,7 +157,8 @@ class cmPolicy;
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0033, \
     "The export_library_dependencies command should not be called.", \
-    "The :command:`export_library_dependencies()` command should not be called.", \
+    "The :command:`export_library_dependencies()` command should not be " \
+    "called.", \
     3, 0, 0, cmPolicies::WARN) \
   SELECT(POLICY, CMP0034, \
     "The utility_source command should not be called.", \

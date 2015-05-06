@@ -675,7 +675,7 @@ void cmState::Snapshot::SetRelativePathTopBinary(const char* dir)
 
 bool cmState::Snapshot::IsValid() const
 {
-  return this->State;
+  return this->State ? true : false;
 }
 
 cmState::Snapshot cmState::Snapshot::GetParent() const

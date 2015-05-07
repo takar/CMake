@@ -440,7 +440,6 @@ protected:
 
   virtual const char* GetPredefinedTargetsFolder();
   virtual bool UseFolderProperty();
-  void EnableMinGWLanguage(cmMakefile *mf);
 
 private:
   cmMakefile* TryCompileOuterMakefile;

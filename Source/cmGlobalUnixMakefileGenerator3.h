@@ -198,7 +198,7 @@ protected:
 
   cmGeneratedFileStream *CommandDatabase;
 private:
-  virtual const char* GetBuildIgnoreErrorsFlag() const { return "-i"; }
+  virtual const char* GetBuildIgnoreErrorsFlag() const { return "-k"; }
   virtual std::string GetEditCacheCommand() const;
 };
 

@@ -371,7 +371,9 @@ cmGlobalXCodeGenerator::GenerateBuildCommand(
 cmLocalGenerator *
 cmGlobalXCodeGenerator::CreateLocalGenerator(cmLocalGenerator* parent)
 {
-  return new cmLocalXCodeGenerator(this, parent);
+  cmLocalGenerator *lg = new cmLocalXCodeGenerator(parent);
+  lg->SetGlobalGenerator(this);
+  return lg;
 }
 
 //----------------------------------------------------------------------------

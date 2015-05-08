@@ -204,8 +204,6 @@ int cmCTestBuildAndTestHandler::RunCMakeAndTest(std::string* outstring)
     }
 
   cmake cm;
-  cm.SetHomeDirectory("");
-  cm.SetHomeOutputDirectory("");
   std::string cmakeOutString;
   cmCTestBuildAndTestCaptureRAII captureRAII(cm, cmakeOutString);
   static_cast<void>(captureRAII);

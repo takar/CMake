@@ -20,14 +20,15 @@
 
 
 static std::string cmIfCommandError(
-  std::vector<cmExpandedCommandArgument> const& args)
+  cmMakefile* mf, std::vector<cmExpandedCommandArgument> const& args)
 {
+  cmLocalGenerator* lg = mf->GetLocalGenerator();
   std::string err = "given arguments:\n ";
   for(std::vector<cmExpandedCommandArgument>::const_iterator i = args.begin();
       i != args.end(); ++i)
     {
     err += " ";
-    err += cmLocalGenerator::EscapeForCMake(i->GetValue());
+    err += lg->EscapeForCMake(i->GetValue());
     }
   err += "\n";
   return err;
@@ -117,7 +118,7 @@ IsFunctionBlocked(const cmListFileFunction& lff,
 
             if (!errorString.empty())
               {
-              std::string err = cmIfCommandError(expandedArguments);
+              std::string err = cmIfCommandError(&mf, expandedArguments);
               err += errorString;
               mf.IssueMessage(messType, err);
               if (messType == cmake::FATAL_ERROR)
@@ -205,7 +206,7 @@ bool cmIfCommand
 
   if (!errorString.empty())
     {
-    std::string err = cmIfCommandError(expandedArguments);
+    std::string err = cmIfCommandError(this->Makefile, expandedArguments);
     err += errorString;
     if (status == cmake::FATAL_ERROR)
       {

@@ -32,7 +32,7 @@ class cmLocalNinjaGenerator : public cmLocalGenerator
 {
 public:
   /// Default constructor.
-  cmLocalNinjaGenerator(cmGlobalGenerator* gg, cmLocalGenerator* parent);
+  cmLocalNinjaGenerator(cmLocalGenerator* parent);
 
   /// Destructor.
   virtual ~cmLocalNinjaGenerator();

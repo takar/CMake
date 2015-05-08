@@ -71,13 +71,6 @@ cmGlobalGenerator::cmGlobalGenerator()
   this->ExtraGenerator = 0;
   this->CurrentLocalGenerator = 0;
   this->TryCompileOuterMakefile = 0;
-
-  this->WindowsShell = false;
-  this->WindowsVSIDE = false;
-  this->WatcomWMake = false;
-  this->MinGWMake = false;
-  this->NMake = false;
-  this->MSYSShell = false;
 }
 
 cmGlobalGenerator::~cmGlobalGenerator()
@@ -1884,7 +1877,9 @@ void cmGlobalGenerator::EnableInstallTarget()
 cmLocalGenerator *
 cmGlobalGenerator::CreateLocalGenerator(cmLocalGenerator *parent)
 {
-  return new cmLocalGenerator(this, parent);
+  cmLocalGenerator *lg = new cmLocalGenerator(parent);
+  lg->SetGlobalGenerator(this);
+  return lg;
 }
 
 void cmGlobalGenerator::EnableLanguagesFromGenerator(cmGlobalGenerator *gen,

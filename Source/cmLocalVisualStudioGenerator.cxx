@@ -19,10 +19,11 @@
 
 //----------------------------------------------------------------------------
 cmLocalVisualStudioGenerator
-::cmLocalVisualStudioGenerator(VSVersion v, cmGlobalGenerator* gg,
-                               cmLocalGenerator* parent)
-  : cmLocalGenerator(gg, parent)
+::cmLocalVisualStudioGenerator(VSVersion v, cmLocalGenerator* parent)
+  : cmLocalGenerator(parent)
 {
+  this->WindowsShell = true;
+  this->WindowsVSIDE = true;
   this->Version = v;
 }
 

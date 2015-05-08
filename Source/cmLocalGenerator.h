@@ -13,7 +13,6 @@
 #define cmLocalGenerator_h
 
 #include "cmStandardIncludes.h"
-#include "cmState.h"
 
 class cmMakefile;
 class cmGlobalGenerator;
@@ -34,7 +33,7 @@ class cmCustomCommandGenerator;
 class cmLocalGenerator
 {
 public:
-  cmLocalGenerator(cmGlobalGenerator* gg, cmLocalGenerator* parent);
+  cmLocalGenerator(cmLocalGenerator* parent);
   virtual ~cmLocalGenerator();
 
   /**
@@ -89,8 +88,8 @@ public:
   const cmGlobalGenerator *GetGlobalGenerator() const {
     return this->GlobalGenerator; }
 
-  cmState* GetState() const;
-  cmState::Snapshot GetStateSnapshot() const;
+  ///! Set the Global Generator, done on creation by the GlobalGenerator
+  void SetGlobalGenerator(cmGlobalGenerator *gg);
 
   /**
    * Convert something to something else. This is a centralized conversion
@@ -299,6 +298,9 @@ public:
                              bool forEcho = false,
                              bool useWatcomQuote = false);
 
+  /** Backwards-compatibility version of EscapeForShell.  */
+  std::string EscapeForShellOldStyle(const std::string& str);
+
   /** Escape the given string as an argument in a CMake script.  */
   static std::string EscapeForCMake(const std::string& str);
 
@@ -383,11 +385,6 @@ public:
                         std::map<cmSourceFile const*, std::string>& mapping,
                         cmGeneratorTarget const* gt = 0);
 
-  bool IsWindowsShell() const;
-  bool IsWatcomWMake() const;
-  bool IsMinGWMake() const;
-  bool IsNMake() const;
-
 protected:
   ///! put all the libraries for a target on into the given stream
   virtual void OutputLinkLibraries(std::string& linkLibraries,
@@ -435,6 +432,11 @@ protected:
                                               std::string const& dir_max);
   void ComputeObjectMaxPath();
 
+  void ConfigureRelativePaths();
+  std::string FindRelativePathTopSource();
+  std::string FindRelativePathTopBinary();
+  void SetupPathConversions();
+
   virtual std::string ConvertToLinkReference(std::string const& lib,
                                              OutputFormat format = SHELL);
 
@@ -446,23 +448,44 @@ protected:
   void ReadInputFile();
 
   cmMakefile *Makefile;
-  cmState::Snapshot StateSnapshot;
   cmGlobalGenerator *GlobalGenerator;
+  // members used for relative path function ConvertToMakefilePath
+  std::string RelativePathToSourceDir;
+  std::string RelativePathToBinaryDir;
+  std::vector<std::string> HomeDirectoryComponents;
+  std::vector<std::string> StartDirectoryComponents;
+  std::vector<std::string> HomeOutputDirectoryComponents;
+  std::vector<std::string> StartOutputDirectoryComponents;
   cmLocalGenerator* Parent;
   std::vector<cmLocalGenerator*> Children;
   std::map<std::string, std::string> UniqueObjectNamesMap;
   std::string::size_type ObjectPathMax;
   std::set<std::string> ObjectMaxPathViolations;
-
+  bool WindowsShell;
+  bool WindowsVSIDE;
+  bool WatcomWMake;
+  bool MinGWMake;
+  bool NMake;
+  bool ForceUnixPath;
+  bool MSYSShell;
   bool LinkScriptShell;
   bool UseRelativePaths;
   bool IgnoreLibPrefix;
   bool Configured;
   bool EmitUniversalBinaryFlags;
-
   // Hack for ExpandRuleVariable until object-oriented version is
   // committed.
   std::string TargetImplib;
+
+  // The top-most directories for relative path conversion.  Both the
+  // source and destination location of a relative path conversion
+  // must be underneath one of these directories (both under source or
+  // both under binary) in order for the relative path to be evaluated
+  // safely by the build tools.
+  std::string RelativePathTopSource;
+  std::string RelativePathTopBinary;
+  bool RelativePathsConfigured;
+  bool PathConversionsSetup;
 
   cmIML_INT_uint64_t BackwardsCompatibility;
   bool BackwardsCompatibilityFinal;

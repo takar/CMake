@@ -19,7 +19,7 @@
  *
  * cmGlobalBorlandMakefileGenerator manages nmake build process for a tree
  */
-class cmGlobalBorlandMakefileGenerator : public cmGlobalUnixMakefileGenerator3
+class cmGlobalBorlandMakefileGenerator : public cmGlobalNMakeMakefileGenerator
 {
 public:
   cmGlobalBorlandMakefileGenerator();

@@ -22,12 +22,14 @@
 
 #include <assert.h>
 
-cmLocalNinjaGenerator::cmLocalNinjaGenerator(cmGlobalGenerator* gg,
-                                             cmLocalGenerator* parent)
-  : cmLocalGenerator(gg, parent)
+cmLocalNinjaGenerator::cmLocalNinjaGenerator(cmLocalGenerator* parent)
+  : cmLocalGenerator(parent)
   , ConfigName("")
   , HomeRelativeOutputPath("")
 {
+#ifdef _WIN32
+  this->WindowsShell = true;
+#endif
   this->TargetImplib = "$TARGET_IMPLIB";
 }
 

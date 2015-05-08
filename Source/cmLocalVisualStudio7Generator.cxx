@@ -55,9 +55,8 @@ static void cmConvertToWindowsSlash(std::string& s)
 
 //----------------------------------------------------------------------------
 cmLocalVisualStudio7Generator
-::cmLocalVisualStudio7Generator(VSVersion v, cmGlobalGenerator* gg,
-                                cmLocalGenerator* parent):
-  cmLocalVisualStudioGenerator(v, gg, parent)
+::cmLocalVisualStudio7Generator(VSVersion v, cmLocalGenerator* parent):
+  cmLocalVisualStudioGenerator(v, parent)
 {
   this->ExtraFlagTable = 0;
   this->Internal = new cmLocalVisualStudio7GeneratorInternals(this);

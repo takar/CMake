@@ -1,7 +1,7 @@
 CMP0018
 -------
 
-.. cmake-policy:: CMP0018
+Ignore CMAKE_SHARED_LIBRARY_<Lang>_FLAGS variable.
 
 CMake 2.8.8 and lower compiled sources in SHARED and MODULE libraries
 using the value of the undocumented CMAKE_SHARED_LIBRARY_<Lang>_FLAGS

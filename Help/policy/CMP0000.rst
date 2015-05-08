@@ -1,7 +1,7 @@
 CMP0000
 -------
 
-.. cmake-policy:: CMP0000
+A minimum required CMake version must be specified.
 
 CMake requires that projects specify the version of CMake to which
 they have been written.  This policy has been put in place so users

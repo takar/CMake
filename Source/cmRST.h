@@ -79,7 +79,6 @@ private:
   DirectiveType Directive;
   cmsys::RegularExpression CMakeDirective;
   cmsys::RegularExpression CMakeModuleDirective;
-  cmsys::RegularExpression CMakePolicyDirective;
   cmsys::RegularExpression ParsedLiteralDirective;
   cmsys::RegularExpression CodeBlockDirective;
   cmsys::RegularExpression ReplaceDirective;

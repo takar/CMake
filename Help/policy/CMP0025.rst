@@ -1,7 +1,7 @@
 CMP0025
 -------
 
-.. cmake-policy:: CMP0025
+Compiler id for Apple Clang is now ``AppleClang``.
 
 CMake 3.0 and above recognize that Apple Clang is a different compiler
 than upstream Clang and that they have different version numbers.

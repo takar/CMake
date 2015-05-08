@@ -1,7 +1,7 @@
 CMP0027
 -------
 
-.. cmake-policy:: CMP0027
+Conditionally linked imported targets with missing include directories.
 
 CMake 2.8.11 introduced introduced the concept of
 INTERFACE_INCLUDE_DIRECTORIES, and a check at cmake time that the

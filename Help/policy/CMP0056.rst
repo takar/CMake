@@ -1,7 +1,7 @@
 CMP0056
 -------
 
-.. cmake-policy:: CMP0056
+Honor link flags in :command:`try_compile` source-file signature.
 
 The :command:`try_compile` command source-file signature generates a
 ``CMakeLists.txt`` file to build the source file into an executable.

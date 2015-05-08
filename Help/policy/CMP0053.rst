@@ -1,7 +1,7 @@
 CMP0053
 -------
 
-.. cmake-policy:: CMP0053
+Simplify variable reference and escape sequence evaluation.
 
 CMake 3.1 introduced a much faster implementation of evaluation of the
 :ref:`Variable References` and :ref:`Escape Sequences` documented in the

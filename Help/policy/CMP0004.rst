@@ -1,7 +1,7 @@
 CMP0004
 -------
 
-.. cmake-policy:: CMP0004
+Libraries linked may not have leading or trailing whitespace.
 
 CMake versions 2.4 and below silently removed leading and trailing
 whitespace from libraries linked with code like

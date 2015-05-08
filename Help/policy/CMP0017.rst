@@ -1,7 +1,7 @@
 CMP0017
 -------
 
-.. cmake-policy:: CMP0017
+Prefer files from the CMake module directory when including from there.
 
 Starting with CMake 2.8.4, if a cmake-module shipped with CMake (i.e.
 located in the CMake module directory) calls include() or

@@ -1,7 +1,7 @@
 CMP0048
 -------
 
-.. cmake-policy:: CMP0048
+The :command:`project` command manages VERSION variables.
 
 CMake version 3.0 introduced the ``VERSION`` option of the :command:`project`
 command to specify a project version as well as the name.  In order to keep

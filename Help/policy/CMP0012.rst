@@ -1,7 +1,7 @@
 CMP0012
 -------
 
-.. cmake-policy:: CMP0012
+if() recognizes numbers and boolean constants.
 
 In CMake versions 2.6.4 and lower the if() command implicitly
 dereferenced arguments corresponding to variables, even those named

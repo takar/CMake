@@ -1,7 +1,7 @@
 CMP0031
 -------
 
-.. cmake-policy:: CMP0031
+The :command:`load_command` command should not be called.
 
 This command was added in August 2002 to allow projects to add
 arbitrary commands implemented in C or C++.  However, it does

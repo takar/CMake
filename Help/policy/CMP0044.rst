@@ -1,7 +1,7 @@
 CMP0044
 -------
 
-.. cmake-policy:: CMP0044
+Case sensitive ``<LANG>_COMPILER_ID`` generator expressions
 
 CMake 2.8.12 introduced the ``<LANG>_COMPILER_ID``
 :manual:`generator expressions <cmake-generator-expressions(7)>` to allow

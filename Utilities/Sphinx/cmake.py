@@ -11,8 +11,6 @@
 #=============================================================================
 import os
 import re
-import json
-from docutils import statemachine
 
 # Monkey patch for pygments reporting an error when generator expressions are
 # used.
@@ -126,43 +124,6 @@ class CMakeModule(Directive):
             raise self.warning('"%s" found unclosed bracket "#[%s[.rst:" in %s' %
                                (self.name, rst[1:-1], path))
         self.state_machine.insert_input(lines, path)
-        return []
-
-class CMakePolicyList(Directive):
-    def run(self):
-
-        env = self.state.document.settings.env
-        with open("PolicyList.json", "r") as f:
-            policies = json.load(f)
-
-            policiesTocList = """
-.. toctree::
-  :maxdepth: 1
-
-"""
-            for policy in policies:
-              policiesTocList += "  " + policy["id"] + \
-                  " (since " + policy["version"] + ") - " + \
-                  policy["doc"].replace("<", "").replace(">", "") + \
-                  "</policy/" + policy["id"] + ">\n"
-
-            include_lines = statemachine.string2lines(policiesTocList)
-            self.state_machine.insert_input(include_lines, "")
-        return []
-
-class CMakePolicy(Directive):
-    required_arguments = 1
-    def run(self):
-
-        env = self.state.document.settings.env
-        with open("PolicyList.json", "r") as f:
-            policies = json.load(f)
-
-            for policy in policies:
-              if policy["id"] == self.arguments[0]:
-                include_lines = statemachine.string2lines(policy["rst"])
-                self.state_machine.insert_input(include_lines, "")
-                break
         return []
 
 class _cmake_index_entry:
@@ -426,8 +387,6 @@ class CMakeDomain(Domain):
 
 def setup(app):
     app.add_directive('cmake-module', CMakeModule)
-    app.add_directive('cmake-policy', CMakePolicy)
-    app.add_directive('cmake-policy-list', CMakePolicyList)
     app.add_transform(CMakeTransform)
     app.add_transform(CMakeXRefTransform)
     app.add_domain(CMakeDomain)

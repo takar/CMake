@@ -1,7 +1,7 @@
 CMP0003
 -------
 
-.. cmake-policy:: CMP0003
+Libraries linked via full path no longer produce linker search paths.
 
 This policy affects how libraries whose full paths are NOT known are
 found at link time, but was created due to a change in how CMake deals

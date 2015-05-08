@@ -1,7 +1,7 @@
 CMP0002
 -------
 
-.. cmake-policy:: CMP0002
+Logical target names must be globally unique.
 
 Targets names created with add_executable, add_library, or
 add_custom_target are logical build target names.  Logical target

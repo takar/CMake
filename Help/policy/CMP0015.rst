@@ -1,7 +1,7 @@
 CMP0015
 -------
 
-.. cmake-policy:: CMP0015
+link_directories() treats paths relative to the source dir.
 
 In CMake 2.8.0 and lower the link_directories() command passed
 relative paths unchanged to the linker.  In CMake 2.8.1 and above the

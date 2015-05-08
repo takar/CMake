@@ -1,7 +1,7 @@
 CMP0010
 -------
 
-.. cmake-policy:: CMP0010
+Bad variable reference syntax is an error.
 
 In CMake 2.6.2 and below, incorrect variable reference syntax such as
 a missing close-brace ("${FOO") was reported but did not stop

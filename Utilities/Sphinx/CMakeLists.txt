@@ -71,21 +71,8 @@ endif()
 if(SPHINX_TEXT)
   list(APPEND doc_formats text)
 endif()
-
-if (doc_formats)
-  find_package(PythonInterp REQUIRED)
-
-  add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/PolicyList.json"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/create-policy-list.py"
-    COMMAND "${PYTHON_EXECUTABLE}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/create-policy-list.py"
-    "${CMAKE_CURRENT_BINARY_DIR}"
-    "${CMake_SOURCE_DIR}/Source/cmPolicies.h"
-  )
-endif()
-
 if(SPHINX_QTHELP)
+  find_package(PythonInterp REQUIRED)
 
   find_program(QCOLLECTIONGENERATOR_EXECUTABLE
     NAMES qcollectiongenerator
@@ -135,7 +122,7 @@ foreach(format ${doc_formats})
             ${CMAKE_CURRENT_BINARY_DIR}/${format}
             > ${doc_format_log} # log stdout, pass stderr
     ${${format}_extra_commands}
-    DEPENDS ${doc_format_last} "${CMAKE_CURRENT_BINARY_DIR}/PolicyList.json"
+    DEPENDS ${doc_format_last}
     COMMENT "sphinx-build ${format}: see Utilities/Sphinx/${doc_format_log}"
     VERBATIM
     )

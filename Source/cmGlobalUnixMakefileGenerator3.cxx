@@ -56,7 +56,9 @@ void cmGlobalUnixMakefileGenerator3
 cmLocalGenerator *
 cmGlobalUnixMakefileGenerator3::CreateLocalGenerator(cmLocalGenerator* parent)
 {
-  return new cmLocalUnixMakefileGenerator3(this, parent);
+  cmLocalGenerator* lg = new cmLocalUnixMakefileGenerator3(parent);
+  lg->SetGlobalGenerator(this);
+  return lg;
 }
 
 //----------------------------------------------------------------------------

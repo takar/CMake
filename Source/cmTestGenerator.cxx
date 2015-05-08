@@ -82,6 +82,7 @@ void cmTestGenerator::GenerateScriptForConfig(std::ostream& os,
   // be translated.
   std::string exe = command[0];
   cmMakefile* mf = this->Test->GetMakefile();
+  cmLocalGenerator* lg = mf->GetLocalGenerator();
   cmTarget* target = mf->FindTargetToUse(exe);
   if(target && target->GetType() == cmTarget::EXECUTABLE)
     {
@@ -97,13 +98,13 @@ void cmTestGenerator::GenerateScriptForConfig(std::ostream& os,
       cmSystemTools::ExpandListArgument(emulator, emulatorWithArgs);
       std::string emulatorExe(emulatorWithArgs[0]);
       cmSystemTools::ConvertToUnixSlashes(emulatorExe);
-      os << cmLocalGenerator::EscapeForCMake(emulatorExe) << " ";
+      os << lg->EscapeForCMake(emulatorExe) << " ";
       for(std::vector<std::string>::const_iterator ei =
           emulatorWithArgs.begin()+1;
           ei != emulatorWithArgs.end();
           ++ei)
         {
-        os << cmLocalGenerator::EscapeForCMake(*ei) << " ";
+        os << lg->EscapeForCMake(*ei) << " ";
         }
       }
     }
@@ -115,12 +116,11 @@ void cmTestGenerator::GenerateScriptForConfig(std::ostream& os,
     }
 
   // Generate the command line with full escapes.
-  os << cmLocalGenerator::EscapeForCMake(exe);
+  os << lg->EscapeForCMake(exe);
   for(std::vector<std::string>::const_iterator ci = command.begin()+1;
       ci != command.end(); ++ci)
     {
-    os << " " << cmLocalGenerator::EscapeForCMake(
-                                         ge.Parse(*ci)->Evaluate(mf, config));
+    os << " " << lg->EscapeForCMake(ge.Parse(*ci)->Evaluate(mf, config));
     }
 
   // Finish the test command.
@@ -136,7 +136,7 @@ void cmTestGenerator::GenerateScriptForConfig(std::ostream& os,
         i != pm.end(); ++i)
       {
       os << " " << i->first
-         << " " << cmLocalGenerator::EscapeForCMake(
+         << " " << lg->EscapeForCMake(
            ge.Parse(i->second.GetValue())->Evaluate(mf, config));
       }
     os << ")" << std::endl;
@@ -197,6 +197,8 @@ void cmTestGenerator::GenerateOldStyle(std::ostream& fout,
   fout << ")" << std::endl;
 
   // Output properties for the test.
+  cmMakefile* mf = this->Test->GetMakefile();
+  cmLocalGenerator* lg = mf->GetLocalGenerator();
   cmPropertyMap& pm = this->Test->GetProperties();
   if(!pm.empty())
     {
@@ -206,7 +208,7 @@ void cmTestGenerator::GenerateOldStyle(std::ostream& fout,
         i != pm.end(); ++i)
       {
       fout << " " << i->first
-           << " " << cmLocalGenerator::EscapeForCMake(i->second.GetValue());
+           << " " << lg->EscapeForCMake(i->second.GetValue());
       }
     fout << ")" << std::endl;
     }

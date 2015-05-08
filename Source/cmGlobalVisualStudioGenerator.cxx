@@ -23,8 +23,6 @@
 //----------------------------------------------------------------------------
 cmGlobalVisualStudioGenerator::cmGlobalVisualStudioGenerator()
 {
-  this->WindowsShell = true;
-  this->WindowsVSIDE = true;
 }
 
 //----------------------------------------------------------------------------

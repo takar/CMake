@@ -25,7 +25,7 @@ class cmGeneratedFileStream;
 class cmLocalGhsMultiGenerator : public cmLocalGenerator
 {
 public:
-  cmLocalGhsMultiGenerator(cmGlobalGenerator* gg, cmLocalGenerator* parent);
+  cmLocalGhsMultiGenerator(cmLocalGenerator* parent);
 
   virtual ~cmLocalGhsMultiGenerator();
 

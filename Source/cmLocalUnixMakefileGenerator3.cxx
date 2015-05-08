@@ -80,9 +80,10 @@ static std::string cmSplitExtension(std::string const& in, std::string& base)
 
 //----------------------------------------------------------------------------
 cmLocalUnixMakefileGenerator3::
-cmLocalUnixMakefileGenerator3(cmGlobalGenerator* gg, cmLocalGenerator* parent)
-  : cmLocalGenerator(gg, parent)
+cmLocalUnixMakefileGenerator3(cmLocalGenerator* parent)
+  : cmLocalGenerator(parent)
 {
+  this->WindowsShell = false;
   this->IncludeDirective = "include";
   this->MakefileVariableSize = 0;
   this->IgnoreLibPrefix = false;
@@ -545,11 +546,9 @@ void cmLocalUnixMakefileGenerator3::WriteDirectoryInformationFile()
   // Setup relative path conversion tops.
   infoFileStream
     << "# Relative path conversion top directories.\n"
-    << "set(CMAKE_RELATIVE_PATH_TOP_SOURCE \""
-    << this->StateSnapshot.GetRelativePathTopSource()
+    << "set(CMAKE_RELATIVE_PATH_TOP_SOURCE \"" << this->RelativePathTopSource
     << "\")\n"
-    << "set(CMAKE_RELATIVE_PATH_TOP_BINARY \""
-    << this->StateSnapshot.GetRelativePathTopBinary()
+    << "set(CMAKE_RELATIVE_PATH_TOP_BINARY \"" << this->RelativePathTopBinary
     << "\")\n"
     << "\n";
 
@@ -680,7 +679,7 @@ cmLocalUnixMakefileGenerator3
 
   // Write the list of commands.
   os << cmWrap("\t", commands, "", "\n") << "\n";
-  if(symbolic && !this->IsWatcomWMake())
+  if(symbolic && !this->WatcomWMake)
     {
     os << ".PHONY : " << cmMakeSafe(tgt) << "\n";
     }
@@ -697,7 +696,7 @@ std::string
 cmLocalUnixMakefileGenerator3
 ::ConvertShellCommand(std::string const& cmd, RelativeRoot root)
 {
-  if(this->IsWatcomWMake() &&
+  if(this->WatcomWMake &&
      cmSystemTools::FileIsFullPath(cmd.c_str()) &&
      cmd.find_first_of("( )") != cmd.npos)
     {
@@ -731,7 +730,7 @@ cmLocalUnixMakefileGenerator3
       << "NULL=nul\n"
       << "!ENDIF\n";
     }
-  if(this->IsWindowsShell())
+  if(this->WindowsShell)
     {
      makefileStream
        << "SHELL = cmd.exe\n"
@@ -799,8 +798,7 @@ cmLocalUnixMakefileGenerator3
     makefileStream, "Disable implicit rules so canonical targets will work.",
     ".SUFFIXES", no_depends, no_commands, false);
 
-  if(!this->IsNMake()
-      && !this->IsWatcomWMake() && !this->BorlandMakeCurlyHack)
+  if(!this->NMake && !this->WatcomWMake && !this->BorlandMakeCurlyHack)
     {
     // turn off RCS and SCCS automatic stuff from gmake
     makefileStream
@@ -812,7 +810,7 @@ cmLocalUnixMakefileGenerator3
   depends.push_back(".hpux_make_needs_suffix_list");
   this->WriteMakeRule(makefileStream, 0,
                       ".SUFFIXES", depends, no_commands, false);
-  if(this->IsWatcomWMake())
+  if(this->WatcomWMake)
     {
     // Switch on WMake feature, if an error or interrupt occurs during
     // makefile processing, the current target being made may be deleted
@@ -830,7 +828,7 @@ cmLocalUnixMakefileGenerator3
       << "VERBOSE = 1\n"
       << "\n";
     }
-  if(this->IsWatcomWMake())
+  if(this->WatcomWMake)
     {
     makefileStream <<
       "!ifndef VERBOSE\n"
@@ -964,7 +962,7 @@ cmLocalUnixMakefileGenerator3
 void cmLocalUnixMakefileGenerator3::AppendFlags(std::string& flags,
                                                 const std::string& newFlags)
 {
-  if(this->IsWatcomWMake() && !newFlags.empty())
+  if(this->WatcomWMake && !newFlags.empty())
     {
     std::string newf = newFlags;
     if(newf.find("\\\"") != newf.npos)
@@ -1114,7 +1112,7 @@ cmLocalUnixMakefileGenerator3
       //
       bool useCall = false;
 
-      if (this->IsWindowsShell())
+      if (this->WindowsShell)
         {
         std::string suffix;
         if (cmd.size() > 4)
@@ -1181,7 +1179,7 @@ cmLocalUnixMakefileGenerator3
           {
           cmd = "call " + cmd;
           }
-        else if (this->IsNMake() && cmd[0]=='"')
+        else if (this->NMake && cmd[0]=='"')
           {
           cmd = "echo >nul && " + cmd;
           }
@@ -1263,7 +1261,7 @@ cmLocalUnixMakefileGenerator3
         f != files.end(); ++f)
       {
       std::string fc = this->Convert(*f,START_OUTPUT,UNCHANGED);
-      fout << "  " << cmLocalGenerator::EscapeForCMake(fc) << "\n";
+      fout << "  " << this->EscapeForCMake(fc) << "\n";
       }
     fout << ")\n";
     }
@@ -1615,15 +1613,16 @@ cmLocalUnixMakefileGenerator3
       }
 
     // Setup relative path top directories.
+    this->RelativePathsConfigured = true;
     if(const char* relativePathTopSource =
        mf->GetDefinition("CMAKE_RELATIVE_PATH_TOP_SOURCE"))
       {
-      this->StateSnapshot.SetRelativePathTopSource(relativePathTopSource);
+      this->RelativePathTopSource = relativePathTopSource;
       }
     if(const char* relativePathTopBinary =
        mf->GetDefinition("CMAKE_RELATIVE_PATH_TOP_BINARY"))
       {
-      this->StateSnapshot.SetRelativePathTopBinary(relativePathTopBinary);
+      this->RelativePathTopBinary = relativePathTopBinary;
       }
     }
   else
@@ -2061,7 +2060,7 @@ void cmLocalUnixMakefileGenerator3
           di != defines.end(); ++di)
         {
         cmakefileStream
-          << "  " << cmLocalGenerator::EscapeForCMake(*di) << "\n";
+          << "  " << this->EscapeForCMake(*di) << "\n";
         }
       cmakefileStream
         << "  )\n";
@@ -2114,8 +2113,7 @@ void cmLocalUnixMakefileGenerator3
     for(std::vector<std::string>::const_iterator tri = transformRules.begin();
         tri != transformRules.end(); ++tri)
       {
-      cmakefileStream << "  "
-          << cmLocalGenerator::EscapeForCMake(*tri) << "\n";
+      cmakefileStream << "  " << this->EscapeForCMake(*tri) << "\n";
       }
     cmakefileStream
       << "  )\n";
@@ -2345,7 +2343,7 @@ void cmLocalUnixMakefileGenerator3
   // used by NMake and Borland make does not support "cd /d" so this
   // feature simply cannot work with them (Borland make does not even
   // support changing the drive letter with just "d:").
-  const char* cd_cmd = this->IsMinGWMake() ? "cd /d " : "cd ";
+  const char* cd_cmd = this->MinGWMake? "cd /d " : "cd ";
 
   if(!this->UnixCD)
     {

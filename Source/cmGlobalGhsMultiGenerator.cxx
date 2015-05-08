@@ -35,7 +35,8 @@ cmGlobalGhsMultiGenerator::~cmGlobalGhsMultiGenerator()
 cmLocalGenerator *
 cmGlobalGhsMultiGenerator::CreateLocalGenerator(cmLocalGenerator* parent)
 {
-  cmLocalGenerator *lg = new cmLocalGhsMultiGenerator(this, parent);
+  cmLocalGenerator *lg = new cmLocalGhsMultiGenerator(parent);
+  lg->SetGlobalGenerator(this);
   this->SetCurrentLocalGenerator(lg);
   return lg;
 }

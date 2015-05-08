@@ -51,35 +51,6 @@ std::string cmCustomCommandGenerator::GetCommand(unsigned int c) const
 }
 
 //----------------------------------------------------------------------------
-std::string escapeForShellOldStyle(const std::string& str)
-{
-  std::string result;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-  // if there are spaces
-  std::string temp = str;
-  if (temp.find(" ") != std::string::npos &&
-      temp.find("\"")==std::string::npos)
-    {
-    result = "\"";
-    result += str;
-    result += "\"";
-    return result;
-    }
-  return str;
-#else
-  for(const char* ch = str.c_str(); *ch != '\0'; ++ch)
-    {
-    if(*ch == ' ')
-      {
-      result += '\\';
-      }
-    result += *ch;
-    }
-  return result;
-#endif
-}
-
-//----------------------------------------------------------------------------
 void
 cmCustomCommandGenerator
 ::AppendArguments(unsigned int c, std::string& cmd) const
@@ -92,7 +63,7 @@ cmCustomCommandGenerator
     cmd += " ";
     if(this->OldStyle)
       {
-      cmd += escapeForShellOldStyle(arg);
+      cmd += this->LG->EscapeForShellOldStyle(arg);
       }
     else
       {

@@ -16,6 +16,13 @@ add_custom_target(BuildFailure ALL COMMAND command-does-not-exist)
   set(CASE_TEST_PREFIX_CODE [[
 cmake_policy(SET CMP0061 NEW)
 ]])
+  set(CASE_TEST_SUFFIX_CODE [[
+if (ctest_build_return_value)
+  message("ctest_build returned non-zero")
+else()
+  message("ctest_build returned zero")
+endif()
+]])
   run_ctest(BuildFailure)
 
   if (RunCMake_GENERATOR MATCHES "Makefiles")

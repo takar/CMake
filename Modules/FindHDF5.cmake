@@ -60,8 +60,8 @@
 #   HDF5_DIFF_EXECUTABLE - the path to the HDF5 dataset comparison tool
 
 #=============================================================================
+# Copyright 2015 Axel Huebl, Helmholtz-Zentrum Dresden - Rossendorf
 # Copyright 2009 Kitware, Inc.
-#           2015 Axel Huebl, Helmholtz-Zentrum Dresden - Rossendorf
 #
 # Distributed under the OSI-approved BSD License (the "License");
 # see accompanying file Copyright.txt for details.

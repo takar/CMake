@@ -210,6 +210,57 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
         }
       return 0;
       }
+    // run include what you use command and then run the compile
+    // command. This is an internal undocumented option and should
+    // only be used by CMake itself when running iwyu.
+    else if (args[1] == "__run_iwyu")
+      {
+      if(args.size() <  3)
+        {
+        std::cerr << "__run_iwyu Usage: -E __run_iwyu [--iwyu=/path/iwyu]"
+          " -- compile command\n";
+        return 1;
+        }
+      bool doing_options = true;
+      std::vector<std::string> orig_cmd;
+      std::string cmd;
+      for (std::string::size_type cc = 2; cc < args.size(); cc ++)
+        {
+        std::string const& arg = args[cc];
+        if(arg == "--")
+          {
+          doing_options = false;
+          }
+        else if (doing_options && cmHasLiteralPrefix(arg, "--iwyu="))
+          {
+          cmd = arg.substr(7);
+          }
+        else if(!doing_options)
+          {
+          orig_cmd.push_back(arg);
+          }
+        }
+      if(cmd.size() == 0)
+        {
+        std::cerr << "__run_iwyu missing iwyu path --iwyu=/path/to/iwyu\n";
+        return 1;
+        }
+      if(orig_cmd.size() == 0)
+        {
+        std::cerr << "__run_iwyu missing compile command after --\n";
+        return 1;
+        }
+      std::vector<std::string> iwyucmd = orig_cmd;
+      iwyucmd[0] = cmd;
+      int ret = 0;
+      cmSystemTools::RunSingleCommand(iwyucmd, 0, 0, 0,
+                                      0, cmSystemTools::OUTPUT_PASSTHROUGH);
+      // the return value of iwyu is ignored as it is always fail
+      cmSystemTools::RunSingleCommand(orig_cmd, 0, 0, &ret,
+                                      0, cmSystemTools::OUTPUT_PASSTHROUGH);
+      // return the value of the real compile command
+      return ret;
+      }
 
     // Echo string
     else if (args[1] == "echo" )
@@ -696,7 +747,6 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
         return autogenSuccess ? 0 : 1;
       }
 #endif
-
     // Tar files
     else if (args[1] == "tar" && args.size() > 3)
       {

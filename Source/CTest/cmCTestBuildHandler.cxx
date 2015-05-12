@@ -133,6 +133,8 @@ static const char* cmCTestWarningMatches[] = {
   "cc-[0-9]* CC: REMARK File = .*, Line = [0-9]*",
   "^CMake Warning.*:",
   "^\\[WARNING\\]",
+  ".*should remove these lines:",
+  ".*should add these lines:",
   0
 };
 

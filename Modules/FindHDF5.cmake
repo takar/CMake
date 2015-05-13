@@ -339,8 +339,9 @@ if( NOT HDF5_FOUND )
     set( HDF5_IS_PARALLEL FALSE )
     set( HDF5_VERSION "" )
     foreach( _dir IN LISTS HDF5_INCLUDE_DIRS )
-        if( EXISTS "${_dir}/H5pubconf.h" )
-            file( STRINGS "${_dir}/H5pubconf.h"
+      foreach(_hdr "${_dir}/H5pubconf.h" "${_dir}/H5pubconf-64.h" "${_dir}/H5pubconf-32.h")
+        if( EXISTS "${_hdr}" )
+            file( STRINGS "${_hdr}"
                 HDF5_HAVE_PARALLEL_DEFINE
                 REGEX "HAVE_PARALLEL 1" )
             if( HDF5_HAVE_PARALLEL_DEFINE )
@@ -348,7 +349,7 @@ if( NOT HDF5_FOUND )
             endif()
             unset(HDF5_HAVE_PARALLEL_DEFINE)
 
-            file( STRINGS "${_dir}/H5pubconf.h"
+            file( STRINGS "${_hdr}"
                 HDF5_VERSION_DEFINE
                 REGEX "^[ \t]*#[ \t]*define[ \t]+H5_VERSION[ \t]+" )
             if( "${HDF5_VERSION_DEFINE}" MATCHES
@@ -357,6 +358,7 @@ if( NOT HDF5_FOUND )
             endif()
             unset(HDF5_VERSION_DEFINE)
         endif()
+      endforeach()
     endforeach()
     set( HDF5_IS_PARALLEL ${HDF5_IS_PARALLEL} CACHE BOOL
         "HDF5 library compiled with parallel IO support" )

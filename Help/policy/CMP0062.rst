@@ -12,7 +12,7 @@ configuration.
 The :command:`install(EXPORT)` generates and installs files which contain
 :ref:`Imported Targets`.  These files are generated with relative paths
 (unless the user specifies absolute paths), and are designed for
-multi-configuration use.
+multi-configuration use.  See :ref:`Creating Packages` for more.
 
 CMake 3.3 no longer allows the use of the :command:`install(FILES)` command
 with the result of the :command:`export()` command.

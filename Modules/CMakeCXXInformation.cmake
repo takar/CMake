@@ -285,7 +285,7 @@ endif()
 # as well as the clang compiler for building cxx files.
 if(CMAKE_IWYU_EXECUTABLE)
   set(CMAKE_CXX_COMPILE_OBJECT
-    "<CMAKE_COMMAND> -E __run_iwyu --iwyu=${CMAKE_IWYU_EXECUTABLE} -- ${CMAKE_CXX_COMPILE_OBJECT}")
+    "<CMAKE_COMMAND> -E __run_iwyu --iwyu=\"${CMAKE_IWYU_EXECUTABLE}\" -- ${CMAKE_CXX_COMPILE_OBJECT}")
 endif()
 
 

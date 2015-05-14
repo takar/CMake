@@ -240,12 +240,12 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
           orig_cmd.push_back(arg);
           }
         }
-      if(cmd.size() == 0)
+      if(cmd.empty())
         {
         std::cerr << "__run_iwyu missing iwyu path --iwyu=/path/to/iwyu\n";
         return 1;
         }
-      if(orig_cmd.size() == 0)
+      if(orig_cmd.empty())
         {
         std::cerr << "__run_iwyu missing compile command after --\n";
         return 1;
@@ -253,11 +253,32 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
       std::vector<std::string> iwyucmd = orig_cmd;
       iwyucmd[0] = cmd;
       int ret = 0;
-      cmSystemTools::RunSingleCommand(iwyucmd, 0, 0, 0,
-                                      0, cmSystemTools::OUTPUT_PASSTHROUGH);
+      std::string stdErr;
+      if(!cmSystemTools::RunSingleCommand(iwyucmd, 0, &stdErr, &ret,
+                                          0, cmSystemTools::OUTPUT_NONE))
+        {
+        // if the command fails to run then output the command and
+        // the stderr from RunSingleCommand and return 1
+        std::cerr << "Error running: " << cmd << "\n";
+        std::cerr << stdErr << "\n";
+        return 1;
+        }
+      if(stdErr.find("should remove these lines:") != stdErr.npos
+        || stdErr.find("should add these lines:") != stdErr.npos)
+        {
+        std::cerr << ":Warning include what you use output: " << stdErr
+                  << "\n";
+        }
+      // capture stderr, look for strings
+      // output Warning iwyu output:\n make sure matches regex
       // the return value of iwyu is ignored as it is always fail
-      cmSystemTools::RunSingleCommand(orig_cmd, 0, 0, &ret,
-                                      0, cmSystemTools::OUTPUT_PASSTHROUGH);
+      if(!cmSystemTools::RunSingleCommand(orig_cmd, 0, &stdErr, &ret,
+                                          0, cmSystemTools::OUTPUT_PASSTHROUGH))
+        {
+        std::cerr << "Error running: " << orig_cmd[0] << "\n";
+        std::cerr << stdErr << "\n";
+        return 1;
+        }
       // return the value of the real compile command
       return ret;
       }

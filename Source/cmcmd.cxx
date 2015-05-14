@@ -250,8 +250,14 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
         std::cerr << "__run_iwyu missing compile command after --\n";
         return 1;
         }
-      std::vector<std::string> iwyucmd = orig_cmd;
-      iwyucmd[0] = cmd;
+      std::vector<std::string> iwyucmd;
+      cmSystemTools::ExpandListArgument(cmd, iwyucmd);
+      // put the rest of orig_cmd without the compiler orig_cmd[0]
+      // into the iwyucmd
+      for(std::vector<std::string>::size_type i=1; i < orig_cmd.size(); ++i)
+        {
+        iwyucmd.push_back(orig_cmd[i]);
+        }
       int ret = 0;
       std::string stdErr;
       if(!cmSystemTools::RunSingleCommand(iwyucmd, 0, &stdErr, &ret,
@@ -266,7 +272,7 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
       if(stdErr.find("should remove these lines:") != stdErr.npos
         || stdErr.find("should add these lines:") != stdErr.npos)
         {
-        std::cerr << ":Warning include what you use output: " << stdErr
+        std::cerr << "Warning : include what you use output: " << stdErr
                   << "\n";
         }
       // capture stderr, look for strings

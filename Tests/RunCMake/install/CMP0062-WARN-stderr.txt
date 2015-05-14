@@ -1,7 +1,7 @@
 CMake Warning \(dev\) at CMP0062-WARN.cmake:[0-9]+ \(install\):
-  Policy CMP0062 is not set: Disallow install\(\) of export\(\) result Run "cmake
-  --help-policy CMP0062" for policy details.  Use the cmake_policy command to
-  set the policy and suppress this warning.
+  Policy CMP0062 is not set: Disallow install\(\) of export\(\) result.  Run
+  "cmake --help-policy CMP0062" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
 
   The file
 

@@ -81,12 +81,7 @@ public:
    */
   ~cmMakefile();
 
-  /**
-   * Read and parse a CMakeLists.txt file.
-   */
-  bool ReadListFile(const char* listfile,
-                    bool noPolicyScope = true,
-                    bool requireProjectCommand = false);
+  bool ReadListFile(const char* listfile);
 
   bool ReadDependentFile(const char* listfile, bool noPolicyScope = true);
 
@@ -913,6 +908,10 @@ private:
   cmMakefile& operator=(const cmMakefile& mf);
 
   cmState::Snapshot StateSnapshot;
+
+  bool ReadListFile(const char* listfile,
+                    bool noPolicyScope,
+                    bool requireProjectCommand);
 
   bool ReadListFileInternal(const char* filenametoread,
                             bool noPolicyScope,

@@ -649,6 +649,7 @@ void cmCTestLaunch::LoadScrapeRules()
   this->RegexWarning.push_back("(^|[ :])[Ww][Aa][Rr][Nn][Ii][Nn][Gg]");
   this->RegexWarning.push_back("(^|[ :])[Rr][Ee][Mm][Aa][Rr][Kk]");
   this->RegexWarning.push_back("(^|[ :])[Nn][Oo][Tt][Ee]");
+
   // Load custom match rules given to us by CTest.
   this->LoadScrapeRules("Warning", this->RegexWarning);
   this->LoadScrapeRules("WarningSuppress", this->RegexWarningSuppress);

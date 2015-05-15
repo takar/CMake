@@ -278,8 +278,8 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
       // capture stderr, look for strings
       // output Warning iwyu output:\n make sure matches regex
       // the return value of iwyu is ignored as it is always fail
-      if(!cmSystemTools::RunSingleCommand(orig_cmd, 0, &stdErr, &ret,
-                                          0, cmSystemTools::OUTPUT_PASSTHROUGH))
+      if(!cmSystemTools::RunSingleCommand(orig_cmd, 0, &stdErr, &ret, 0,
+                                          cmSystemTools::OUTPUT_PASSTHROUGH))
         {
         std::cerr << "Error running: " << orig_cmd[0] << "\n";
         std::cerr << stdErr << "\n";
@@ -774,6 +774,7 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
         return autogenSuccess ? 0 : 1;
       }
 #endif
+
     // Tar files
     else if (args[1] == "tar" && args.size() > 3)
       {

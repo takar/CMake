@@ -22,6 +22,7 @@ cmGlobalMinGWMakefileGenerator::cmGlobalMinGWMakefileGenerator()
   this->WindowsShell = true;
   this->MinGWMake = true;
   this->PassMakeflags = true;
+  this->UnixCD = false;
 }
 
 void cmGlobalMinGWMakefileGenerator
@@ -66,7 +67,6 @@ cmGlobalMinGWMakefileGenerator::CreateLocalGenerator(cmLocalGenerator* parent)
   cmLocalUnixMakefileGenerator3* lg =
       new cmLocalUnixMakefileGenerator3(this, parent);
   lg->SetIgnoreLibPrefix(true);
-  lg->SetUnixCD(true);
   return lg;
 }
 

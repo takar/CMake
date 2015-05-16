@@ -23,6 +23,7 @@ cmGlobalMSYSMakefileGenerator::cmGlobalMSYSMakefileGenerator()
   this->UseLinkScript = false;
   this->MSYSShell = true;
   this->PassMakeflags = true;
+  this->UnixCD = false;
 }
 
 std::string
@@ -101,7 +102,6 @@ cmGlobalMSYSMakefileGenerator::CreateLocalGenerator(cmLocalGenerator* parent)
   cmLocalUnixMakefileGenerator3* lg =
       new cmLocalUnixMakefileGenerator3(this, parent);
   lg->SetIgnoreLibPrefix(true);
-  lg->SetUnixCD(true);
   return lg;
 }
 

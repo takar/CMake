@@ -105,9 +105,8 @@ public:
 
   bool RaiseScope(std::string const& var, const char* varDef, cmMakefile* mf)
   {
-    assert(this->VarStack.size() > 0);
-
     std::list<cmDefinitions>::reverse_iterator it = this->VarStack.rbegin();
+    assert(it != this->VarStack.rend());
     ++it;
     if(it == this->VarStack.rend())
       {
@@ -230,18 +229,12 @@ cmMakefile::cmMakefile(cmLocalGenerator* localGenerator)
   {
   const char* dir = this->GetCMakeInstance()->GetHomeDirectory();
   this->AddDefinition("CMAKE_SOURCE_DIR", dir);
-  if ( !this->GetDefinition("CMAKE_CURRENT_SOURCE_DIR") )
-    {
-    this->AddDefinition("CMAKE_CURRENT_SOURCE_DIR", dir);
-    }
+  this->AddDefinition("CMAKE_CURRENT_SOURCE_DIR", dir);
   }
   {
   const char* dir = this->GetCMakeInstance()->GetHomeOutputDirectory();
   this->AddDefinition("CMAKE_BINARY_DIR", dir);
-  if ( !this->GetDefinition("CMAKE_CURRENT_BINARY_DIR") )
-    {
-    this->AddDefinition("CMAKE_CURRENT_BINARY_DIR", dir);
-    }
+  this->AddDefinition("CMAKE_CURRENT_BINARY_DIR", dir);
   }
 }
 
@@ -595,7 +588,6 @@ void cmMakefile::IncludeScope::EnforceCMP0011()
 bool cmMakefile::ProcessBuildsystemFile(const char* listfile)
 {
   this->AddDefinition("CMAKE_PARENT_LIST_FILE", listfile);
-  this->cmCurrentListFile = listfile;
   std::string curSrc = this->GetCurrentSourceDirectory();
   return this->ReadListFile(listfile, true,
                             curSrc == this->GetHomeDirectory());
@@ -603,17 +595,16 @@ bool cmMakefile::ProcessBuildsystemFile(const char* listfile)
 
 bool cmMakefile::ReadDependentFile(const char* listfile, bool noPolicyScope)
 {
-  this->AddDefinition("CMAKE_PARENT_LIST_FILE", this->GetCurrentListFile());
-  this->cmCurrentListFile =
-    cmSystemTools::CollapseFullPath(listfile,
-                                    this->GetCurrentSourceDirectory());
-  return this->ReadListFile(this->cmCurrentListFile.c_str(),
-                            noPolicyScope);
+  this->AddDefinition("CMAKE_PARENT_LIST_FILE",
+                      this->GetDefinition("CMAKE_CURRENT_LIST_FILE"));
+  return this->ReadListFile(listfile, noPolicyScope, false);
 }
 
-//----------------------------------------------------------------------------
-// Parse the given CMakeLists.txt file executing all commands
-//
+bool cmMakefile::ReadListFile(const char* listfile)
+{
+  return this->ReadListFile(listfile, true, false);
+}
+
 bool cmMakefile::ReadListFile(const char* listfile,
                               bool noPolicyScope,
                               bool requireProjectCommand)
@@ -4357,7 +4348,7 @@ void cmMakefile::AddCMakeDependFilesFromUser()
     }
 }
 
-std::string cmMakefile::GetListFileStack() const
+std::string cmMakefile::FormatListFileStack() const
 {
   std::ostringstream tmp;
   size_t depth = this->ListFileStack.size();

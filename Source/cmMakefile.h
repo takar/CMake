@@ -85,12 +85,7 @@ public:
    */
   ~cmMakefile();
 
-  /**
-   * Read and parse a CMakeLists.txt file.
-   */
-  bool ReadListFile(const char* listfile,
-                    bool noPolicyScope = true,
-                    bool requireProjectCommand = false);
+  bool ReadListFile(const char* listfile);
 
   bool ReadDependentFile(const char* listfile, bool noPolicyScope = true);
 
@@ -439,14 +434,6 @@ public:
   void SetCurrentBinaryDirectory(const std::string& dir);
   const char* GetCurrentBinaryDirectory() const;
 
-  /* Get the current CMakeLists.txt file that is being processed.  This
-   * is just used in order to be able to 'branch' from one file to a second
-   * transparently */
-  const char* GetCurrentListFile() const
-    {
-      return this->cmCurrentListFile.c_str();
-    }
-
   //@}
 
   /**
@@ -609,7 +596,7 @@ public:
     { this->ListFiles.push_back(file);}
   void AddCMakeDependFilesFromUser();
 
-  std::string GetListFileStack() const;
+  std::string FormatListFileStack() const;
 
   /**
    * Get the current context backtrace.
@@ -865,8 +852,6 @@ protected:
   // Check for a an unused variable
   void CheckForUnused(const char* reason, const std::string& name) const;
 
-  std::string cmCurrentListFile;
-
   std::string ProjectName;    // project name
 
   // libraries, classes, and executables
@@ -931,6 +916,10 @@ private:
   cmMakefile& operator=(const cmMakefile& mf);
 
   cmState::Snapshot StateSnapshot;
+
+  bool ReadListFile(const char* listfile,
+                    bool noPolicyScope,
+                    bool requireProjectCommand);
 
   bool ReadListFileInternal(const char* filenametoread,
                             bool noPolicyScope,

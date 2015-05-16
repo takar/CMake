@@ -151,10 +151,6 @@ cmMakefile::cmMakefile(cmLocalGenerator* localGenerator)
   this->Internal->VarUsageStack.push(std::set<std::string>());
   this->Internal->IsSourceFileTryCompile = false;
 
-  // Initialize these first since AddDefaultDefinitions calls AddDefinition
-  this->WarnUnused = false;
-  this->CheckSystemVars = false;
-
   this->GeneratingBuildSystem = false;
   this->SuppressWatches = false;
 

@@ -22,6 +22,8 @@ cmGlobalMSYSMakefileGenerator::cmGlobalMSYSMakefileGenerator()
   this->ToolSupportsColor = true;
   this->UseLinkScript = false;
   this->MSYSShell = true;
+  this->PassMakeflags = true;
+  this->UnixCD = false;
 }
 
 std::string
@@ -91,18 +93,6 @@ void cmGlobalMSYSMakefileGenerator
       ("CMAKE_AR was not found, please set to archive program. ",
        mf->GetDefinition("CMAKE_AR"));
     }
-}
-
-///! Create a local generator appropriate to this Global Generator
-cmLocalGenerator *
-cmGlobalMSYSMakefileGenerator::CreateLocalGenerator(cmLocalGenerator* parent)
-{
-  cmLocalUnixMakefileGenerator3* lg =
-      new cmLocalUnixMakefileGenerator3(this, parent);
-  lg->SetIgnoreLibPrefix(true);
-  lg->SetPassMakeflags(false);
-  lg->SetUnixCD(true);
-  return lg;
 }
 
 //----------------------------------------------------------------------------

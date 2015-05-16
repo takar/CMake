@@ -21,6 +21,8 @@ cmGlobalMinGWMakefileGenerator::cmGlobalMinGWMakefileGenerator()
   this->UseLinkScript = true;
   this->WindowsShell = true;
   this->MinGWMake = true;
+  this->PassMakeflags = true;
+  this->UnixCD = false;
 }
 
 void cmGlobalMinGWMakefileGenerator
@@ -56,18 +58,6 @@ void cmGlobalMinGWMakefileGenerator
   mf->AddDefinition("CMAKE_GENERATOR_CXX", gxx.c_str());
   mf->AddDefinition("CMAKE_GENERATOR_RC", rc.c_str());
   this->cmGlobalUnixMakefileGenerator3::EnableLanguage(l, mf, optional);
-}
-
-///! Create a local generator appropriate to this Global Generator
-cmLocalGenerator *
-cmGlobalMinGWMakefileGenerator::CreateLocalGenerator(cmLocalGenerator* parent)
-{
-  cmLocalUnixMakefileGenerator3* lg =
-      new cmLocalUnixMakefileGenerator3(this, parent);
-  lg->SetIgnoreLibPrefix(true);
-  lg->SetPassMakeflags(false);
-  lg->SetUnixCD(true);
-  return lg;
 }
 
 //----------------------------------------------------------------------------

@@ -22,6 +22,7 @@ cmGlobalMSYSMakefileGenerator::cmGlobalMSYSMakefileGenerator()
   this->ToolSupportsColor = true;
   this->UseLinkScript = false;
   this->MSYSShell = true;
+  this->PassMakeflags = true;
 }
 
 std::string
@@ -100,7 +101,6 @@ cmGlobalMSYSMakefileGenerator::CreateLocalGenerator(cmLocalGenerator* parent)
   cmLocalUnixMakefileGenerator3* lg =
       new cmLocalUnixMakefileGenerator3(this, parent);
   lg->SetIgnoreLibPrefix(true);
-  lg->SetPassMakeflags(false);
   lg->SetUnixCD(true);
   return lg;
 }

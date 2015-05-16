@@ -55,7 +55,6 @@ cmGlobalWatcomWMakeGenerator::CreateLocalGenerator(cmLocalGenerator* parent)
   cmLocalUnixMakefileGenerator3* lg
       = new cmLocalUnixMakefileGenerator3(this, parent);
   lg->SetMakeSilentFlag("-h");
-  lg->SetIgnoreLibPrefix(true);
   return lg;
 }
 

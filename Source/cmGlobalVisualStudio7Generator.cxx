@@ -33,6 +33,7 @@ cmGlobalVisualStudio7Generator::cmGlobalVisualStudio7Generator(
     {
     this->DefaultPlatformName = platformName;
     }
+  this->ExtraFlagTable = this->GetExtraFlagTableVS7();
 }
 
 cmGlobalVisualStudio7Generator::~cmGlobalVisualStudio7Generator()
@@ -256,7 +257,6 @@ cmGlobalVisualStudio7Generator::CreateLocalGenerator(cmLocalGenerator* parent)
   cmLocalVisualStudio7Generator *lg =
     new cmLocalVisualStudio7Generator(cmLocalVisualStudioGenerator::VS7,
                                       this, parent);
-  lg->SetExtraFlagTable(this->GetExtraFlagTableVS7());
   return lg;
 }
 

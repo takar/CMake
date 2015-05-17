@@ -1722,8 +1722,7 @@ void cmMakefile::AddDefinition(const std::string& name, const char* value)
     }
 
   this->Internal->SetDefinition(name, value);
-  if (!this->Internal->VarUsageStack.empty() &&
-      this->VariableInitialized(name))
+  if (this->VariableInitialized(name))
     {
     this->CheckForUnused("changing definition", name);
     this->Internal->VarUsageStack.top().erase(name);
@@ -1798,8 +1797,7 @@ void cmMakefile::AddCacheDefinition(const std::string& name, const char* value,
 void cmMakefile::AddDefinition(const std::string& name, bool value)
 {
   this->Internal->SetDefinition(name, value ? "ON" : "OFF");
-  if (!this->Internal->VarUsageStack.empty() &&
-      this->VariableInitialized(name))
+  if (this->VariableInitialized(name))
     {
     this->CheckForUnused("changing definition", name);
     this->Internal->VarUsageStack.top().erase(name);
@@ -1896,8 +1894,7 @@ void cmMakefile::CheckForUnused(const char* reason,
 void cmMakefile::RemoveDefinition(const std::string& name)
 {
   this->Internal->RemoveDefinition(name);
-  if (!this->Internal->VarUsageStack.empty() &&
-      this->VariableInitialized(name))
+  if (this->VariableInitialized(name))
     {
     this->CheckForUnused("unsetting", name);
     this->Internal->VarUsageStack.top().erase(name);

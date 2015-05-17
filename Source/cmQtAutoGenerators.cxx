@@ -20,7 +20,7 @@
 #include "cmAlgorithms.h"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
-# include "cmLocalVisualStudioGenerator.h"
+# include "cmGlobalVisualStudioGenerator.h"
 #endif
 
 #include <sys/stat.h>

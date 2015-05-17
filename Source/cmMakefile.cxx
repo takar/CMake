@@ -38,7 +38,6 @@
 #include <cmsys/FStream.hxx>
 #include <cmsys/auto_ptr.hxx>
 
-#include <stack>
 #include <list>
 #include <ctype.h> // for isspace
 #include <assert.h>

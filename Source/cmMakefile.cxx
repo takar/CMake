@@ -111,7 +111,7 @@ public:
     if(it == this->VarStack.rend())
       {
       cmLocalGenerator* plg = mf->GetLocalGenerator()->GetParent();
-      if(plg)
+      if(!plg)
         {
         return false;
         }

@@ -121,11 +121,11 @@ public:
       cmMakefile* parent = plg->GetMakefile();
       if (varDef)
         {
-          parent->AddDefinition(var, varDef);
+        parent->AddDefinition(var, varDef);
         }
       else
         {
-          parent->RemoveDefinition(var);
+        parent->RemoveDefinition(var);
         }
       return true;
       }

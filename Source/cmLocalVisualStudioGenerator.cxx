@@ -32,7 +32,7 @@ cmLocalVisualStudioGenerator::~cmLocalVisualStudioGenerator()
 
 //----------------------------------------------------------------------------
 cmGlobalVisualStudioGenerator::VSVersion
-cmLocalVisualStudioGenerator::GetVarsion() const
+cmLocalVisualStudioGenerator::GetVersion() const
 {
   cmGlobalVisualStudioGenerator* gg =
     static_cast<cmGlobalVisualStudioGenerator*>(this->GlobalGenerator);

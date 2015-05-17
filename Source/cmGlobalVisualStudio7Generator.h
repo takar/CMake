@@ -111,7 +111,7 @@ public:
   // Encoding for Visual Studio files
   virtual std::string Encoding();
 
-  cmVS7FlagTable const* ExtraFlagTable;
+  cmIDEFlagTable const* ExtraFlagTable;
 
 protected:
   virtual void Generate();

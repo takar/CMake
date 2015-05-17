@@ -23,6 +23,21 @@
 class cmGlobalVisualStudioGenerator : public cmGlobalGenerator
 {
 public:
+  /** Known versions of Visual Studio.  */
+  enum VSVersion
+  {
+    VS6 = 60,
+    VS7 = 70,
+    VS71 = 71,
+    VS8 = 80,
+    VS9 = 90,
+    VS10 = 100,
+    VS11 = 110,
+    VS12 = 120,
+    /* VS13 = 130 was skipped */
+    VS14 = 140
+  };
+
   cmGlobalVisualStudioGenerator();
   virtual ~cmGlobalVisualStudioGenerator();
 
@@ -119,6 +134,8 @@ private:
   TargetSetMap TargetLinkClosure;
   void FillLinkClosure(cmTarget const* target, TargetSet& linked);
   TargetSet const& GetTargetLinkClosure(cmTarget* target);
+
+  VSVersion Version;
 };
 
 class cmGlobalVisualStudioGenerator::OrderedTargetDependSet:

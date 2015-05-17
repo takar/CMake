@@ -33,6 +33,13 @@ cmGlobalVisualStudioGenerator::~cmGlobalVisualStudioGenerator()
 }
 
 //----------------------------------------------------------------------------
+cmGlobalVisualStudioGenerator::VSVersion
+cmGlobalVisualStudioGenerator::GetVersion() const
+{
+  return this->Version;
+}
+
+//----------------------------------------------------------------------------
 std::string cmGlobalVisualStudioGenerator::GetRegistryBase()
 {
   return cmGlobalVisualStudioGenerator::GetRegistryBase(

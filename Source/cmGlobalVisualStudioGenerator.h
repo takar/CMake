@@ -41,6 +41,8 @@ public:
   cmGlobalVisualStudioGenerator();
   virtual ~cmGlobalVisualStudioGenerator();
 
+  VSVersion GetVersion() const;
+
   /**
    * Configure CMake's Visual Studio macros file into the user's Visual
    * Studio macros directory.
@@ -122,6 +124,9 @@ protected:
   typedef std::map<cmTarget const*, std::string> UtilityDependsMap;
   UtilityDependsMap UtilityDepends;
 
+protected:
+  VSVersion Version;
+
 private:
   virtual std::string GetVSMakeProgram() = 0;
   void PrintCompilerAdvice(std::ostream&, std::string const&,
@@ -134,8 +139,6 @@ private:
   TargetSetMap TargetLinkClosure;
   void FillLinkClosure(cmTarget const* target, TargetSet& linked);
   TargetSet const& GetTargetLinkClosure(cmTarget* target);
-
-  VSVersion Version;
 };
 
 class cmGlobalVisualStudioGenerator::OrderedTargetDependSet:

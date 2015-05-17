@@ -31,11 +31,12 @@ cmLocalVisualStudioGenerator::~cmLocalVisualStudioGenerator()
 }
 
 //----------------------------------------------------------------------------
+cmGlobalVisualStudioGenerator::VSVersion
 cmLocalVisualStudioGenerator::GetVarsion() const
 {
   cmGlobalVisualStudioGenerator* gg =
     static_cast<cmGlobalVisualStudioGenerator*>(this->GlobalGenerator);
-  return gg->Version;
+  return gg->GetVersion();
 }
 
 //----------------------------------------------------------------------------

@@ -246,9 +246,9 @@ void cmLocalVisualStudio7Generator
   this->WindowsCEProject = gg->TargetsWindowsCE();
 
   // Intel Fortran for VS10 uses VS9 format ".vfproj" files.
-  cmGlobalVisualStudioGenerator::VSVersion realVersion = this->GetVersion();
+  cmGlobalVisualStudioGenerator::VSVersion realVersion = gg->GetVersion();
   if(this->FortranProject
-      && this->GetVersion() >= cmGlobalVisualStudioGenerator::VS10)
+      && gg->GetVersion() >= cmGlobalVisualStudioGenerator::VS10)
     {
     gg->Version = cmGlobalVisualStudioGenerator::VS9;
     }
@@ -2156,13 +2156,13 @@ cmLocalVisualStudio7Generator::WriteProjectStart(std::ostream& fout,
        << gg->Encoding() << "\"?>\n"
        << "<VisualStudioProject\n"
        << "\tProjectType=\"Visual C++\"\n";
-  if(this->GetVersion() == cmGlobalVisualStudioGenerator::VS71)
+  if(gg->GetVersion() == cmGlobalVisualStudioGenerator::VS71)
     {
     fout << "\tVersion=\"7.10\"\n";
     }
   else
     {
-    fout <<  "\tVersion=\"" << (this->GetVersion()/10) << ".00\"\n";
+    fout <<  "\tVersion=\"" << (gg->GetVersion()/10) << ".00\"\n";
     }
   const char* projLabel = target.GetProperty("PROJECT_LABEL");
   if(!projLabel)
@@ -2175,7 +2175,7 @@ cmLocalVisualStudio7Generator::WriteProjectStart(std::ostream& fout,
     keyword = "Win32Proj";
     }
   fout << "\tName=\"" << projLabel << "\"\n";
-  if(this->GetVersion() >= cmGlobalVisualStudioGenerator::VS8)
+  if(gg->GetVersion() >= cmGlobalVisualStudioGenerator::VS8)
     {
     fout << "\tProjectGUID=\"{" << gg->GetGUID(libName.c_str()) << "}\"\n";
     }

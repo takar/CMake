@@ -42,6 +42,7 @@ public:
   virtual ~cmGlobalVisualStudioGenerator();
 
   VSVersion GetVersion() const;
+  void SetVersion(VSVersion v);
 
   /**
    * Configure CMake's Visual Studio macros file into the user's Visual

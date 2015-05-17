@@ -40,6 +40,12 @@ cmGlobalVisualStudioGenerator::GetVersion() const
 }
 
 //----------------------------------------------------------------------------
+void cmGlobalVisualStudioGenerator::SetVersion(VSVersion v)
+{
+  this->Version = v;
+}
+
+//----------------------------------------------------------------------------
 std::string cmGlobalVisualStudioGenerator::GetRegistryBase()
 {
   return cmGlobalVisualStudioGenerator::GetRegistryBase(

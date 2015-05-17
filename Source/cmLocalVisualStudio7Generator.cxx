@@ -250,7 +250,7 @@ void cmLocalVisualStudio7Generator
   if(this->FortranProject
       && gg->GetVersion() >= cmGlobalVisualStudioGenerator::VS10)
     {
-    gg->Version = cmGlobalVisualStudioGenerator::VS9;
+    gg->SetVersion(cmGlobalVisualStudioGenerator::VS9);
     }
 
   // add to the list of projects
@@ -280,7 +280,7 @@ void cmLocalVisualStudio7Generator
     this->GlobalGenerator->FileReplacedDuringGenerate(fname);
     }
 
-  gg->Version = realVersion;
+  gg->SetVersion(realVersion);
 }
 
 //----------------------------------------------------------------------------

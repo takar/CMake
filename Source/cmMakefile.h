@@ -66,14 +66,10 @@ class cmMakefile
   class Internals;
   cmsys::auto_ptr<Internals> Internal;
 public:
-  /* Check for unused variables in this scope */
-  void CheckForUnusedVariables() const;
   /* Mark a variable as used */
   void MarkVariableAsUsed(const std::string& var);
   /* return true if a variable has been initialized */
   bool VariableInitialized(const std::string& ) const;
-  /* return true if a variable has been used */
-  bool VariableUsed(const std::string& ) const;
 
   /**
    * Construct an empty makefile.
@@ -845,7 +841,7 @@ protected:
   void AddGlobalLinkInformation(const std::string& name, cmTarget& target);
 
   // Check for a an unused variable
-  void CheckForUnused(const char* reason, const std::string& name) const;
+  void LogUnused(const char* reason, const std::string& name) const;
 
   std::string ProjectName;    // project name
 
@@ -1061,6 +1057,8 @@ private:
                              const std::string& feature) const;
   bool HaveCxxStandardAvailable(cmTarget const* target,
                                const std::string& feature) const;
+
+  void CheckForUnusedVariables() const;
 
   mutable bool SuppressWatches;
 };

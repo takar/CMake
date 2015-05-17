@@ -47,8 +47,6 @@ class cmMakefile::Internals
 {
 public:
   std::list<cmDefinitions> VarStack;
-  std::stack<std::set<std::string> > VarInitStack;
-  std::stack<std::set<std::string> > VarUsageStack;
   bool IsSourceFileTryCompile;
 
   void PushDefinitions()
@@ -69,6 +67,12 @@ public:
                                     this->VarStack.rend());
   }
 
+  bool IsInitialized(std::string const& name)
+  {
+    return cmDefinitions::HasKey(name, this->VarStack.rbegin(),
+                                 this->VarStack.rend());
+  }
+
   void SetDefinition(std::string const& name, std::string const& value)
   {
     this->VarStack.back().Set(name, value.c_str());
@@ -76,20 +80,12 @@ public:
 
   void RemoveDefinition(std::string const& name)
   {
-    if (this->VarStack.size() > 1)
-      {
-      // In lower scopes we store keys, defined or not.
-      this->VarStack.back().Set(name, 0);
-      }
-    else
-      {
-      this->VarStack.back().Erase(name);
-      }
+    this->VarStack.back().Set(name, 0);
   }
 
-  std::vector<std::string> LocalKeys() const
+  std::vector<std::string> UnusedKeys() const
   {
-    return this->VarStack.back().LocalKeys();
+    return this->VarStack.back().UnusedKeys();
   }
 
   std::vector<std::string> ClosureKeys() const
@@ -130,7 +126,7 @@ public:
       return true;
       }
     // First localize the definition in the current scope.
-    this->GetDefinition(var);
+    cmDefinitions::Raise(var, this->VarStack.rbegin(), this->VarStack.rend());
 
     // Now update the definition in the parent scope.
     it->Set(var, varDef);
@@ -145,8 +141,6 @@ cmMakefile::cmMakefile(cmLocalGenerator* localGenerator)
     StateSnapshot(localGenerator->GetStateSnapshot())
 {
   this->Internal->PushDefinitions();
-  this->Internal->VarInitStack.push(std::set<std::string>());
-  this->Internal->VarUsageStack.push(std::set<std::string>());
   this->Internal->IsSourceFileTryCompile = false;
 
   this->GeneratingBuildSystem = false;
@@ -584,7 +578,6 @@ bool cmMakefile::ReadListFile(const char* listfile,
 
   if (res)
     {
-    // Check for unused variables
     this->CheckForUnusedVariables();
     }
 
@@ -1719,13 +1712,11 @@ void cmMakefile::AddDefinition(const std::string& name, const char* value)
     return;
     }
 
-  this->Internal->SetDefinition(name, value);
   if (this->VariableInitialized(name))
     {
-    this->CheckForUnused("changing definition", name);
-    this->Internal->VarUsageStack.top().erase(name);
+    this->LogUnused("changing definition", name);
     }
-  this->Internal->VarInitStack.top().insert(name);
+  this->Internal->SetDefinition(name, value);
 
 #ifdef CMAKE_BUILD_WITH_CMAKE
   cmVariableWatch* vv = this->GetVariableWatch();
@@ -1794,13 +1785,11 @@ void cmMakefile::AddCacheDefinition(const std::string& name, const char* value,
 
 void cmMakefile::AddDefinition(const std::string& name, bool value)
 {
-  this->Internal->SetDefinition(name, value ? "ON" : "OFF");
   if (this->VariableInitialized(name))
     {
-    this->CheckForUnused("changing definition", name);
-    this->Internal->VarUsageStack.top().erase(name);
+    this->LogUnused("changing definition", name);
     }
-  this->Internal->VarInitStack.top().insert(name);
+  this->Internal->SetDefinition(name, value ? "ON" : "OFF");
 #ifdef CMAKE_BUILD_WITH_CMAKE
   cmVariableWatch* vv = this->GetVariableWatch();
   if ( vv )
@@ -1817,43 +1806,28 @@ void cmMakefile::CheckForUnusedVariables() const
     {
     return;
     }
-  const std::vector<std::string>& locals = this->Internal->LocalKeys();
-  std::vector<std::string>::const_iterator it = locals.begin();
-  for (; it != locals.end(); ++it)
+  const std::vector<std::string>& unused = this->Internal->UnusedKeys();
+  std::vector<std::string>::const_iterator it = unused.begin();
+  for (; it != unused.end(); ++it)
     {
-    this->CheckForUnused("out of scope", *it);
+    this->LogUnused("out of scope", *it);
     }
 }
 
 void cmMakefile::MarkVariableAsUsed(const std::string& var)
 {
-  this->Internal->VarUsageStack.top().insert(var);
+  this->Internal->GetDefinition(var);
 }
 
 bool cmMakefile::VariableInitialized(const std::string& var) const
 {
-  if(this->Internal->VarInitStack.top().find(var) !=
-      this->Internal->VarInitStack.top().end())
-    {
-    return true;
-    }
-  return false;
+  return this->Internal->IsInitialized(var);
 }
 
-bool cmMakefile::VariableUsed(const std::string& var) const
-{
-  if(this->Internal->VarUsageStack.top().find(var) !=
-      this->Internal->VarUsageStack.top().end())
-    {
-    return true;
-    }
-  return false;
-}
-
-void cmMakefile::CheckForUnused(const char* reason,
+void cmMakefile::LogUnused(const char* reason,
                                 const std::string& name) const
 {
-  if (this->WarnUnused && !this->VariableUsed(name))
+  if (this->WarnUnused)
     {
     std::string path;
     cmListFileBacktrace bt(this->GetLocalGenerator());
@@ -1891,13 +1865,11 @@ void cmMakefile::CheckForUnused(const char* reason,
 
 void cmMakefile::RemoveDefinition(const std::string& name)
 {
-  this->Internal->RemoveDefinition(name);
   if (this->VariableInitialized(name))
     {
-    this->CheckForUnused("unsetting", name);
-    this->Internal->VarUsageStack.top().erase(name);
+    this->LogUnused("unsetting", name);
     }
-  this->Internal->VarInitStack.top().insert(name);
+  this->Internal->RemoveDefinition(name);
 #ifdef CMAKE_BUILD_WITH_CMAKE
   cmVariableWatch* vv = this->GetVariableWatch();
   if ( vv )
@@ -2364,7 +2336,6 @@ const char* cmMakefile::GetRequiredDefinition(const std::string& name) const
 bool cmMakefile::IsDefinitionSet(const std::string& name) const
 {
   const char* def = this->Internal->GetDefinition(name);
-  this->Internal->VarUsageStack.top().insert(name);
   if(!def)
     {
     def = this->GetState()->GetInitializedCacheValue(name);
@@ -2385,10 +2356,6 @@ bool cmMakefile::IsDefinitionSet(const std::string& name) const
 
 const char* cmMakefile::GetDefinition(const std::string& name) const
 {
-  if (this->WarnUnused)
-    {
-    this->Internal->VarUsageStack.top().insert(name);
-    }
   const char* def = this->Internal->GetDefinition(name);
   if(!def)
     {
@@ -4315,10 +4282,6 @@ std::string cmMakefile::FormatListFileStack() const
 void cmMakefile::PushScope()
 {
   this->Internal->PushDefinitions();
-  const std::set<std::string>& init = this->Internal->VarInitStack.top();
-  const std::set<std::string>& usage = this->Internal->VarUsageStack.top();
-  this->Internal->VarInitStack.push(init);
-  this->Internal->VarUsageStack.push(usage);
 
   this->PushLoopBlockBarrier();
 
@@ -4335,31 +4298,9 @@ void cmMakefile::PopScope()
 
   this->PopLoopBlockBarrier();
 
-  std::set<std::string> init = this->Internal->VarInitStack.top();
-  std::set<std::string> usage = this->Internal->VarUsageStack.top();
-  const std::vector<std::string>& locals = this->Internal->LocalKeys();
-  // Remove initialization and usage information for variables in the local
-  // scope.
-  std::vector<std::string>::const_iterator it = locals.begin();
-  for (; it != locals.end(); ++it)
-    {
-    init.erase(*it);
-    if (!this->VariableUsed(*it))
-      {
-      this->CheckForUnused("out of scope", *it);
-      }
-    else
-      {
-      usage.erase(*it);
-      }
-    }
+  this->CheckForUnusedVariables();
 
   this->Internal->PopDefinitions();
-  this->Internal->VarInitStack.pop();
-  this->Internal->VarUsageStack.pop();
-  // Push initialization and usage up to the parent scope.
-  this->Internal->VarInitStack.top().insert(init.begin(), init.end());
-  this->Internal->VarUsageStack.top().insert(usage.begin(), usage.end());
 }
 
 void cmMakefile::RaiseScope(const std::string& var, const char *varDef)

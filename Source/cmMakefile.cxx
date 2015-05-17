@@ -1714,7 +1714,7 @@ void cmMakefile::AddDefinition(const std::string& name, const char* value)
   this->Internal->SetDefinition(name, value);
   if (this->VariableInitialized(name))
     {
-    this->CheckForUnused("changing definition", name);
+    this->LogUnused("changing definition", name);
     this->Internal->VarUsageStack.top().erase(name);
     }
   this->Internal->VarInitStack.top().insert(name);
@@ -1789,7 +1789,7 @@ void cmMakefile::AddDefinition(const std::string& name, bool value)
   this->Internal->SetDefinition(name, value ? "ON" : "OFF");
   if (this->VariableInitialized(name))
     {
-    this->CheckForUnused("changing definition", name);
+    this->LogUnused("changing definition", name);
     this->Internal->VarUsageStack.top().erase(name);
     }
   this->Internal->VarInitStack.top().insert(name);
@@ -1813,7 +1813,7 @@ void cmMakefile::CheckForUnusedVariables() const
   std::vector<std::string>::const_iterator it = locals.begin();
   for (; it != locals.end(); ++it)
     {
-    this->CheckForUnused("out of scope", *it);
+    this->LogUnused("out of scope", *it);
     }
 }
 
@@ -1842,7 +1842,7 @@ bool cmMakefile::VariableUsed(const std::string& var) const
   return false;
 }
 
-void cmMakefile::CheckForUnused(const char* reason,
+void cmMakefile::LogUnused(const char* reason,
                                 const std::string& name) const
 {
   if (this->WarnUnused && !this->VariableUsed(name))
@@ -1886,7 +1886,7 @@ void cmMakefile::RemoveDefinition(const std::string& name)
   this->Internal->RemoveDefinition(name);
   if (this->VariableInitialized(name))
     {
-    this->CheckForUnused("unsetting", name);
+    this->LogUnused("unsetting", name);
     this->Internal->VarUsageStack.top().erase(name);
     }
   this->Internal->VarInitStack.top().insert(name);
@@ -4338,7 +4338,7 @@ void cmMakefile::PopScope()
     init.erase(*it);
     if (!this->VariableUsed(*it))
       {
-      this->CheckForUnused("out of scope", *it);
+      this->LogUnused("out of scope", *it);
       }
     else
       {

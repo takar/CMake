@@ -769,8 +769,6 @@ void cmLocalVisualStudio7Generator::WriteConfiguration(std::ostream& fout,
     t = Options::FortranCompiler;
     table = cmLocalVisualStudio7GeneratorFortranFlagTable;
     }
-  cmGlobalVisualStudio7Generator* gg =
-    static_cast<cmGlobalVisualStudio7Generator*>(this->GlobalGenerator);
   Options targetOptions(this, t,
                         table,
                         gg->ExtraFlagTable);

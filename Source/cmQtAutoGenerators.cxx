@@ -378,7 +378,7 @@ bool cmQtAutoGenerators::InitializeAutogenTarget(cmTarget* target)
     // reduce the number of targets loaded into the IDE.
     // This also works around a VS 11 bug that may skip updating the target:
     //  https://connect.microsoft.com/VisualStudio/feedback/details/769495
-    usePRE_BUILD = gg->GetVersion() >= cmGlobalVisualStudioGenerator::VS7;
+    usePRE_BUILD = vsgg->GetVersion() >= cmGlobalVisualStudioGenerator::VS7;
     if(usePRE_BUILD)
       {
       for (std::vector<std::string>::iterator it = depends.begin();

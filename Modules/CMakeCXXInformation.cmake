@@ -280,14 +280,6 @@ if(NOT CMAKE_CXX_COMPILE_OBJECT)
   set(CMAKE_CXX_COMPILE_OBJECT
     "<CMAKE_CXX_COMPILER>  <DEFINES> <FLAGS> -o <OBJECT> -c <SOURCE>")
 endif()
-# check to see if CMAKE_IWYU_EXECUTABLE is set.  If yes,
-# then use the cmake -E __run_iwyu command to run iwyu
-# as well as the clang compiler for building cxx files.
-if(CMAKE_IWYU_COMMAND)
-  set(CMAKE_CXX_COMPILE_OBJECT
-    "<CMAKE_COMMAND> -E __run_iwyu --iwyu=\"${CMAKE_IWYU_COMMAND}\" -- ${CMAKE_CXX_COMPILE_OBJECT}")
-endif()
-
 
 if(NOT CMAKE_CXX_LINK_EXECUTABLE)
   set(CMAKE_CXX_LINK_EXECUTABLE

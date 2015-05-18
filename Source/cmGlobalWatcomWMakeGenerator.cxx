@@ -28,7 +28,6 @@ cmGlobalWatcomWMakeGenerator::cmGlobalWatcomWMakeGenerator()
   this->WatcomWMake = true;
   this->IncludeDirective = "!include";
   this->DefineWindowsNULL = true;
-  this->PassMakeflags = true;
   this->UnixCD = false;
   this->MakeSilentFlag = "-h";
 }

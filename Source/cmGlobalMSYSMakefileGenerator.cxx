@@ -22,7 +22,6 @@ cmGlobalMSYSMakefileGenerator::cmGlobalMSYSMakefileGenerator()
   this->ToolSupportsColor = true;
   this->UseLinkScript = false;
   this->MSYSShell = true;
-  this->PassMakeflags = true;
 }
 
 std::string

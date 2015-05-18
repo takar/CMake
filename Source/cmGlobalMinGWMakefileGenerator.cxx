@@ -21,7 +21,6 @@ cmGlobalMinGWMakefileGenerator::cmGlobalMinGWMakefileGenerator()
   this->UseLinkScript = true;
   this->WindowsShell = true;
   this->MinGWMake = true;
-  this->PassMakeflags = true;
 }
 
 void cmGlobalMinGWMakefileGenerator

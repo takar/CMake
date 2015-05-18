@@ -1843,9 +1843,6 @@ bool cmLocalVisualStudio7Generator
               tool = Options::FortranCompiler;
               table = cmLocalVisualStudio7GeneratorFortranFlagTable;
               }
-            cmGlobalVisualStudio7Generator* gg =
-              static_cast<cmGlobalVisualStudio7Generator*>(
-                                                      this->GlobalGenerator);
             Options fileOptions(this, tool, table,
                                 gg->ExtraFlagTable);
             fileOptions.Parse(fc.CompileFlags.c_str());

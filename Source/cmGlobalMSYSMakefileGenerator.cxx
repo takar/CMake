@@ -23,7 +23,6 @@ cmGlobalMSYSMakefileGenerator::cmGlobalMSYSMakefileGenerator()
   this->UseLinkScript = false;
   this->MSYSShell = true;
   this->PassMakeflags = true;
-  this->UnixCD = false;
 }
 
 std::string

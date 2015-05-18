@@ -22,7 +22,6 @@ cmGlobalMinGWMakefileGenerator::cmGlobalMinGWMakefileGenerator()
   this->WindowsShell = true;
   this->MinGWMake = true;
   this->PassMakeflags = true;
-  this->UnixCD = false;
 }
 
 void cmGlobalMinGWMakefileGenerator

@@ -1,5 +1,5 @@
 
-if(NOT DEFINED CMake_HAVE_CXX11_UNORDERED_MAP)
+if(CMAKE_CXX_STANDARD AND NOT DEFINED CMake_HAVE_CXX11_UNORDERED_MAP)
   message(STATUS "Checking if compiler supports C++11 unordered_map")
   try_compile(CMake_HAVE_CXX11_UNORDERED_MAP
     ${CMAKE_CURRENT_BINARY_DIR}

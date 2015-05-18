@@ -2487,13 +2487,7 @@ void cmake::IssueMessage(cmake::MessageType t, std::string const& text,
     }
 
   // Add the immediate context.
-  cmListFileBacktrace::const_iterator i = backtrace.begin();
-  if(i != backtrace.end())
-    {
-    cmListFileContext const& lfc = *i;
-    msg << (lfc.Line? " at ": " in ") << lfc;
-    ++i;
-    }
+  backtrace.PrintTitle(msg);
 
   // Add the message text.
   {
@@ -2504,16 +2498,7 @@ void cmake::IssueMessage(cmake::MessageType t, std::string const& text,
   }
 
   // Add the rest of the context.
-  if(i != backtrace.end())
-    {
-    msg << "Call Stack (most recent call first):\n";
-    while(i != backtrace.end())
-      {
-      cmListFileContext const& lfc = *i;
-      msg << "  " << lfc << "\n";
-      ++i;
-      }
-    }
+  backtrace.PrintCallStack(msg);
 
   // Add a note about warning suppression.
   if(t == cmake::AUTHOR_WARNING)

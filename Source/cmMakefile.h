@@ -39,7 +39,6 @@
 #endif
 
 #include <stack>
-#include <deque>
 
 class cmFunctionBlocker;
 class cmCommand;
@@ -377,33 +376,13 @@ public:
     */
   cmPolicies *GetPolicies() const;
 
-  struct cmCMP0054Id
-  {
-    cmCMP0054Id(cmListFileContext const& context):
-        Context(context)
-    {
-
-    }
-
-    bool operator< (cmCMP0054Id const& id) const
-    {
-      if(this->Context.FilePath != id.Context.FilePath)
-        return this->Context.FilePath < id.Context.FilePath;
-
-      return this->Context.Line < id.Context.Line;
-    }
-
-    cmListFileContext Context;
-  };
-
-  mutable std::set<cmCMP0054Id> CMP0054ReportedIds;
+  mutable std::set<cmListFileContext> CMP0054ReportedIds;
 
   /**
    * Determine if the given context, name pair has already been reported
    * in context of CMP0054.
    */
-  bool HasCMP0054AlreadyBeenReported(
-    cmListFileContext context) const;
+  bool HasCMP0054AlreadyBeenReported() const;
 
   bool IgnoreErrorsCMP0061() const;
 
@@ -593,6 +572,7 @@ public:
    * Get the current context backtrace.
    */
   cmListFileBacktrace GetBacktrace() const;
+  cmListFileContext GetExecutionContext() const;
 
   /**
    * Get the vector of  files created by this makefile
@@ -947,7 +927,7 @@ private:
   bool CheckSystemVars;
 
   // stack of list files being read
-  std::deque<std::string> ListFileStack;
+  std::vector<std::string> ListFileStack;
 
   // stack of commands being invoked.
   struct CallStackEntry
@@ -955,7 +935,7 @@ private:
     cmListFileContext const* Context;
     cmExecutionStatus* Status;
   };
-  typedef std::deque<CallStackEntry> CallStackType;
+  typedef std::vector<CallStackEntry> CallStackType;
   CallStackType CallStack;
   friend class cmMakefileCall;
 

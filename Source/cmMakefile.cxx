@@ -277,7 +277,7 @@ void cmMakefile::IssueMessage(cmake::MessageType t,
       lfc.FilePath = this->ListFileStack.back();
       }
     lfc.Line = 0;
-    backtrace.push_back(lfc);
+    backtrace.Append(lfc);
     }
 
   // Issue the message.
@@ -291,9 +291,15 @@ cmListFileBacktrace cmMakefile::GetBacktrace() const
   for(CallStackType::const_reverse_iterator i = this->CallStack.rbegin();
       i != this->CallStack.rend(); ++i)
     {
-    backtrace.push_back(*i->Context);
+    backtrace.Append(*i->Context);
     }
   return backtrace;
+}
+
+//----------------------------------------------------------------------------
+cmListFileContext cmMakefile::GetExecutionContext() const
+{
+  return *this->CallStack.back().Context;
 }
 
 //----------------------------------------------------------------------------
@@ -1832,9 +1838,9 @@ void cmMakefile::LogUnused(const char* reason,
     cmListFileBacktrace bt(this->GetLocalGenerator());
     if (!this->CallStack.empty())
       {
-      const cmListFileContext* file = this->CallStack.back().Context;
-      bt.push_back(*file);
-      path = file->FilePath.c_str();
+      cmListFileContext file = this->GetExecutionContext();
+      bt.Append(file);
+      path = file.FilePath;
       }
     else
       {
@@ -1843,7 +1849,7 @@ void cmMakefile::LogUnused(const char* reason,
       cmListFileContext lfc;
       lfc.FilePath = path;
       lfc.Line = 0;
-      bt.push_back(lfc);
+      bt.Append(lfc);
       }
     if (this->CheckSystemVars ||
         cmSystemTools::IsSubDirectory(path,
@@ -2765,7 +2771,7 @@ cmake::MessageType cmMakefile::ExpandVariablesInStringNew(
                 cmListFileContext lfc;
                 lfc.FilePath = filename;
                 lfc.Line = line;
-                bt.push_back(lfc);
+                bt.Append(lfc);
                 msg << "uninitialized variable \'" << lookup << "\'";
                 this->GetCMakeInstance()->IssueMessage(cmake::AUTHOR_WARNING,
                                                        msg.str(), bt);
@@ -3298,7 +3304,7 @@ void cmMakefile::AddFunctionBlocker(cmFunctionBlocker* fb)
   if(!this->CallStack.empty())
     {
     // Record the context in which the blocker is created.
-    fb->SetStartingContext(*(this->CallStack.back().Context));
+    fb->SetStartingContext(this->GetExecutionContext());
     }
 
   this->FunctionBlockers.push_back(fb);
@@ -4259,7 +4265,7 @@ std::string cmMakefile::FormatListFileStack() const
   size_t depth = this->ListFileStack.size();
   if (depth > 0)
     {
-    std::deque<std::string>::const_iterator it = this->ListFileStack.end();
+    std::vector<std::string>::const_iterator it = this->ListFileStack.end();
     do
       {
       if (depth != this->ListFileStack.size())
@@ -4797,20 +4803,9 @@ bool cmMakefile::SetPolicyVersion(const char *version)
 }
 
 //----------------------------------------------------------------------------
-bool cmMakefile::HasCMP0054AlreadyBeenReported(
-  cmListFileContext context) const
+bool cmMakefile::HasCMP0054AlreadyBeenReported() const
 {
-  cmCMP0054Id id(context);
-
-  bool alreadyReported =
-    this->CMP0054ReportedIds.find(id) != this->CMP0054ReportedIds.end();
-
-  if(!alreadyReported)
-    {
-    this->CMP0054ReportedIds.insert(id);
-    }
-
-  return alreadyReported;
+  return !this->CMP0054ReportedIds.insert(this->GetExecutionContext()).second;
 }
 
 //----------------------------------------------------------------------------

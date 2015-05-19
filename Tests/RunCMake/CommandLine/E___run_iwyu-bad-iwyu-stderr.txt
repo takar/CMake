@@ -1,0 +1,1 @@
+^Error running 'iwyu-does-not-exist': No such file or directory$

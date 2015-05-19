@@ -658,6 +658,13 @@ void cmComputeLinkInformation::AddItem(std::string const& item,
       // of COMPATIBLE_INTERFACE_ enforcement.  The generators will ignore
       // this for the actual link line.
       this->Items.push_back(Item(std::string(), true, tgt));
+
+      // Also add the item the interface specifies to be used in its place.
+      std::string const& linkItem = tgt->GetImportedLinkItem(config);
+      if (!linkItem.empty())
+        {
+        this->AddItem(linkItem, 0);
+        }
       }
     else
       {

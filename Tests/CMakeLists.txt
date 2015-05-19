@@ -1342,6 +1342,7 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev -P ${CMake_SOURCE_DIR}/Utilities/Release
   if(CMake_TEST_FindJsonCpp)
     add_subdirectory(FindJsonCpp)
   endif()
+  add_subdirectory(FindOpenGL)
 
   # Matlab module
   if(CMake_TEST_FindMatlab)

@@ -76,7 +76,7 @@ cmLocalGenerator::~cmLocalGenerator()
 
 bool cmLocalGenerator::IsRootMakefile() const
 {
-  return !this->GetParent();
+  return !this->StateSnapshot.GetParent().IsValid();
 }
 
 //----------------------------------------------------------------------------
@@ -115,8 +115,10 @@ void cmLocalGenerator::Configure()
   filesDir += cmake::GetCMakeFilesDirectory();
   cmSystemTools::MakeDirectory(filesDir.c_str());
 
-  // find & read the list file
-  this->ReadInputFile();
+  std::string currentStart = this->StateSnapshot.GetCurrentSourceDirectory();
+  currentStart += "/CMakeLists.txt";
+  assert(cmSystemTools::FileExists(currentStart.c_str(), true));
+  this->Makefile->ProcessBuildsystemFile(currentStart.c_str());
 
   // at the end of the ReadListFile handle any old style subdirs
   // first get all the subdirectories
@@ -181,16 +183,6 @@ void cmLocalGenerator::ComputeObjectMaxPath()
       }
     }
   this->ObjectMaxPathViolations.clear();
-}
-
-//----------------------------------------------------------------------------
-void cmLocalGenerator::ReadInputFile()
-{
-  // Look for the CMakeLists.txt file.
-  std::string currentStart = this->StateSnapshot.GetCurrentSourceDirectory();
-  currentStart += "/CMakeLists.txt";
-  assert(cmSystemTools::FileExists(currentStart.c_str(), true));
-  this->Makefile->ProcessBuildsystemFile(currentStart.c_str());
 }
 
 void cmLocalGenerator::ConfigureFinalPass()
@@ -1001,12 +993,12 @@ cmLocalGenerator::ExpandRuleVariable(std::string const& variable,
     }
   if(variable == "CMAKE_COMMAND")
     {
-    const char* cmcommand =
-      this->GetMakefile()->GetDefinition("CMAKE_COMMAND");
-    return this->Convert(cmcommand, FULL, SHELL);
+    return this->Convert(
+          this->GetState()->GetInitializedCacheValue("CMAKE_COMMAND"),
+          FULL, SHELL);
     }
-  std::vector<std::string> enabledLanguages;
-  this->GlobalGenerator->GetEnabledLanguages(enabledLanguages);
+  std::vector<std::string> enabledLanguages =
+      this->GetState()->GetEnabledLanguages();
   // loop over language specific replace variables
   int pos = 0;
   while(ruleReplaceVars[pos])
@@ -1848,7 +1840,7 @@ void cmLocalGenerator::OutputLinkLibraries(std::string& linkLibraries,
         fdi != fwDirs.end(); ++fdi)
       {
       frameworkPath += fwSearchFlag;
-      frameworkPath += this->Convert(*fdi, NONE, shellFormat, false);
+      frameworkPath += this->Convert(*fdi, NONE, shellFormat);
       frameworkPath += " ";
       }
     }
@@ -1902,7 +1894,7 @@ void cmLocalGenerator::OutputLinkLibraries(std::string& linkLibraries,
         ri != runtimeDirs.end(); ++ri)
       {
       rpath += cli.GetRuntimeFlag();
-      rpath += this->Convert(*ri, NONE, shellFormat, false);
+      rpath += this->Convert(*ri, NONE, shellFormat);
       rpath += " ";
       }
     fout << rpath;

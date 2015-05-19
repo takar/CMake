@@ -2005,7 +2005,7 @@ void cmGlobalGenerator::FillProjectMap()
       if (name != lg->GetMakefile()->GetProjectName())
         {
         name = lg->GetMakefile()->GetProjectName();
-        this->ProjectMap[name].push_back(this->LocalGenerators[i]);
+        this->ProjectMap[name].push_back(lg);
         }
       lg = lg->GetParent();
       }

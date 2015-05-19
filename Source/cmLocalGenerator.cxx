@@ -993,9 +993,9 @@ cmLocalGenerator::ExpandRuleVariable(std::string const& variable,
     }
   if(variable == "CMAKE_COMMAND")
     {
-    const char* cmcommand =
-      this->GetMakefile()->GetDefinition("CMAKE_COMMAND");
-    return this->Convert(cmcommand, FULL, SHELL);
+    return this->Convert(
+          this->GetState()->GetInitializedCacheValue("CMAKE_COMMAND"),
+          FULL, SHELL);
     }
   std::vector<std::string> enabledLanguages =
       this->GetState()->GetEnabledLanguages();

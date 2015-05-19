@@ -5401,6 +5401,7 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
     // and valid response.
     return true;
     }
+  std::string const locPropBase = "IMPORTED_LOCATION";
 
   // Track the configuration-specific property suffix.
   suffix = "_";
@@ -5427,7 +5428,7 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
     {
     // Look for this configuration.
     std::string mcUpper = cmSystemTools::UpperCase(*mci);
-    std::string locProp = "IMPORTED_LOCATION_";
+    std::string locProp = locPropBase + "_";
     locProp += mcUpper;
     *loc = this->GetProperty(locProp);
     if(allowImp)
@@ -5457,7 +5458,7 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
   // configurations.  Look for an exact-match.
   if(!*loc && !*imp)
     {
-    std::string locProp = "IMPORTED_LOCATION";
+    std::string locProp = locPropBase;
     locProp += suffix;
     *loc = this->GetProperty(locProp);
     if(allowImp)
@@ -5477,7 +5478,7 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
 
     // Look for a configuration-less location.  This may be set by
     // manually-written code.
-    *loc = this->GetProperty("IMPORTED_LOCATION");
+    *loc = this->GetProperty(locPropBase);
     if(allowImp)
       {
       *imp = this->GetProperty("IMPORTED_IMPLIB");
@@ -5499,7 +5500,7 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
       {
       suffix = "_";
       suffix += cmSystemTools::UpperCase(*aci);
-      std::string locProp = "IMPORTED_LOCATION";
+      std::string locProp = locPropBase;
       locProp += suffix;
       *loc = this->GetProperty(locProp);
       if(allowImp)

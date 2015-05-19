@@ -142,6 +142,10 @@ cmMakefile::cmMakefile(cmLocalGenerator* localGenerator)
   this->Internal->PushDefinitions();
   this->Internal->IsSourceFileTryCompile = false;
 
+  // Initialize these first since AddDefaultDefinitions calls AddDefinition
+  this->WarnUnused = this->GetCMakeInstance()->GetWarnUnused();
+  this->CheckSystemVars = this->GetCMakeInstance()->GetCheckSystemVars();
+
   this->GeneratingBuildSystem = false;
   this->SuppressWatches = false;
 
@@ -210,8 +214,6 @@ cmMakefile::cmMakefile(cmLocalGenerator* localGenerator)
 #endif
 
   this->Properties.SetCMakeInstance(this->GetCMakeInstance());
-  this->WarnUnused = this->GetCMakeInstance()->GetWarnUnused();
-  this->CheckSystemVars = this->GetCMakeInstance()->GetCheckSystemVars();
 
   {
   const char* dir = this->GetCMakeInstance()->GetHomeDirectory();

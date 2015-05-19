@@ -997,8 +997,8 @@ cmLocalGenerator::ExpandRuleVariable(std::string const& variable,
       this->GetMakefile()->GetDefinition("CMAKE_COMMAND");
     return this->Convert(cmcommand, FULL, SHELL);
     }
-  std::vector<std::string> enabledLanguages;
-  this->GlobalGenerator->GetEnabledLanguages(enabledLanguages);
+  std::vector<std::string> enabledLanguages =
+      this->GetState()->GetEnabledLanguages();
   // loop over language specific replace variables
   int pos = 0;
   while(ruleReplaceVars[pos])

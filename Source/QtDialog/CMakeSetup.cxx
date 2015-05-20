@@ -193,8 +193,10 @@ int main(int argc, char** argv)
 }
 
 #if defined(Q_OS_MAC)
-# include <unistd.h>
+# include <errno.h>
+# include <string.h>
 # include <sys/stat.h>
+# include <unistd.h>
 static bool cmOSXInstall(std::string const& dir, std::string const& tool)
 {
   if (tool.empty())

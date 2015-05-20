@@ -993,9 +993,7 @@ cmLocalGenerator::ExpandRuleVariable(std::string const& variable,
     }
   if(variable == "CMAKE_COMMAND")
     {
-    return this->Convert(
-          this->GetState()->GetInitializedCacheValue("CMAKE_COMMAND"),
-          FULL, SHELL);
+    return this->Convert(cmSystemTools::GetCMakeCommand(), FULL, SHELL);
     }
   std::vector<std::string> enabledLanguages =
       this->GetState()->GetEnabledLanguages();

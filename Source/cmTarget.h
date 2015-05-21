@@ -434,6 +434,9 @@ public:
       no soname at all.  */
   bool IsImportedSharedLibWithoutSOName(const std::string& config) const;
 
+  /** Get the link item for an imported interface library.  */
+  std::string GetImportedLinkItem(std::string const& config) const;
+
   /** Get the full path to the target according to the settings in its
       makefile and the configuration type.  */
   std::string GetFullPath(const std::string& config="", bool implib = false,

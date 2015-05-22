@@ -26,5 +26,5 @@ int main(int argc, char* argv[])
   gluErrorString(GLU_INVALID_ENUM);
 #endif
   /* Link to a GL symbol without calling it since we have no context.  */
-  return ((int)(&glGetError)) * (argc-1);
+  return ((int)(&glGetError)) % argc;
 }

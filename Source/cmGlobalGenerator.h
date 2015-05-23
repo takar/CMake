@@ -371,7 +371,7 @@ protected:
   typedef std::vector<cmLocalGenerator*> GeneratorVector;
   // for a project collect all its targets by following depend
   // information, and also collect all the targets
-  virtual void GetTargetSets(TargetDependSet& projectTargets,
+  void GetTargetSets(TargetDependSet& projectTargets,
                              TargetDependSet& originalTargets,
                              cmLocalGenerator* root, GeneratorVector const&);
   bool IsRootOnlyTarget(cmTarget* target) const;
@@ -446,7 +446,7 @@ protected:
   TargetMap ImportedTargets;
   std::vector<cmGeneratorExpressionEvaluationFile*> EvaluationFiles;
 
-  virtual const char* GetPredefinedTargetsFolder();
+  const char* GetPredefinedTargetsFolder();
   virtual bool UseFolderProperty();
 
 private:

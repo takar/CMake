@@ -37,8 +37,8 @@ class cmGlobalVisualStudio11Generator::Factory
   : public cmGlobalGeneratorFactory
 {
 public:
-  virtual cmGlobalGenerator* CreateGlobalGenerator(
-                                                const std::string& name) const
+  virtual cmGlobalGenerator*
+  CreateGlobalGenerator(const std::string& name, cmake* cm) const
     {
     std::string genName;
     const char* p = cmVS11GenName(name, genName);
@@ -46,20 +46,17 @@ public:
       { return 0; }
     if(!*p)
       {
-      return new cmGlobalVisualStudio11Generator(
-        genName, "");
+      return new cmGlobalVisualStudio11Generator(cm, genName, "");
       }
     if(*p++ != ' ')
       { return 0; }
     if(strcmp(p, "Win64") == 0)
       {
-      return new cmGlobalVisualStudio11Generator(
-        genName, "x64");
+      return new cmGlobalVisualStudio11Generator(cm, genName, "x64");
       }
     if(strcmp(p, "ARM") == 0)
       {
-      return new cmGlobalVisualStudio11Generator(
-        genName, "ARM");
+      return new cmGlobalVisualStudio11Generator(cm, genName, "ARM");
       }
 
     std::set<std::string> installedSDKs =
@@ -71,7 +68,7 @@ public:
       }
 
     cmGlobalVisualStudio11Generator* ret =
-      new cmGlobalVisualStudio11Generator(name, p);
+      new cmGlobalVisualStudio11Generator(cm, name, p);
     ret->WindowsCEVersion = "8.00";
     return ret;
     }

@@ -16,7 +16,7 @@
 #include "cmake.h"
 
 //----------------------------------------------------------------------------
-cmGlobalVisualStudio71Generator::cmGlobalVisualStudio71Generator(cmake* cm
+cmGlobalVisualStudio71Generator::cmGlobalVisualStudio71Generator(cmake* cm,
   const std::string& platformName)
   : cmGlobalVisualStudio7Generator(cm, platformName)
 {

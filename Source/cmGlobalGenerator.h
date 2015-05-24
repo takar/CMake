@@ -121,7 +121,7 @@ public:
    * Try running cmake and building a file. This is used for dynamically
    * loaded commands, not as part of the usual build process.
    */
-  virtual int TryCompile(const std::string& srcdir, const std::string& bindir,
+  int TryCompile(const std::string& srcdir, const std::string& bindir,
                          const std::string& projectName,
                          const std::string& targetName,
                          bool fast, std::string& output, cmMakefile* mf);

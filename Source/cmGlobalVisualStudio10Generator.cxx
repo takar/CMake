@@ -310,8 +310,7 @@ cmLocalGenerator *
 cmGlobalVisualStudio10Generator::CreateLocalGenerator(cmLocalGenerator* parent,
                                                     cmState::Snapshot snapshot)
 {
-  return new cmLocalVisualStudio10Generator(
-    cmLocalVisualStudioGenerator::VS10, this, parent, snapshot);
+  return new cmLocalVisualStudio10Generator(this, parent, snapshot);
 }
 
 //----------------------------------------------------------------------------

@@ -24,8 +24,8 @@
 cmGlobalVisualStudioGenerator::cmGlobalVisualStudioGenerator(cmake* cm)
   : cmGlobalGenerator(cm)
 {
-  cm->GetState()->SetWindowsShell(true);
-  cm->GetState()->SetWindowsVSIDE(true);
+  this->WindowsShell = true;
+  this->WindowsVSIDE = true;
 }
 
 //----------------------------------------------------------------------------

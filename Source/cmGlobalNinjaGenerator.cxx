@@ -517,7 +517,7 @@ cmGlobalNinjaGenerator::cmGlobalNinjaGenerator(cmake* cm)
   , PolicyCMP0058(cmPolicies::WARN)
 {
 #ifdef _WIN32
-  cm->GetState()->SetWindowsShell(true);
+  this->WindowsShell = true;
 #endif
   // // Ninja is not ported to non-Unix OS yet.
   // this->ForceUnixPaths = true;

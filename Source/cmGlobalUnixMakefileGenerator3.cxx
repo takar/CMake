@@ -61,7 +61,7 @@ void cmGlobalUnixMakefileGenerator3
 ///! Create a local generator appropriate to this Global Generator
 cmLocalGenerator *
 cmGlobalUnixMakefileGenerator3::CreateLocalGenerator(cmLocalGenerator* parent,
-                                                     cmState::Snapshot snapshot)
+                                                   cmState::Snapshot snapshot)
 {
   return new cmLocalUnixMakefileGenerator3(this, parent, snapshot);
 }

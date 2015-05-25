@@ -20,8 +20,8 @@ cmGlobalNMakeMakefileGenerator::cmGlobalNMakeMakefileGenerator(cmake* cm)
   this->ForceUnixPaths = false;
   this->ToolSupportsColor = true;
   this->UseLinkScript = false;
-  cm->GetState()->SetWindowsShell(true);
-  cm->GetState()->SetNMake(true);
+  this->WindowsShell = true;
+  this->NMake = true;
   this->DefineWindowsNULL = true;
   this->PassMakeflags = true;
   this->UnixCD = false;

@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 
 project(InterfaceLibrary)
 
+set(CMAKE_VERBOSE_MAKEFILE 1)
+
 add_library(iface_nodepends INTERFACE)
 target_compile_definitions(iface_nodepends INTERFACE IFACE_DEFINE)
 

@@ -1745,13 +1745,9 @@ void cmTarget::SetProperty(const std::string& prop, const char* value)
     this->Makefile->IssueMessage(cmake::FATAL_ERROR, e.str());
     }
   else if(cmHasLiteralPrefix(prop, "IMPORTED_LINK_ITEM") &&
-          (this->GetType() != cmTarget::INTERFACE_LIBRARY ||
-           !this->IsImported()))
+          !this->CheckImportedLinkItem(prop, value? value:""))
     {
-    std::ostringstream e;
-    e << prop << " property may be set only on "
-      << "imported INTERFACE library targets.\n";
-    this->Makefile->IssueMessage(cmake::FATAL_ERROR, e.str());
+    /* error was reported by check method */
     }
   else if (prop == "LINK_LIBRARIES")
     {
@@ -1840,14 +1836,10 @@ void cmTarget::AppendProperty(const std::string& prop, const char* value,
           << this->Name << "\")\n";
     this->Makefile->IssueMessage(cmake::FATAL_ERROR, e.str());
     }
-  else if(cmHasLiteralPrefix(prop, "IMPORTED_LINK_ITEM") &&
-          (this->GetType() != cmTarget::INTERFACE_LIBRARY ||
-           !this->IsImported()))
+  else if(cmHasLiteralPrefix(prop, "IMPORTED_LINK_ITEM"))
     {
-    std::ostringstream e;
-    e << prop << " property may be set only on "
-      << "imported INTERFACE library targets.\n";
-    this->Makefile->IssueMessage(cmake::FATAL_ERROR, e.str());
+    this->Makefile->IssueMessage(cmake::FATAL_ERROR,
+      prop + " property may not be APPENDed.");
     }
   else if (prop == "LINK_LIBRARIES")
     {
@@ -5718,6 +5710,37 @@ void cmTarget::ComputeImportInfo(std::string const& desired_config,
       sscanf(reps, "%u", &info.Multiplicity);
       }
     }
+}
+
+//----------------------------------------------------------------------------
+bool cmTarget::CheckImportedLinkItem(std::string const& prop,
+                                     std::string const& value) const
+{
+  if (this->GetType() != cmTarget::INTERFACE_LIBRARY ||
+      !this->IsImported())
+    {
+    this->Makefile->IssueMessage(cmake::FATAL_ERROR, prop +
+      " property may be set only on imported INTERFACE library targets.");
+    return false;
+    }
+  if (!value.empty())
+    {
+    if (value[0] == '-')
+      {
+      this->Makefile->IssueMessage(cmake::FATAL_ERROR, prop +
+        " property value\n  " + value + "\nmay not start in '-'.");
+      return false;
+      }
+    std::string::size_type bad = value.find_first_of(":/\\;");
+    if (bad != value.npos)
+      {
+      this->Makefile->IssueMessage(cmake::FATAL_ERROR, prop +
+        " property value\n  " + value + "\nmay not contain '" +
+        value.substr(bad,1) + "'.");
+      return false;
+      }
+    }
+  return true;
 }
 
 //----------------------------------------------------------------------------

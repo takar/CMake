@@ -1,0 +1,44 @@
+^CMake Error at IMPORTED_LINK_ITEM-bad-value.cmake:[0-9]+ \(set_property\):
+  IMPORTED_LINK_ITEM property value
+
+    -flag
+
+  may not start in '-'.
+Call Stack \(most recent call first\):
+  CMakeLists.txt:[0-9]+ \(include\)
++
+CMake Error at IMPORTED_LINK_ITEM-bad-value.cmake:[0-9]+ \(set_property\):
+  IMPORTED_LINK_ITEM property value
+
+    item1;item2
+
+  may not contain ';'.
+Call Stack \(most recent call first\):
+  CMakeLists.txt:[0-9]+ \(include\)
++
+CMake Error at IMPORTED_LINK_ITEM-bad-value.cmake:[0-9]+ \(set_property\):
+  IMPORTED_LINK_ITEM property value
+
+    /path/to/item1
+
+  may not contain '/'.
+Call Stack \(most recent call first\):
+  CMakeLists.txt:[0-9]+ \(include\)
++
+CMake Error at IMPORTED_LINK_ITEM-bad-value.cmake:[0-9]+ \(set_property\):
+  IMPORTED_LINK_ITEM property value
+
+    \\path\\to\\item1
+
+  may not contain '\\'.
+Call Stack \(most recent call first\):
+  CMakeLists.txt:[0-9]+ \(include\)
++
+CMake Error at IMPORTED_LINK_ITEM-bad-value.cmake:[0-9]+ \(set_property\):
+  IMPORTED_LINK_ITEM property value
+
+    c:\\path\\to\\item1
+
+  may not contain ':'.
+Call Stack \(most recent call first\):
+  CMakeLists.txt:[0-9]+ \(include\)$

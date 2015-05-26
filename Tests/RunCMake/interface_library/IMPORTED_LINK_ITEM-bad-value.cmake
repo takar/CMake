@@ -1,6 +1,0 @@
-add_library(MyTarget INTERFACE IMPORTED)
-set_property(TARGET MyTarget PROPERTY IMPORTED_LINK_ITEM -flag)
-set_property(TARGET MyTarget PROPERTY IMPORTED_LINK_ITEM item1 item2)
-set_property(TARGET MyTarget PROPERTY IMPORTED_LINK_ITEM /path/to/item1)
-set_property(TARGET MyTarget PROPERTY IMPORTED_LINK_ITEM \\path\\to\\item1)
-set_property(TARGET MyTarget PROPERTY IMPORTED_LINK_ITEM c:\\path\\to\\item1)

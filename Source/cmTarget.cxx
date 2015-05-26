@@ -77,7 +77,6 @@ struct cmTarget::ImportInfo
   std::string Location;
   std::string SOName;
   std::string ImportLibrary;
-  std::string LinkItem;
   std::string Languages;
   std::string Libraries;
   std::string LibrariesProp;
@@ -365,6 +364,11 @@ void cmTarget::SetMakefile(cmMakefile* mf)
       std::string configUpper = cmSystemTools::UpperCase(*ci);
       for(const char** p = configProps; *p; ++p)
         {
+        if (this->TargetTypeValue == INTERFACE_LIBRARY
+            && strcmp(*p, "MAP_IMPORTED_CONFIG_") != 0)
+          {
+          continue;
+          }
         std::string property = *p;
         property += configUpper;
         this->SetPropertyDefault(property, 0);
@@ -1671,10 +1675,7 @@ static bool whiteListedInterfaceProperty(const std::string& prop)
     return true;
     }
 
-  if (prop == "IMPORTED_CONFIGURATIONS" ||
-      prop == "IMPORTED_LINK_ITEM" ||
-      cmHasLiteralPrefix(prop, "IMPORTED_LINK_ITEM_") ||
-      cmHasLiteralPrefix(prop, "MAP_IMPORTED_CONFIG_"))
+  if (cmHasLiteralPrefix(prop, "MAP_IMPORTED_CONFIG_"))
     {
     return true;
     }
@@ -1743,11 +1744,6 @@ void cmTarget::SetProperty(const std::string& prop, const char* value)
     e << "EXPORT_NAME property can't be set on imported targets (\""
           << this->Name << "\")\n";
     this->Makefile->IssueMessage(cmake::FATAL_ERROR, e.str());
-    }
-  else if(cmHasLiteralPrefix(prop, "IMPORTED_LINK_ITEM") &&
-          !this->CheckImportedLinkItem(prop, value? value:""))
-    {
-    /* error was reported by check method */
     }
   else if (prop == "LINK_LIBRARIES")
     {
@@ -1835,11 +1831,6 @@ void cmTarget::AppendProperty(const std::string& prop, const char* value,
     e << "EXPORT_NAME property can't be set on imported targets (\""
           << this->Name << "\")\n";
     this->Makefile->IssueMessage(cmake::FATAL_ERROR, e.str());
-    }
-  else if(cmHasLiteralPrefix(prop, "IMPORTED_LINK_ITEM"))
-    {
-    this->Makefile->IssueMessage(cmake::FATAL_ERROR,
-      prop + " property may not be APPENDed.");
     }
   else if (prop == "LINK_LIBRARIES")
     {
@@ -3846,16 +3837,6 @@ void cmTarget::GetFullNameComponents(std::string& prefix, std::string& base,
 }
 
 //----------------------------------------------------------------------------
-std::string cmTarget::GetImportedLinkItem(std::string const& config) const
-{
-  if (cmTarget::ImportInfo const* info = this->GetImportInfo(config))
-    {
-    return info->LinkItem;
-    }
-  return std::string();
-}
-
-//----------------------------------------------------------------------------
 std::string cmTarget::GetFullPath(const std::string& config, bool implib,
                                   bool realname) const
 {
@@ -5412,9 +5393,14 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
                                const char** imp,
                                std::string& suffix) const
 {
-  std::string const locPropBase =
-    this->GetType() == INTERFACE_LIBRARY?
-    "IMPORTED_LINK_ITEM" : "IMPORTED_LOCATION";
+  if (this->GetType() == INTERFACE_LIBRARY)
+    {
+    // This method attempts to find a config-specific LOCATION for the
+    // IMPORTED library. In the case of INTERFACE_LIBRARY, there is no
+    // LOCATION at all, so leaving *loc and *imp unchanged is the appropriate
+    // and valid response.
+    return true;
+    }
 
   // Track the configuration-specific property suffix.
   suffix = "_";
@@ -5441,7 +5427,7 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
     {
     // Look for this configuration.
     std::string mcUpper = cmSystemTools::UpperCase(*mci);
-    std::string locProp = locPropBase + "_";
+    std::string locProp = "IMPORTED_LOCATION_";
     locProp += mcUpper;
     *loc = this->GetProperty(locProp);
     if(allowImp)
@@ -5460,20 +5446,18 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
     }
 
   // If we needed to find one of the mapped configurations but did not
-  // then the target location is not found.  The project does not want
-  // any other configuration.
+  // then the target is not found.  The project does not want any
+  // other configuration.
   if(!mappedConfigs.empty() && !*loc && !*imp)
     {
-    // Interface libraries are always available because their
-    // link item is optional so it is okay to leave *loc empty.
-    return this->GetType() == cmTarget::INTERFACE_LIBRARY;
+    return false;
     }
 
   // If we have not yet found it then there are no mapped
   // configurations.  Look for an exact-match.
   if(!*loc && !*imp)
     {
-    std::string locProp = locPropBase;
+    std::string locProp = "IMPORTED_LOCATION";
     locProp += suffix;
     *loc = this->GetProperty(locProp);
     if(allowImp)
@@ -5493,7 +5477,7 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
 
     // Look for a configuration-less location.  This may be set by
     // manually-written code.
-    *loc = this->GetProperty(locPropBase);
+    *loc = this->GetProperty("IMPORTED_LOCATION");
     if(allowImp)
       {
       *imp = this->GetProperty("IMPORTED_IMPLIB");
@@ -5515,7 +5499,7 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
       {
       suffix = "_";
       suffix += cmSystemTools::UpperCase(*aci);
-      std::string locProp = locPropBase;
+      std::string locProp = "IMPORTED_LOCATION";
       locProp += suffix;
       *loc = this->GetProperty(locProp);
       if(allowImp)
@@ -5526,13 +5510,10 @@ bool cmTarget::GetMappedConfig(std::string const& desired_config,
         }
       }
     }
-
-  // If we have not yet found it then the target location is not available.
+  // If we have not yet found it then the target is not available.
   if(!*loc && !*imp)
     {
-    // Interface libraries are always available because their
-    // link item is optional so it is okay to leave *loc empty.
-    return this->GetType() == cmTarget::INTERFACE_LIBRARY;
+    return false;
     }
 
   return true;
@@ -5585,10 +5566,6 @@ void cmTarget::ComputeImportInfo(std::string const& desired_config,
   }
   if(this->GetType() == INTERFACE_LIBRARY)
     {
-    if (loc)
-      {
-      info.LinkItem = loc;
-      }
     return;
     }
 
@@ -5710,37 +5687,6 @@ void cmTarget::ComputeImportInfo(std::string const& desired_config,
       sscanf(reps, "%u", &info.Multiplicity);
       }
     }
-}
-
-//----------------------------------------------------------------------------
-bool cmTarget::CheckImportedLinkItem(std::string const& prop,
-                                     std::string const& value) const
-{
-  if (this->GetType() != cmTarget::INTERFACE_LIBRARY ||
-      !this->IsImported())
-    {
-    this->Makefile->IssueMessage(cmake::FATAL_ERROR, prop +
-      " property may be set only on imported INTERFACE library targets.");
-    return false;
-    }
-  if (!value.empty())
-    {
-    if (value[0] == '-')
-      {
-      this->Makefile->IssueMessage(cmake::FATAL_ERROR, prop +
-        " property value\n  " + value + "\nmay not start in '-'.");
-      return false;
-      }
-    std::string::size_type bad = value.find_first_of(":/\\;");
-    if (bad != value.npos)
-      {
-      this->Makefile->IssueMessage(cmake::FATAL_ERROR, prop +
-        " property value\n  " + value + "\nmay not contain '" +
-        value.substr(bad,1) + "'.");
-      return false;
-      }
-    }
-  return true;
 }
 
 //----------------------------------------------------------------------------

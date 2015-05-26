@@ -794,6 +794,9 @@ private:
   void ComputeImportInfo(std::string const& desired_config,
                          ImportInfo& info) const;
 
+  bool CheckImportedLinkItem(std::string const& prop,
+                             std::string const& value) const;
+
   // Cache target compile paths for each configuration.
   struct CompileInfo;
   CompileInfo const* GetCompileInfo(const std::string& config) const;

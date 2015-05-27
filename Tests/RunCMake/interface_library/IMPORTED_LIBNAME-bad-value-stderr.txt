@@ -3,7 +3,7 @@
 
     -flag
 
-  may not start in '-'.
+  may not start with '-'.
 Call Stack \(most recent call first\):
   CMakeLists.txt:[0-9]+ \(include\)
 +

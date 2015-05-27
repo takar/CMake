@@ -5728,7 +5728,7 @@ bool cmTarget::CheckImportedLibName(std::string const& prop,
     if (value[0] == '-')
       {
       this->Makefile->IssueMessage(cmake::FATAL_ERROR, prop +
-        " property value\n  " + value + "\nmay not start in '-'.");
+        " property value\n  " + value + "\nmay not start with '-'.");
       return false;
       }
     std::string::size_type bad = value.find_first_of(":/\\;");

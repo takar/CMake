@@ -4,10 +4,11 @@ IMPORTED_LIBNAME
 Specify the link library name for an :ref:`imported <Imported Targets>`
 :ref:`Interface Library <Interface Libraries>`.
 
-An interface library has no library file so linking to it normally
-adds its usage requirements but does not link to an actual library.
-The ``IMPORTED_LIBNAME`` property specifies a single library name
-to be placed on the link line in place of the interface library.
+An interface library builds no library file itself but does specify
+usage requirements for its consumers.  The ``IMPORTED_LIBNAME``
+property may be set to specify a single library name to be placed
+on the link line in place of the interface library target name as
+a requirement for using the interface.
 
 This property is intended for use in naming libraries provided by
 a platform SDK for which the full path to a library file may not

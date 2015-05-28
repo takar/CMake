@@ -2798,13 +2798,35 @@ namespace {
 
 
   static size_t
-  cmFileCommandCurlDebugCallback(CURL *, curl_infotype, char *chPtr,
+  cmFileCommandCurlDebugCallback(CURL *, curl_infotype type, char *chPtr,
                                  size_t size, void *data)
     {
     cmFileCommandVectorOfChar *vec
       = static_cast<cmFileCommandVectorOfChar*>(data);
-    vec->insert(vec->end(), chPtr, chPtr + size);
-    return size;
+    switch(type)
+      {
+      case CURLINFO_TEXT:
+      case CURLINFO_HEADER_IN:
+      case CURLINFO_HEADER_OUT:
+        vec->insert(vec->end(), chPtr, chPtr + size);
+        break;
+      case CURLINFO_DATA_IN:
+      case CURLINFO_DATA_OUT:
+      case CURLINFO_SSL_DATA_IN:
+      case CURLINFO_SSL_DATA_OUT:
+        {
+        char buf[128];
+        int n = sprintf(buf, "[%" cmIML_INT_PRIu64 " bytes data]\n", size);
+        if (n > 0)
+          {
+          vec->insert(vec->end(), buf, buf + n);
+          }
+        }
+        break;
+      default:
+        break;
+      }
+    return 0;
     }
 
 

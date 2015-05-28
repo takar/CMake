@@ -45,6 +45,7 @@ target_link_libraries(InterfaceLibrary
   item_iface
   item_fake # ensure that 'item_real' is ordered in place of item_iface
   )
+add_dependencies(InterfaceLibrary item_fake_tgt)
 
 add_subdirectory(libsdir)
 
